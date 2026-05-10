@@ -14,8 +14,31 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "StopGoon - Mental Wellness & Recovery",
-  description: "A premium platform for addiction recovery and mental clarity.",
+  title: {
+    default: "StopGoon - Overcome Addiction & Build Discipline",
+    template: "%s | StopGoon"
+  },
+  description: "StopGoon is a premium mental wellness platform designed to help you break bad habits, overcome addiction, and build a disciplined, fulfilling life.",
+  keywords: ["addiction recovery", "nofap", "mental wellness", "stop gooning", "habit tracker", "discipline", "self improvement"],
+  authors: [{ name: "StopGoon Team" }],
+  creator: "StopGoon",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://stopgoon.vercel.app",
+    title: "StopGoon - Overcome Addiction & Build Discipline",
+    description: "A premium mental wellness platform designed to help you break bad habits and build a disciplined life.",
+    siteName: "StopGoon",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "StopGoon - Overcome Addiction & Build Discipline",
+    description: "A premium mental wellness platform designed to help you break bad habits and build a disciplined life.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
 };
 
 export default function RootLayout({
@@ -41,8 +64,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           {children}
