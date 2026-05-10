@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import { Sparkles, Loader2, Lock } from 'lucide-react';
 import Link from 'next/link';
 

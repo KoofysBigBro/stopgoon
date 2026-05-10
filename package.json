@@ -11,6 +11,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.71",
     "@ai-sdk/openai": "^3.0.63",
+    "@ai-sdk/react": "^3.0.179",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
     "@stripe/stripe-js": "^9.4.0",
     "@supabase/ssr": "^0.10.3",
