@@ -240,33 +240,6 @@ export default function SettingsPage() {
     setIsSaving(false)
   }
 
-  const handleExportData = async () => {
-    try {
-      const { data: journal } = await supabase.from('journal_entries').select('*').order('created_at', { ascending: false })
-      const { data: urges } = await supabase.from('urge_logs').select('*').order('created_at', { ascending: false })
-      const { data: checkins } = await supabase.from('daily_checkins').select('*').order('created_at', { ascending: false })
-      const { data: relapses } = await supabase.from('relapses').select('*').order('created_at', { ascending: false })
-
-      const exportData = {
-        exported_at: new Date().toISOString(),
-        journal_entries: journal || [],
-        urge_logs: urges || [],
-        daily_checkins: checkins || [],
-        relapses: relapses || [],
-      }
-
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `stopgoon-export-${new Date().toISOString().split('T')[0]}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-
-      setSaveMessage('Data exported')
-      setTimeout(() => setSaveMessage(null), 2000)
-    } catch {
-      setSaveMessage('Export failed')
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/login')
