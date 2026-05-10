@@ -140,44 +140,46 @@ export default function JournalPage() {
   if (isWriting) {
     return (
       <div className="animate-in fade-in duration-300 max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">New Entry</h1>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-foreground">New Entry</h1>
+          <div className="flex items-center gap-4">
             {saveStatus === 'saved' && (
-              <span className="text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-1 animate-in fade-in">
+              <span className="text-sm font-medium text-emerald-500 flex items-center gap-1.5 animate-in fade-in">
                 <Check className="w-4 h-4" /> Saved
               </span>
             )}
             <button
               onClick={() => { setIsWriting(false); setTitle(''); setContent(''); setSelectedMood(null) }}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2"
+              className="text-muted hover:text-foreground p-2 transition-colors rounded-full hover:bg-surface-hover"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
             </button>
           </div>
         </div>
 
         {/* Entry type selector */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
           {ENTRY_TYPES.map(t => (
             <button
               key={t.value}
               onClick={() => setEntryType(t.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all border ${
+              className={`px-5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${
                 entryType === t.value
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400'
+                  ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                  : 'border-border text-muted hover:border-primary/50 hover:text-foreground bg-surface'
               }`}
             >{t.label}</button>
           ))}
         </div>
 
         {/* Daily prompt */}
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-4 mb-6 flex gap-3 items-start">
-          <Lightbulb className="w-5 h-5 text-indigo-500 mt-0.5 shrink-0" />
+        <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 mb-8 flex gap-4 items-start">
+          <div className="bg-primary/10 p-2 rounded-full shrink-0">
+            <Lightbulb className="w-5 h-5 text-primary" />
+          </div>
           <div>
-            <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200 mb-0.5">Today&apos;s prompt</p>
-            <p className="text-sm text-indigo-700 dark:text-indigo-300">{prompt}</p>
+            <p className="text-sm font-semibold text-primary mb-1 uppercase tracking-wider">Reflection Prompt</p>
+            <p className="text-base text-foreground font-medium">{prompt}</p>
           </div>
         </div>
 
@@ -185,8 +187,8 @@ export default function JournalPage() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title (optional)"
-          className="w-full text-2xl font-bold bg-transparent border-none outline-none placeholder:text-slate-300 dark:placeholder:text-slate-600 mb-4"
+          placeholder="Give this entry a title..."
+          className="w-full text-3xl font-bold bg-transparent border-none outline-none placeholder:text-muted/50 mb-6 text-foreground font-heading tracking-tight"
         />
 
         {/* Content */}
@@ -196,24 +198,24 @@ export default function JournalPage() {
           rows={12}
           placeholder="Start writing..."
           autoFocus
-          className="w-full bg-transparent border-none outline-none text-lg leading-relaxed placeholder:text-slate-300 dark:placeholder:text-slate-600 resize-none mb-6"
+          className="w-full bg-transparent border-none outline-none text-lg leading-relaxed placeholder:text-muted/50 resize-none mb-8 text-foreground"
         />
 
         {/* Mood selector */}
-        <div className="mb-6">
-          <label className="text-sm font-semibold block mb-3">How are you feeling?</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-10">
+          <label className="text-sm font-semibold block mb-4 text-foreground">How are you feeling?</label>
+          <div className="flex flex-wrap gap-2.5">
             {MOODS.map(m => (
               <button
                 key={m.value}
                 onClick={() => setSelectedMood(selectedMood === m.value ? null : m.value)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all border flex items-center gap-1.5 ${
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border flex items-center gap-2 ${
                   selectedMood === m.value
-                    ? 'bg-indigo-600 text-white border-indigo-600'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-indigo-400'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                    : 'border-border text-muted hover:border-primary/50 hover:text-foreground bg-surface'
                 }`}
               >
-                <span>{m.emoji}</span> {m.label}
+                <span className="text-lg">{m.emoji}</span> {m.label}
               </button>
             ))}
           </div>
@@ -223,10 +225,10 @@ export default function JournalPage() {
         <button
           onClick={handleSave}
           disabled={!content.trim() || isSaving}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-primary/20"
         >
-          {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-          {isSaving ? 'Saving...' : 'Save Entry'}
+          {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
+          {isSaving ? 'Saving...' : 'Save Journal Entry'}
         </button>
       </div>
     )
@@ -235,92 +237,92 @@ export default function JournalPage() {
   // List mode
   return (
     <div className="animate-in fade-in duration-300">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-1">Journal</h1>
-          <p className="text-slate-500 dark:text-slate-400">Reflect on your journey. Honesty is growth.</p>
+          <p className="text-muted text-lg">A safe space for reflection and honesty.</p>
         </div>
         <button
           onClick={() => setIsWriting(true)}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-medium transition-all hover:scale-[1.02] shadow-sm shadow-primary/20"
         >
           <Plus className="w-5 h-5" />
-          New Entry
+          Write Entry
         </button>
       </header>
 
       {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+      <div className="relative mb-8">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search your entries..."
-          className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+          className="w-full pl-12 pr-4 py-4 rounded-xl border border-border bg-surface hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground"
         />
       </div>
 
       {/* Entries list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+          <Loader2 className="w-8 h-8 animate-spin text-muted" />
         </div>
       ) : filteredEntries.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-12 text-center">
-          <BookHeart className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-500 dark:text-slate-400 mb-4">
-            {searchQuery ? 'No entries match your search.' : 'No entries yet. Start writing to track your journey.'}
+        <div className="bg-surface border border-dashed border-border rounded-3xl p-16 text-center shadow-sm">
+          <BookHeart className="w-12 h-12 text-muted/50 mx-auto mb-6" />
+          <p className="text-muted text-lg mb-6 max-w-sm mx-auto leading-relaxed">
+            {searchQuery ? "No entries match your search." : "Your journal is empty. Take a moment to reflect on your day."}
           </p>
           {!searchQuery && (
             <button
               onClick={() => setIsWriting(true)}
-              className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+              className="text-primary font-semibold hover:underline text-lg"
             >
               Write your first entry
             </button>
           )}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {filteredEntries.map(entry => (
             <div
               key={entry.id}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-surface border border-border rounded-2xl p-8 shadow-sm hover:shadow-md transition-all hover:border-primary/20"
             >
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="px-2.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-full uppercase tracking-wider">
+              <div className="flex justify-between items-start mb-5">
+                <div className="flex items-center gap-4 flex-wrap">
+                  <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-md uppercase tracking-widest">
                     {entry.type}
                   </span>
                   {entry.mood && (
-                    <span className="text-sm">
-                      {MOODS.find(m => m.value === entry.mood)?.emoji || ''}{' '}
+                    <span className="text-sm font-medium text-muted flex items-center gap-1.5">
+                      <span className="text-lg">{MOODS.find(m => m.value === entry.mood)?.emoji || ''}</span>
                       {MOODS.find(m => m.value === entry.mood)?.label || entry.mood}
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-muted">
                     {new Date(entry.created_at).toLocaleDateString(undefined, {
                       month: 'short', day: 'numeric', year: 'numeric'
                     })}
                   </span>
                   {deleteConfirm === entry.id ? (
-                    <div className="flex items-center gap-1 animate-in fade-in">
+                    <div className="flex items-center gap-2 animate-in fade-in bg-surface-hover px-2 py-1 rounded-md">
                       <button
                         onClick={() => handleDelete(entry.id)}
-                        className="text-xs text-red-600 font-semibold hover:underline"
+                        className="text-xs text-red-500 font-bold hover:text-red-600 uppercase tracking-wide"
                       >Delete</button>
-                      <span className="text-xs text-slate-400">|</span>
+                      <span className="text-xs text-border">|</span>
                       <button
                         onClick={() => setDeleteConfirm(null)}
-                        className="text-xs text-slate-500 hover:underline"
+                        className="text-xs text-muted hover:text-foreground font-bold uppercase tracking-wide"
                       >Cancel</button>
                     </div>
                   ) : (
                     <button
                       onClick={() => setDeleteConfirm(entry.id)}
-                      className="text-slate-300 hover:text-red-500 dark:text-slate-600 dark:hover:text-red-400 transition-colors p-1"
+                      className="text-muted/50 hover:text-red-500 transition-colors p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -329,10 +331,10 @@ export default function JournalPage() {
               </div>
 
               {entry.title && (
-                <h3 className="text-lg font-bold mb-2">{entry.title}</h3>
+                <h3 className="text-xl font-bold mb-3 text-foreground tracking-tight font-heading">{entry.title}</h3>
               )}
 
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+              <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-[15px]">
                 {entry.content.length > 300 ? entry.content.slice(0, 300) + '...' : entry.content}
               </p>
             </div>

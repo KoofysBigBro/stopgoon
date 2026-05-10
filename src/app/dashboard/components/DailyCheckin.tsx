@@ -30,24 +30,24 @@ export default function DailyCheckin() {
 
   if (saved) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm animate-in fade-in duration-300">
+      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm animate-in fade-in duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
             <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <h3 className="text-xl font-bold">Checked in</h3>
+          <h3 className="text-xl font-bold text-foreground">Checked in</h3>
         </div>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">
-          You&apos;re feeling <strong>{saved}</strong> today. Thanks for being honest with yourself.
+        <p className="text-muted text-sm">
+          You're feeling <strong>{saved}</strong> today. Thanks for being honest with yourself.
         </p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-      <h3 className="text-xl font-bold mb-2">Daily Check-in</h3>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">How are you feeling today?</p>
+    <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+      <h3 className="text-xl font-bold mb-2 text-foreground">Daily Check-in</h3>
+      <p className="text-muted text-sm mb-5">How are you feeling today?</p>
 
       <div className="flex flex-wrap gap-3">
         {MOODS.map(mood => (
@@ -55,10 +55,10 @@ export default function DailyCheckin() {
             key={mood.value}
             onClick={() => handleCheckin(mood.value)}
             disabled={isSaving}
-            className={`flex-1 py-3.5 px-4 rounded-xl border border-slate-200 dark:border-slate-800 font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60
-              ${mood.color === 'emerald' ? 'hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20' : ''}
-              ${mood.color === 'indigo' ? 'hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' : ''}
-              ${mood.color === 'amber' ? 'hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20' : ''}
+            className={`flex-1 py-3.5 px-4 rounded-xl border border-border font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-surface text-foreground
+              ${mood.color === 'emerald' ? 'hover:border-emerald-500 hover:bg-emerald-500/5' : ''}
+              ${mood.color === 'indigo' ? 'hover:border-indigo-500 hover:bg-indigo-500/5' : ''}
+              ${mood.color === 'amber' ? 'hover:border-amber-500 hover:bg-amber-500/5' : ''}
             `}
           >
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="text-lg">{mood.emoji}</span>}

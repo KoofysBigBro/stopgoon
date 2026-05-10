@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
   Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye
@@ -18,7 +19,7 @@ export default function SettingsPage() {
   const [userCreated, setUserCreated] = useState('')
 
   // Settings state
-  const [theme, setTheme] = useState('midnight')
+  const { theme, setTheme } = useTheme()
   const [fontScale, setFontScale] = useState('normal')
   const [motion, setMotion] = useState('normal')
   const [highContrast, setHighContrast] = useState(false)
@@ -55,14 +56,10 @@ export default function SettingsPage() {
     setIsLoading(false)
   }
 
-  // Apply theme to DOM whenever it changes
+  // Sync loaded theme with next-themes if available
   useEffect(() => {
-    if (theme === 'midnight') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [theme])
+    // If the DB has a specific theme preference, we could sync it here
+  }, [])
 
   // Apply text size to DOM whenever it changes
   useEffect(() => {
@@ -239,9 +236,9 @@ export default function SettingsPage() {
               <label className="text-sm font-semibold block mb-3">Theme</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => { setTheme('calm'); saveSetting('theme', 'calm') }}
+                  onClick={() => { setTheme('light'); saveSetting('theme', 'calm') }}
                   className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                    theme === 'calm'
+                    theme === 'light'
                       ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
                   }`}
@@ -249,13 +246,13 @@ export default function SettingsPage() {
                   <Sun className="w-5 h-5 text-amber-500" />
                   <div className="text-left">
                     <p className="font-semibold text-sm">Light</p>
-                    <p className="text-xs text-slate-500">Calm &amp; minimal</p>
+                    <p className="text-xs text-slate-500">Calm &amp; warm</p>
                   </div>
                 </button>
                 <button
-                  onClick={() => { setTheme('midnight'); saveSetting('theme', 'midnight') }}
+                  onClick={() => { setTheme('dark'); saveSetting('theme', 'midnight') }}
                   className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                    theme === 'midnight'
+                    theme === 'dark'
                       ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
                   }`}
@@ -263,7 +260,7 @@ export default function SettingsPage() {
                   <Moon className="w-5 h-5 text-indigo-500" />
                   <div className="text-left">
                     <p className="font-semibold text-sm">Dark</p>
-                    <p className="text-xs text-slate-500">Midnight recovery</p>
+                    <p className="text-xs text-slate-500">Immersive focus</p>
                   </div>
                 </button>
               </div>
