@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 import { Check, Loader2 } from 'lucide-react'
 
 const MOODS = [
@@ -13,7 +14,38 @@ const MOODS = [
 export default function DailyCheckin() {
   const [saved, setSaved] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+    checkToday()
+  }, [])
+
+  const checkToday = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Get start of today in local time, then convert to ISO string for DB comparison
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      const { data } = await supabase
+        .from('daily_checkins')
+        .select('mood')
+        .eq('user_id', user.id)
+        .gte('created_at', today.toISOString())
+        .limit(1)
+
+      if (data && data.length > 0) {
+        setSaved(data[0].mood)
+      }
+    } catch {
+      // ignore
+    }
+    setIsLoading(false)
+  }
 
   const handleCheckin = async (mood: string) => {
     setIsSaving(true)
@@ -21,11 +53,20 @@ export default function DailyCheckin() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
+      setSaved(mood)
+      router.refresh() // Refresh the server component to update the streak counter
     } catch {
       // graceful
     }
-    setSaved(mood)
     setIsSaving(false)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex items-center justify-center h-[160px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted" />
+      </div>
+    )
   }
 
   if (saved) {

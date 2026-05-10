@@ -1,20 +1,62 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts'
 import { Activity } from 'lucide-react'
-
-// Dummy data for now, ideally we pass in real data from Supabase
-const data = [
-  { date: 'Mon', intensity: 3 },
-  { date: 'Tue', intensity: 5 },
-  { date: 'Wed', intensity: 2 },
-  { date: 'Thu', intensity: 8 },
-  { date: 'Fri', intensity: 4 },
-  { date: 'Sat', intensity: 1 },
-  { date: 'Sun', intensity: 2 },
-]
+import { createClient } from '@/utils/supabase/client'
 
 export default function UrgeIntensityChart() {
+  const [data, setData] = useState<{date: string, intensity: number}[]>([])
+  const supabase = createClient()
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Initialize the last 7 days with 0 intensity
+      const last7Days: { dateObj: Date; date: string; intensity: number }[] = []
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        last7Days.push({
+          dateObj: d,
+          date: d.toLocaleDateString('en-US', { weekday: 'short' }),
+          intensity: 0
+        })
+      }
+
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 7)
+      
+      const { data: logs } = await supabase
+        .from('urge_logs')
+        .select('intensity, created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', weekAgo.toISOString())
+
+      if (logs) {
+        logs.forEach(log => {
+          const logDate = new Date(log.created_at)
+          const dayMatch = last7Days.find(d => 
+            d.dateObj.getDate() === logDate.getDate() && 
+            d.dateObj.getMonth() === logDate.getMonth()
+          )
+          if (dayMatch) {
+            dayMatch.intensity = Math.max(dayMatch.intensity, log.intensity)
+          }
+        })
+      }
+
+      setData(last7Days.map(d => ({ date: d.date, intensity: d.intensity })))
+    } catch {
+      // fallback to empty chart
+    }
+  }
   return (
     <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6">

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import UrgeLogger from './components/UrgeLogger'
 import DailyCheckin from './components/DailyCheckin'
 import UrgeIntensityChart from './components/UrgeIntensityChart'
+import RelapseButton from './components/RelapseButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -13,23 +14,33 @@ export default async function DashboardPage() {
   let nextMilestone = 7
 
   try {
-    const { data: relapses } = await supabase
-      .from('relapses')
-      .select('created_at')
-      .order('created_at', { ascending: false })
-      .limit(1)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      let startDate = new Date(user.created_at)
+      
+      const { data: relapses } = await supabase
+        .from('relapses')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
 
-    if (relapses && relapses.length > 0) {
-      const lastRelapse = new Date(relapses[0].created_at)
-      const now = new Date()
-      daysOfGrowth = Math.floor((now.getTime() - lastRelapse.getTime()) / (1000 * 60 * 60 * 24))
-    } else {
-      // No relapses logged — calculate from account creation
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const created = new Date(user.created_at)
-        const now = new Date()
-        daysOfGrowth = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))
+      if (relapses && relapses.length > 0) {
+        startDate = new Date(relapses[0].created_at)
+      }
+
+      const { data: checkins } = await supabase
+        .from('daily_checkins')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', startDate.toISOString())
+
+      if (checkins) {
+        // count unique days the user checked in
+        const uniqueDays = new Set(
+          checkins.map(c => new Date(c.created_at).toISOString().split('T')[0])
+        )
+        daysOfGrowth = uniqueDays.size
       }
     }
   } catch {
@@ -86,6 +97,8 @@ export default async function DashboardPage() {
           <p className="text-xs text-muted mt-4 font-semibold uppercase tracking-widest">
             Next Milestone: {nextMilestone} Days
           </p>
+          
+          <RelapseButton />
         </div>
       </section>
 
