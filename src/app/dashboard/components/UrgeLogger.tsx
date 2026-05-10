@@ -61,9 +61,12 @@ export default function UrgeLogger() {
   const handleQuickLog = async () => {
     setIsSaving(true)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
       const { data, error } = await supabase
         .from('urge_logs')
-        .insert({ intensity: 5, urge_passed: false })
+        .insert({ user_id: user.id, intensity: 5, urge_passed: false })
         .select()
         .single()
 
@@ -84,9 +87,13 @@ export default function UrgeLogger() {
   const handleDetailedLog = async () => {
     setIsSaving(true)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
       const { data, error } = await supabase
         .from('urge_logs')
         .insert({
+          user_id: user.id,
           intensity,
           trigger: selectedTrigger,
           emotion: selectedEmotion,

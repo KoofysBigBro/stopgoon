@@ -18,7 +18,9 @@ export default function DailyCheckin() {
   const handleCheckin = async (mood: string) => {
     setIsSaving(true)
     try {
-      await supabase.from('daily_checkins').insert({ mood })
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
     } catch {
       // graceful
     }

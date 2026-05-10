@@ -55,6 +55,21 @@ export default function SettingsPage() {
     setIsLoading(false)
   }
 
+  // Apply theme to DOM whenever it changes
+  useEffect(() => {
+    if (theme === 'midnight') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [theme])
+
+  // Apply text size to DOM whenever it changes
+  useEffect(() => {
+    const sizes: Record<string, string> = { normal: '16px', large: '18px', xlarge: '20px' }
+    document.documentElement.style.fontSize = sizes[fontScale] || '16px'
+  }, [fontScale])
+
   const saveSetting = async (field: string, value: string | boolean) => {
     setIsSaving(true)
     setSaveMessage(null)

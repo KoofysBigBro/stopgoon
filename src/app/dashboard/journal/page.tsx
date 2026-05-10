@@ -86,7 +86,11 @@ export default function JournalPage() {
     setSaveStatus('saving')
 
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
       const { error } = await supabase.from('journal_entries').insert({
+        user_id: user.id,
         title: title.trim() || null,
         type: entryType,
         content: content.trim(),
