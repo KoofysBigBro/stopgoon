@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
+import Link from 'next/link'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
-  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye
+  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck
 } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -358,14 +359,21 @@ export default function SettingsPage() {
             <h2 className="text-lg font-bold">Subscription</h2>
           </div>
 
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-5 flex justify-between items-center">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <p className="font-bold text-indigo-900 dark:text-indigo-100">Free Plan</p>
-              <p className="text-sm text-indigo-700 dark:text-indigo-300">All core recovery tools included.</p>
+              <p className="text-sm text-indigo-700 dark:text-indigo-300 mb-2">All core recovery tools included.</p>
+              <span className="px-3 py-1 bg-white dark:bg-slate-800 text-xs font-bold rounded-full border border-indigo-200 dark:border-indigo-700">
+                Active
+              </span>
             </div>
-            <span className="px-3 py-1 bg-white dark:bg-slate-800 text-xs font-bold rounded-full border border-indigo-200 dark:border-indigo-700">
-              Active
-            </span>
+            <Link 
+              href="/dashboard/upgrade"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Upgrade to Premium
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </section>
 
@@ -414,6 +422,26 @@ export default function SettingsPage() {
                 Delete Account
               </button>
             )}
+          </div>
+        </section>
+
+        {/* Legal */}
+        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Legal Information</h2>
+          </div>
+          
+          <div className="flex flex-col space-y-3">
+            <Link href="/terms" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+              Terms of Service
+            </Link>
+            <Link href="/privacy" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+              Privacy Policy
+            </Link>
+            <Link href="/refund" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+              Refund Policy
+            </Link>
           </div>
         </section>
 
