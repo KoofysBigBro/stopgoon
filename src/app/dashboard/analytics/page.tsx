@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { Flame, Calendar, TrendingUp, BookHeart, Zap, Target } from 'lucide-react'
 import MoodBreakdownChart from './MoodBreakdownChart'
 import AICoach from '../components/AICoach'
+import PredictiveWarning from './PredictiveWarning'
+import RecoveryTimeline from './RecoveryTimeline'
 export default async function AnalyticsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -16,6 +18,12 @@ export default async function AnalyticsPage() {
   let checkinCalendar: { date: string; count: number }[] = []
   let moodCounts: Record<string, number> = {}
   let isPremium = false;
+
+  // Predictive & Timeline data
+  let averageStreak = 0;
+  let lastUrgeIntensity = 0;
+  let lastUrgeTime: Date | null = null;
+  const timelineEvents: { id: string; type: 'start' | 'relapse' | 'milestone' | 'journal'; date: Date; title: string; description?: string }[] = [];
 
   if (user) {
     // Fetch user for premium status
@@ -97,22 +105,92 @@ export default async function AnalyticsPage() {
     checkinCalendar = Object.entries(calendarMap).map(([date, count]) => ({ date, count }))
 
     // Total journal entries
-    const { count: journalCount } = await supabase
+    const { data: journals, count: journalCount } = await supabase
       .from('journal_entries')
-      .select('id', { count: 'exact', head: true })
+      .select('id, created_at, reflection', { count: 'exact' })
       .eq('user_id', user.id)
     totalJournalEntries = journalCount || 0
 
     // Urge logs
     const { data: urges } = await supabase
       .from('urge_logs')
-      .select('intensity')
+      .select('intensity, created_at')
       .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+    
     totalUrges = urges?.length || 0
     if (urges && urges.length > 0) {
       const sum = urges.reduce((acc, u) => acc + (u.intensity || 0), 0)
       averageIntensity = Math.round((sum / urges.length) * 10) / 10
+      lastUrgeIntensity = urges[0].intensity || 0;
+      lastUrgeTime = new Date(urges[0].created_at);
     }
+
+    // Build Timeline Events
+    timelineEvents.push({
+      id: 'start',
+      type: 'start',
+      date: new Date(user.created_at),
+      title: 'Journey Began',
+      description: 'You made the decision to start your recovery journey.'
+    });
+
+    if (relapses) {
+      relapses.forEach((r, i) => {
+        timelineEvents.push({
+          id: `relapse-${i}`,
+          type: 'relapse',
+          date: new Date(r.created_at),
+          title: 'Relapse Logged',
+          description: 'A bump in the road. Recovery is not linear.'
+        });
+      });
+      // Calculate average streak
+      if (relapses.length > 1) {
+        const relapseDates = relapses.map(r => new Date(r.created_at).getTime()).sort();
+        let totalDays = 0;
+        for(let i = 1; i < relapseDates.length; i++) {
+          totalDays += (relapseDates[i] - relapseDates[i-1]) / (1000 * 60 * 60 * 24);
+        }
+        averageStreak = Math.round(totalDays / (relapseDates.length - 1));
+      } else if (relapses.length === 1) {
+        averageStreak = Math.round((new Date(relapses[0].created_at).getTime() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24));
+      }
+    }
+
+    if (journals) {
+      journals.forEach((j) => {
+        timelineEvents.push({
+          id: `journal-${j.id}`,
+          type: 'journal',
+          date: new Date(j.created_at),
+          title: 'Journal Entry',
+          description: j.reflection ? (j.reflection.substring(0, 60) + '...') : 'Logged thoughts and feelings.'
+        });
+      });
+    }
+
+    // Add milestone if current streak > 0
+    if (currentStreak > 0) {
+      let milestoneTitle = '';
+      if (currentStreak >= 365) milestoneTitle = '1 Year Clean!';
+      else if (currentStreak >= 100) milestoneTitle = '100 Days Clean!';
+      else if (currentStreak >= 30) milestoneTitle = '30 Days Clean!';
+      else if (currentStreak >= 7) milestoneTitle = '1 Week Clean!';
+      
+      if (milestoneTitle) {
+        timelineEvents.push({
+          id: `milestone-current`,
+          type: 'milestone',
+          date: new Date(),
+          title: milestoneTitle,
+          description: `You are currently on a ${currentStreak} day streak.`
+        });
+      }
+    }
+
+    // Sort timeline descending
+    timelineEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   return (
@@ -126,6 +204,16 @@ export default async function AnalyticsPage() {
       <div className="mb-8">
         <AICoach isPremium={isPremium} />
       </div>
+
+      {/* Predictive Warning */}
+      <PredictiveWarning 
+        isPremium={isPremium}
+        currentStreak={currentStreak}
+        totalRelapses={totalRelapses}
+        averageStreak={averageStreak}
+        lastUrgeIntensity={lastUrgeIntensity}
+        lastUrgeTime={lastUrgeTime}
+      />
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -232,6 +320,11 @@ export default async function AnalyticsPage() {
           <div className="w-3 h-3 rounded bg-primary" />
           <span>More</span>
         </div>
+      </div>
+
+      {/* Recovery Timeline */}
+      <div className="mt-8">
+        <RecoveryTimeline isPremium={isPremium} events={timelineEvents} />
       </div>
     </div>
   )

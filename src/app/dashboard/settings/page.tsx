@@ -9,6 +9,7 @@ import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
   Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock
 } from 'lucide-react'
+import DataExport from './DataExport'
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -266,10 +267,6 @@ export default function SettingsPage() {
       setTimeout(() => setSaveMessage(null), 2000)
     } catch {
       setSaveMessage('Export failed')
-      setTimeout(() => setSaveMessage(null), 3000)
-    }
-  }
-
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/login')
@@ -277,10 +274,15 @@ export default function SettingsPage() {
   }
 
   const handleDeleteAccount = async () => {
-    // In production, this would call a server-side function
-    // For now, sign out and show message
-    await supabase.auth.signOut()
-    router.push('/')
+    try {
+      // Basic implementation for deleting an account. Note: proper deletion might require Edge Functions for cascading deletes safely depending on schema
+      await supabase.rpc('delete_user_account')
+      await supabase.auth.signOut()
+      router.push('/')
+    } catch (error) {
+      console.error(error)
+      alert("Failed to delete account.")
+    }
   }
 
   if (isLoading) {
@@ -599,18 +601,10 @@ export default function SettingsPage() {
           </div>
 
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
-            Your data is encrypted and stored securely. You can export or delete it at any time.
+            Your data is encrypted and stored securely. You can delete it at any time.
           </p>
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={handleExportData}
-              className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 px-5 py-2.5 rounded-lg font-medium transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Export All Data
-            </button>
-
+          <div className="flex flex-wrap gap-3 mb-8">
             {showDeleteConfirm ? (
               <div className="flex items-center gap-3 animate-in fade-in">
                 <p className="text-sm text-red-600 font-medium">This cannot be undone.</p>
@@ -637,6 +631,9 @@ export default function SettingsPage() {
               </button>
             )}
           </div>
+          
+          {/* Data Export Component */}
+          <DataExport isPremium={isPremium} />
         </section>
 
         {/* Legal */}
