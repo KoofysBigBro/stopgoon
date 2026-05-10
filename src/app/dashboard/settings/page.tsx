@@ -7,9 +7,10 @@ import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
-  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock
+  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock, Smartphone
 } from 'lucide-react'
 import DataExport from './DataExport'
+import DeviceSettings from './DeviceSettings'
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -565,6 +566,9 @@ export default function SettingsPage() {
             </Link>
           </div>
         </section>
+
+        {/* Device Settings */}
+        <DeviceSettings />
 
         {/* Data & Privacy */}
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">

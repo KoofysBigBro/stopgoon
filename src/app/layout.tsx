@@ -13,6 +13,13 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  themeColor: '#09090b',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   title: {
     default: "StopGoon - Overcome Addiction & Build Discipline",
@@ -38,6 +45,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  manifest: "/manifest.json",
+  icons: {
+    apple: "/icon.svg",
   }
 };
 
