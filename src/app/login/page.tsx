@@ -38,7 +38,24 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/dashboard')
+      // Check if onboarding is completed
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .single()
+
+        if (profile && !profile.onboarding_completed) {
+          router.push('/onboarding')
+        } else {
+          router.push('/dashboard')
+        }
+      } else {
+        router.push('/dashboard')
+      }
+      
       router.refresh()
     } catch {
       setError('Could not connect to the server. Please check your internet connection and try again.')
