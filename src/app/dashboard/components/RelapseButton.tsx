@@ -20,7 +20,7 @@ export default function RelapseButton() {
       
       await supabase.from('relapses').insert({
         user_id: user.id,
-        note: note.trim() || 'No note provided'
+        reason: note.trim() || 'No reason provided'
       })
 
       setIsOpen(false)
