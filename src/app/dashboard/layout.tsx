@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, ShieldCheck, Users, MessageCircle } from 'lucide-react'
+import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, ShieldCheck, Users, MessageCircle, Sparkles } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
@@ -68,6 +68,10 @@ export default async function DashboardLayout({
             <Link href="/dashboard/accountability" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
               <Users className="w-5 h-5" />
               Partners
+            </Link>
+            <Link href="/dashboard/motivation" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-amber-500/10 text-amber-500 transition-colors font-medium">
+              <Sparkles className="w-5 h-5" />
+              Motivation
             </Link>
             <Link href="/dashboard/chat" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground relative">
               <MessageCircle className="w-5 h-5" />
