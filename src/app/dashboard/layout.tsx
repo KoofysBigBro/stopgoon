@@ -64,10 +64,6 @@ export default async function DashboardLayout({
               <Activity className="w-5 h-5" />
               Analytics
             </Link>
-            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
-              <Settings className="w-5 h-5" />
-              Settings
-            </Link>
             <Link href="/dashboard/accountability" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
               <Users className="w-5 h-5" />
               Partners
@@ -85,6 +81,12 @@ export default async function DashboardLayout({
           <div className="mb-4 truncate text-sm text-muted font-medium">
             {displayName}
           </div>
+          <nav className="space-y-1 mb-3">
+            <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
+              <Settings className="w-5 h-5" />
+              Settings
+            </Link>
+          </nav>
           <form action={handleSignOut}>
             <button className="flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
               <LogOut className="w-5 h-5" />

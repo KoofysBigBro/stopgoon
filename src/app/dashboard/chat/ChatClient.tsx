@@ -69,6 +69,9 @@ export default function ChatClient({
   const [lastSentAt, setLastSentAt] = useState(0);
   const [adminMenuOpen, setAdminMenuOpen] = useState<string | null>(null);
   const [profilePopup, setProfilePopup] = useState<{ profile: UserProfile; stats: UserStats | null; targetId: string } | null>(null);
+  const [userProfiles, setUserProfiles] = useState<Record<string, { avatar_url: string | null; role: string; username: string }>>({
+    [userId]: { avatar_url: userAvatarUrl, role: userRole, username: userUsername }
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -98,6 +101,25 @@ export default function ChatClient({
         .limit(100);
       setMessages(data || []);
       setTimeout(scrollToBottom, 100);
+
+      // Fetch live profiles for all unique users in messages
+      if (data && data.length > 0) {
+        const uniqueUserIds = [...new Set(data.map((m: any) => m.user_id))];
+        const missingIds = uniqueUserIds.filter(id => !userProfiles[id]);
+        if (missingIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('users')
+            .select('id, avatar_url, role, username')
+            .in('id', missingIds);
+          if (profiles) {
+            const newProfiles: Record<string, any> = {};
+            profiles.forEach((p: any) => {
+              newProfiles[p.id] = { avatar_url: p.avatar_url, role: p.role || 'user', username: p.username };
+            });
+            setUserProfiles(prev => ({ ...prev, ...newProfiles }));
+          }
+        }
+      }
     };
 
     loadMessages();
@@ -360,21 +382,26 @@ export default function ChatClient({
               ) : (
                 messages.map((msg) => {
                   const isOwn = msg.user_id === userId;
+                  // Use live profile data (falls back to message data for users not yet loaded)
+                  const liveProfile = userProfiles[msg.user_id];
+                  const avatarUrl = liveProfile?.avatar_url || msg.sender_avatar_url;
+                  const role = liveProfile?.role || msg.sender_role || 'user';
+                  const displayName = liveProfile?.username || msg.sender_username || 'Anonymous';
                   return (
                     <div key={msg.id} className={`flex gap-2.5 ${isOwn ? 'flex-row-reverse' : ''}`}>
                       {/* Avatar */}
                       <button
                         onClick={() => handleAvatarClick(msg.user_id)}
                         className={`w-9 h-9 rounded-full border-2 overflow-hidden flex-shrink-0 hover:ring-2 hover:ring-indigo-500/50 transition-all cursor-pointer ${
-                          msg.sender_role === 'owner' ? 'border-amber-500/60 bg-amber-500/20' : msg.sender_role === 'admin' ? 'border-indigo-500/60 bg-indigo-500/20' : 'border-border bg-slate-600'
+                          role === 'owner' ? 'border-amber-500/60 bg-amber-500/20' : role === 'admin' ? 'border-indigo-500/60 bg-indigo-500/20' : 'border-border bg-slate-600'
                         }`}
-                        title={`View ${msg.sender_username}'s profile`}
+                        title={`View ${displayName}'s profile`}
                       >
-                        {msg.sender_avatar_url ? (
-                          <img src={msg.sender_avatar_url} alt="" className="w-full h-full object-cover" />
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <span className="flex items-center justify-center w-full h-full text-sm font-bold text-white">
-                            {(msg.sender_username || '?')[0]?.toUpperCase()}
+                            {(displayName || '?')[0]?.toUpperCase()}
                           </span>
                         )}
                       </button>
@@ -383,10 +410,10 @@ export default function ChatClient({
                       <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[75%]`}>
                         <div className={`flex items-center gap-1.5 mb-0.5 ${isOwn ? 'flex-row-reverse' : ''}`}>
                           <p className={`text-xs font-semibold flex items-center gap-1 ${
-                            msg.sender_role === 'owner' ? 'text-amber-400' : msg.sender_role === 'admin' ? 'text-indigo-400' : isOwn ? 'text-indigo-400' : 'text-muted'
+                            role === 'owner' ? 'text-amber-400' : role === 'admin' ? 'text-indigo-400' : isOwn ? 'text-indigo-400' : 'text-muted'
                           }`}>
-                            {getRoleIcon(msg.sender_role)}
-                            {isOwn ? 'You' : (msg.sender_username || 'Anonymous')}
+                            {getRoleIcon(role)}
+                            {isOwn ? 'You' : displayName}
                           </p>
                           {/* Admin controls */}
                           {canModerate && !isOwn && (
