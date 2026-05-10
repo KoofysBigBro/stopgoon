@@ -34,13 +34,21 @@ export default function RegisterPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       })
 
       if (error) {
         setError(error.message)
+        setIsLoading(false)
+        return
+      }
+
+      // Supabase returns an empty identities array if the email is already registered
+      // (When 'Prevent Email Enumeration' is turned on in Supabase settings)
+      if (data?.user?.identities && data.user.identities.length === 0) {
+        setError('An account with this email already exists. Please sign in instead.')
         setIsLoading(false)
         return
       }
