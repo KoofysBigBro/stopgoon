@@ -44,7 +44,8 @@ export default function SettingsPage() {
 
       const { data } = await supabase.from('settings').select('*').single()
       if (data) {
-        setTheme(data.theme || 'midnight')
+        const mappedTheme = data.theme === 'midnight' ? 'dark' : data.theme === 'calm' ? 'light' : (data.theme || 'dark')
+        setTheme(mappedTheme)
         setFontScale(data.font_scale || 'normal')
         setMotion(data.motion || 'normal')
         setHighContrast(data.high_contrast || false)
@@ -236,31 +237,31 @@ export default function SettingsPage() {
               <label className="text-sm font-semibold block mb-3">Theme</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => { setTheme('light'); saveSetting('theme', 'calm') }}
+                  onClick={() => { setTheme('light'); saveSetting('theme', 'light') }}
                   className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
                     theme === 'light'
-                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50'
                   }`}
                 >
                   <Sun className="w-5 h-5 text-amber-500" />
                   <div className="text-left">
-                    <p className="font-semibold text-sm">Light</p>
-                    <p className="text-xs text-slate-500">Calm &amp; warm</p>
+                    <p className="font-semibold text-sm text-foreground">Light</p>
+                    <p className="text-xs text-muted">Calm &amp; warm</p>
                   </div>
                 </button>
                 <button
-                  onClick={() => { setTheme('dark'); saveSetting('theme', 'midnight') }}
+                  onClick={() => { setTheme('dark'); saveSetting('theme', 'dark') }}
                   className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
                     theme === 'dark'
-                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-primary/50'
                   }`}
                 >
                   <Moon className="w-5 h-5 text-indigo-500" />
                   <div className="text-left">
-                    <p className="font-semibold text-sm">Dark</p>
-                    <p className="text-xs text-slate-500">Immersive focus</p>
+                    <p className="font-semibold text-sm text-foreground">Dark</p>
+                    <p className="text-xs text-muted">Immersive focus</p>
                   </div>
                 </button>
               </div>
