@@ -10,16 +10,12 @@ export default async function DashboardLayout({
 }) {
   const supabase = await createClient()
 
-  let {
+  const {
     data: { user },
   } = await supabase.auth.getUser()
 
   if (!user) {
-    if (process.env.NODE_ENV === 'development') {
-      user = { email: 'offline-dev@example.com', id: 'dev-user-id' } as any;
-    } else {
-      return redirect('/login')
-    }
+    return redirect('/login')
   }
 
   const handleSignOut = async () => {
@@ -62,20 +58,13 @@ export default async function DashboardLayout({
               <Settings className="w-5 h-5" />
               Settings
             </Link>
-            
-            {/* Developer Override Panel */}
-            {process.env.NODE_ENV === 'development' && (
-              <Link href="/dashboard/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors font-bold mt-4 border border-red-500/20">
-                <ShieldCheck className="w-5 h-5" />
-                Dev Admin Panel
-              </Link>
-            )}
+
           </nav>
         </div>
 
         <div className="p-6 border-t border-border">
           <div className="mb-4 truncate text-sm text-muted font-medium">
-            {user.email}
+            {user?.email}
           </div>
           <form action={handleSignOut}>
             <button className="flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">

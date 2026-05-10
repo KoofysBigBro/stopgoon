@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { Flame, Calendar, TrendingUp, BookHeart, Zap, Target } from 'lucide-react'
 import MoodBreakdownChart from './MoodBreakdownChart'
-
+import AICoach from '../components/AICoach'
 export default async function AnalyticsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -15,8 +15,12 @@ export default async function AnalyticsPage() {
   let averageIntensity = 0
   let checkinCalendar: { date: string; count: number }[] = []
   let moodCounts: Record<string, number> = {}
+  let isPremium = false;
 
   if (user) {
+    // Fetch profile for premium status
+    const { data: profile } = await supabase.from('profiles').select('is_premium').eq('id', user.id).single();
+    isPremium = profile?.is_premium || false;
     // Fetch last relapse
     const { data: relapses } = await supabase
       .from('relapses')
@@ -117,6 +121,11 @@ export default async function AnalyticsPage() {
         <h1 className="text-3xl font-bold tracking-tight mb-1">Progress Analytics</h1>
         <p className="text-muted text-lg">Visualize your journey. Every step is progress.</p>
       </header>
+
+      {/* AI Coach */}
+      <div className="mb-8">
+        <AICoach isPremium={isPremium} />
+      </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
