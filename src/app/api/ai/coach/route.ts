@@ -56,14 +56,14 @@ export async function POST(req: Request) {
     `;
 
     const { text } = await generateText({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-1.5-flash-latest'),
       system: systemPrompt,
       prompt: prompt || 'Can you analyze my recent entries and give me some advice?',
     });
 
     return Response.json({ text });
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI Coach Error:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return new Response(error.message || 'Internal Server Error', { status: 500 });
   }
 }
