@@ -13,18 +13,15 @@ export async function sendInvite(partnerCode: string) {
     return { error: 'Please enter a valid connection code.' };
   }
 
-  // 1. Find user by connection code
-  const { data: partner, error: partnerError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('connection_code', partnerCode.toUpperCase())
-    .single();
+  // 1. Find user by connection code (using an RPC function to bypass RLS)
+  const { data: partnerId, error: partnerError } = await supabase
+    .rpc('get_user_id_by_code', { p_code: partnerCode.toUpperCase() });
 
-  if (partnerError || !partner) {
+  if (partnerError || !partnerId) {
     return { error: 'Invalid connection code or user not found.' };
   }
 
-  if (partner.id === user.id) {
+  if (partnerId === user.id) {
     return { error: 'You cannot invite yourself.' };
   }
 
@@ -32,7 +29,7 @@ export async function sendInvite(partnerCode: string) {
   const { data: existing } = await supabase
     .from('accountability_partners')
     .select('*')
-    .or(`and(user1_id.eq.${user.id},user2_id.eq.${partner.id}),and(user1_id.eq.${partner.id},user2_id.eq.${user.id})`)
+    .or(`and(user1_id.eq.${user.id},user2_id.eq.${partnerId}),and(user1_id.eq.${partnerId},user2_id.eq.${user.id})`)
     .single();
 
   if (existing) {
@@ -44,7 +41,7 @@ export async function sendInvite(partnerCode: string) {
     .from('accountability_partners')
     .insert({
       user1_id: user.id,
-      user2_id: partner.id,
+      user2_id: partnerId,
       status: 'pending'
     });
 
