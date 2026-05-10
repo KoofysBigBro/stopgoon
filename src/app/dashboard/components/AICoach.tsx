@@ -22,7 +22,7 @@ export default function AICoach({ isPremium }: AICoachProps) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+    <div className="bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20 rounded-2xl p-6 shadow-sm relative overflow-hidden min-h-[250px] flex flex-col justify-center">
       
       {/* Premium Lock Overlay */}
       {!isPremium && (
