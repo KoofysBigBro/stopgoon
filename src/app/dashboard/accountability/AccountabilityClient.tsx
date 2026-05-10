@@ -145,7 +145,7 @@ export default function AccountabilityClient({
                   <div key={p.id} className="flex items-center justify-between bg-background border border-border p-4 rounded-xl">
                     <div className="truncate pr-4">
                       <p className="font-bold truncate">{partnerEmail}</p>
-                      <p className="text-xs text-muted">Linked Since: {new Date(p.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted">Linked Since: {new Date(p.created_at).toISOString().split('T')[0]}</p>
                     </div>
                     <button 
                       onClick={() => handleRemove(p.id)}
