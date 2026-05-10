@@ -16,12 +16,12 @@ export async function POST(req: Request) {
 
     // Check if user is premium
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_premium')
+      .from('users')
+      .select('subscription_tier')
       .eq('id', user.id)
       .single();
 
-    if (!profile?.is_premium) {
+    if (profile?.subscription_tier !== 'premium') {
       return new Response('Premium Required', { status: 403 });
     }
 

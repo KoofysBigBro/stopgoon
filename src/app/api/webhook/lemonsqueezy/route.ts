@@ -39,9 +39,9 @@ export async function POST(req: Request) {
       
       // Update user's profile with premium status
       await supabase
-        .from('profiles')
+        .from('users')
         .update({
-          is_premium: status === 'active',
+          subscription_tier: status === 'active' ? 'premium' : 'free',
           lemon_squeezy_customer_id: obj.customer_id,
           lemon_squeezy_subscription_id: data.data.id,
         })
@@ -52,9 +52,9 @@ export async function POST(req: Request) {
     else if (eventName === 'subscription_cancelled' || eventName === 'subscription_expired') {
       // Revoke premium access
       await supabase
-        .from('profiles')
+        .from('users')
         .update({
-          is_premium: false,
+          subscription_tier: 'free',
           lemon_squeezy_subscription_id: null,
         })
         .eq('id', userId);

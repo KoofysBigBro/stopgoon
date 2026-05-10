@@ -18,9 +18,9 @@ export default async function AnalyticsPage() {
   let isPremium = false;
 
   if (user) {
-    // Fetch profile for premium status
-    const { data: profile } = await supabase.from('profiles').select('is_premium').eq('id', user.id).single();
-    isPremium = profile?.is_premium || false;
+    // Fetch user for premium status
+    const { data: profile } = await supabase.from('users').select('subscription_tier').eq('id', user.id).single();
+    isPremium = profile?.subscription_tier === 'premium';
     // Fetch last relapse
     const { data: relapses } = await supabase
       .from('relapses')
