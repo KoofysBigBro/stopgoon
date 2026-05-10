@@ -19,7 +19,7 @@ export default async function LandingPage() {
             <div className="bg-primary/10 p-2 rounded-xl">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-foreground font-heading">StopGoon</span>
+            <span className="text-2xl font-bold tracking-tight text-foreground font-heading">Reclaim</span>
           </div>
           <div className="flex items-center gap-6">
             <Link href="/login" className="text-sm font-semibold hover:text-primary transition-colors">
@@ -49,7 +49,7 @@ export default async function LandingPage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-500">Reclaim your focus.</span>
           </h1>
           <p className="text-lg md:text-xl text-muted mb-12 max-w-2xl mx-auto leading-relaxed">
-            StopGoon is a mature, scientifically-grounded platform designed to help you overcome compulsive habits and doomscrolling through mindfulness, non-punitive tracking, and accessible design.
+            Reclaim is a mature, scientifically-grounded platform designed to help you overcome compulsive habits and doomscrolling through mindfulness, non-punitive tracking, and accessible design.
           </p>
           <Link href="/register" className="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-primary-foreground px-10 py-5 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl shadow-primary/20">
             Start Your Journey Today
@@ -98,7 +98,7 @@ export default async function LandingPage() {
       </main>
 
       <footer className="py-12 text-center text-muted text-sm bg-background">
-        <p>© {new Date().getFullYear()} StopGoon. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Reclaim. All rights reserved.</p>
       </footer>
     </div>
   )

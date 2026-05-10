@@ -18,7 +18,7 @@ export default function RefundPage() {
           
           <section>
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1. General Refund Policy</h2>
-            <p>We want you to be completely satisfied with StopGoon Premium. If you are not satisfied with your subscription, we offer a 14-day money-back guarantee for your initial purchase.</p>
+            <p>We want you to be completely satisfied with Reclaim Premium. If you are not satisfied with your subscription, we offer a 14-day money-back guarantee for your initial purchase.</p>
           </section>
 
           <section>

@@ -14,7 +14,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "StopGoon - Mental Wellness & Recovery",
+  title: "Reclaim - Mental Wellness & Recovery",
   description: "A premium platform for addiction recovery and mental clarity.",
 };
 
