@@ -10,6 +10,19 @@ export default function PWAInit() {
         .then((reg) => console.log('Service Worker registered', reg))
         .catch((err) => console.log('Service Worker registration failed', err))
     }
+
+    // Capture the install prompt globally
+    const handleInstallPrompt = (e: Event) => {
+      e.preventDefault()
+      // @ts-ignore
+      window.deferredInstallPrompt = e
+    }
+
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt)
+    }
   }, [])
 
   return null

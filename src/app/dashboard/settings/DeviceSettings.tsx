@@ -9,17 +9,27 @@ export default function DeviceSettings() {
   const [notificationStatus, setNotificationStatus] = useState<NotificationPermission>('default')
 
   useEffect(() => {
-    // Listen for PWA install prompt
-    window.addEventListener('beforeinstallprompt', (e) => {
+    // Check if the prompt was already captured by PWAInit
+    // @ts-ignore
+    if (window.deferredInstallPrompt) {
+      // @ts-ignore
+      setInstallPrompt(window.deferredInstallPrompt)
+    }
+
+    // Also listen just in case it fires while on this page
+    const handlePrompt = (e: any) => {
       e.preventDefault()
       setInstallPrompt(e)
-    })
+    }
+    window.addEventListener('beforeinstallprompt', handlePrompt)
 
     // Check notification status
     if ('Notification' in window) {
       setNotificationStatus(Notification.permission)
       setNotificationsEnabled(Notification.permission === 'granted')
     }
+
+    return () => window.removeEventListener('beforeinstallprompt', handlePrompt)
   }, [])
 
   const handleInstallClick = async () => {
@@ -32,6 +42,8 @@ export default function DeviceSettings() {
     const { outcome } = await installPrompt.userChoice
     if (outcome === 'accepted') {
       setInstallPrompt(null)
+      // @ts-ignore
+      window.deferredInstallPrompt = null
     }
   }
 
