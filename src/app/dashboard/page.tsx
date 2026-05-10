@@ -9,13 +9,16 @@ import RelapseButton from './components/RelapseButton'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Calculate days of growth from the most recent relapse
   let daysOfGrowth = 0
   let nextMilestone = 7
+  let isPremium = false
 
   try {
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
+      const { data: profile } = await supabase.from('users').select('subscription_tier').eq('id', user.id).single()
+      isPremium = profile?.subscription_tier === 'premium'
+
       let startDate = new Date(user.created_at)
       
       const { data: relapses } = await supabase
@@ -115,15 +118,37 @@ export default async function DashboardPage() {
         <div className="lg:col-span-7 space-y-8">
           <UrgeIntensityChart />
           
-          {/* We can add more widgets here later like 'Recent Insights' or 'Mood Trends' */}
-          <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Zap className="w-6 h-6 text-primary" />
+          {/* AI Insight (Blurred for Free Users) */}
+          <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm group">
+            <div className={`p-6 bg-surface flex items-start gap-4 transition-all ${!isPremium ? 'blur-sm opacity-50' : ''}`}>
+              <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                <Zap className="w-6 h-6 text-indigo-500" />
+              </div>
+              <div>
+                <h4 className="font-bold text-foreground">AI Predictive Insight</h4>
+                <p className="text-sm text-muted mt-1 leading-relaxed">
+                  Based on your history, your urges peak on Day 7 around 10 PM. Consider starting a proactive focus routine at 9 PM tonight to lower dopamine levels.
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-foreground">Recovery Insight</h4>
-              <p className="text-sm text-muted mt-0.5">Most of your urges happen around 10 PM. Consider starting a wind-down routine at 9 PM.</p>
-            </div>
+            
+            {!isPremium && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/40 backdrop-blur-md p-6 text-center">
+                <div className="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-md">
+                  PREMIUM FEATURE
+                </div>
+                <h4 className="font-bold text-lg mb-2">Predictive AI Insights</h4>
+                <p className="text-sm text-muted mb-4 max-w-sm">
+                  Stop relapses before they happen. Our AI analyzes your tracking data to predict your highest-risk windows.
+                </p>
+                <Link 
+                  href="/dashboard/upgrade"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 transition-all hover:scale-105"
+                >
+                  Unlock Insights
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
