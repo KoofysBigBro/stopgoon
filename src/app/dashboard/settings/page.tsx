@@ -70,6 +70,24 @@ export default function SettingsPage() {
     document.documentElement.style.fontSize = sizes[fontScale] || '16px'
   }, [fontScale])
 
+  // Apply reduced motion to DOM
+  useEffect(() => {
+    if (motion === 'reduced') {
+      document.documentElement.classList.add('reduced-motion')
+    } else {
+      document.documentElement.classList.remove('reduced-motion')
+    }
+  }, [motion])
+
+  // Apply high contrast to DOM
+  useEffect(() => {
+    if (highContrast) {
+      document.documentElement.classList.add('high-contrast')
+    } else {
+      document.documentElement.classList.remove('high-contrast')
+    }
+  }, [highContrast])
+
   const saveSetting = async (field: string, value: string | boolean) => {
     setIsSaving(true)
     setSaveMessage(null)
