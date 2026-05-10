@@ -19,11 +19,22 @@ export default async function AccountabilityPage() {
   }
 
   // Fetch the current user's premium status and connection code
-  const { data: profile } = await supabase
+  let { data: profile } = await supabase
     .from('users')
     .select('subscription_tier, connection_code')
     .eq('id', user.id)
     .single();
+
+  // Auto-heal: Generate a connection code if they don't have one
+  if (profile && !profile.connection_code) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let newCode = '';
+    for (let i = 0; i < 6; i++) {
+      newCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    await supabase.from('users').update({ connection_code: newCode }).eq('id', user.id);
+    profile.connection_code = newCode;
+  }
 
   const isPremium = profile?.subscription_tier === 'premium';
   const connectionCode = profile?.connection_code || '';
