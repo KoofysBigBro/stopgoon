@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, ShieldCheck, Users, MessageCircle } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import ChatNotificationDot from './components/ChatNotificationDot'
 
 export default async function DashboardLayout({
   children,
@@ -25,23 +26,14 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  // Fetch user profile (username + last_seen_chat_at)
+  // Fetch user profile (username)
   const { data: profile } = await supabase
     .from('users')
-    .select('username, last_seen_chat_at')
+    .select('username')
     .eq('id', user.id)
     .single()
 
   const displayName = profile?.username || user.email?.split('@')[0] || user.email
-
-  // Check for unread chat messages since last visit
-  const lastSeen = profile?.last_seen_chat_at || '2000-01-01T00:00:00Z'
-  const { count: unreadCount } = await supabase
-    .from('chat_messages')
-    .select('*', { count: 'exact', head: true })
-    .eq('room_id', 'global')
-    .neq('user_id', user.id)
-    .gt('created_at', lastSeen)
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground transition-colors duration-300">
@@ -83,9 +75,7 @@ export default async function DashboardLayout({
             <Link href="/dashboard/chat" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground relative">
               <MessageCircle className="w-5 h-5" />
               Community
-              {(unreadCount ?? 0) > 0 && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-              )}
+              <ChatNotificationDot userId={user.id} />
             </Link>
 
           </nav>
