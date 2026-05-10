@@ -3,6 +3,7 @@ import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Shiel
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
+import DashboardAdWrapper from '@/components/DashboardAdWrapper'
 
 export default async function DashboardLayout({
   children,
@@ -98,6 +99,7 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto">
+        <DashboardAdWrapper />
         {children}
       </main>
     </div>
