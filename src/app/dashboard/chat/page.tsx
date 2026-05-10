@@ -27,7 +27,8 @@ export default async function ChatPage() {
 
   const isPremium = profile?.subscription_tier === 'premium';
   const userUsername = profile?.username || user.email?.split('@')[0] || 'Anonymous';
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'owner';
+  const userRole = profile?.role || 'user';
   
   // Auto-unmute if mute has expired
   let isMuted = profile?.is_muted || false;
@@ -75,6 +76,7 @@ export default async function ChatPage() {
       userEmail={user.email || 'Anonymous'}
       userUsername={userUsername}
       userAvatarUrl={profile?.avatar_url || null}
+      userRole={userRole}
       isPremium={isPremium}
       isAdmin={isAdmin}
       isMuted={isMuted}
