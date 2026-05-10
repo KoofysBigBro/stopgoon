@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     `;
 
     const { text } = await generateText({
-      model: google('gemini-1.5-flash-latest'),
+      model: google('gemini-pro'),
       system: systemPrompt,
       prompt: prompt || 'Can you analyze my recent entries and give me some advice?',
     });
