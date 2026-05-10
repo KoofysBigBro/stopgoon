@@ -18,15 +18,27 @@ export default async function ChatPage() {
     redirect('/login');
   }
 
-  // Fetch premium status and username
+  // Fetch user profile
   const { data: profile } = await supabase
     .from('users')
-    .select('subscription_tier, username')
+    .select('subscription_tier, username, avatar_url, role, is_muted, is_banned, muted_until')
     .eq('id', user.id)
     .single();
 
   const isPremium = profile?.subscription_tier === 'premium';
   const userUsername = profile?.username || user.email?.split('@')[0] || 'Anonymous';
+  const isAdmin = profile?.role === 'admin';
+  
+  // Auto-unmute if mute has expired
+  let isMuted = profile?.is_muted || false;
+  if (isMuted && profile?.muted_until) {
+    if (new Date(profile.muted_until) < new Date()) {
+      isMuted = false;
+      await supabase.from('users').update({ is_muted: false, muted_until: null }).eq('id', user.id);
+    }
+  }
+  
+  const isBanned = profile?.is_banned || false;
 
   // Mark chat as "seen" to clear the red notification dot
   await supabase
@@ -45,11 +57,9 @@ export default async function ChatPage() {
     .eq('status', 'accepted')
     .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
 
-  // Build list of partners for DM tabs
   const partners = (partnerships || []).map(p => {
     const isUser1 = p.user1_id === user.id;
     const partner = isUser1 ? p.user2 : p.user1;
-    // Room ID is a sorted combo of both user IDs
     const roomId = [p.user1_id, p.user2_id].sort().join('_');
     return {
       id: partner?.id,
@@ -64,7 +74,11 @@ export default async function ChatPage() {
       userId={user.id}
       userEmail={user.email || 'Anonymous'}
       userUsername={userUsername}
+      userAvatarUrl={profile?.avatar_url || null}
       isPremium={isPremium}
+      isAdmin={isAdmin}
+      isMuted={isMuted}
+      isBanned={isBanned}
       partners={partners}
     />
   );

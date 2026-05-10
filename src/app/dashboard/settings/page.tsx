@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
-  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil
+  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock
 } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -24,6 +24,10 @@ export default function SettingsPage() {
   const [isPremium, setIsPremium] = useState(false)
   const [editingUsername, setEditingUsername] = useState(false)
   const [usernameError, setUsernameError] = useState<string | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [isPublic, setIsPublic] = useState(true)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState('')
 
   // Settings state
   const { theme, setTheme } = useTheme()
@@ -51,7 +55,7 @@ export default function SettingsPage() {
         // Load username and premium status
         const { data: profile } = await supabase
           .from('users')
-          .select('username, username_changed_at, subscription_tier')
+          .select('username, username_changed_at, subscription_tier, avatar_url, is_public')
           .eq('id', user.id)
           .single()
         if (profile) {
@@ -59,6 +63,9 @@ export default function SettingsPage() {
           setNewUsername(profile.username || user.email?.split('@')[0] || '')
           setUsernameChangedAt(profile.username_changed_at)
           setIsPremium(profile.subscription_tier === 'premium')
+          setAvatarUrl(profile.avatar_url || null)
+          setIsPublic(profile.is_public !== false) // default true
+          setCurrentUserId(user.id)
         }
       }
 
@@ -130,6 +137,56 @@ export default function SettingsPage() {
     setUsernameChangedAt(new Date().toISOString())
     setEditingUsername(false)
     setSaveMessage('Username updated!')
+    setTimeout(() => setSaveMessage(null), 2000)
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      setSaveMessage('Image must be under 2MB')
+      setTimeout(() => setSaveMessage(null), 3000)
+      return
+    }
+
+    setUploadingAvatar(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${user.id}/avatar.${fileExt}`
+
+    // Upload to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) {
+      setSaveMessage('Upload failed')
+      setTimeout(() => setSaveMessage(null), 3000)
+      setUploadingAvatar(false)
+      return
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
+    const publicUrl = urlData.publicUrl
+
+    // Save URL to user profile
+    await supabase.from('users').update({ avatar_url: publicUrl }).eq('id', user.id)
+    setAvatarUrl(publicUrl)
+    setUploadingAvatar(false)
+    setSaveMessage('Avatar updated!')
+    setTimeout(() => setSaveMessage(null), 2000)
+  }
+
+  const handleTogglePublic = async () => {
+    const newVal = !isPublic
+    setIsPublic(newVal)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('users').update({ is_public: newVal }).eq('id', user.id)
+    setSaveMessage(newVal ? 'Profile is now public' : 'Profile is now private')
     setTimeout(() => setSaveMessage(null), 2000)
   }
 
@@ -243,11 +300,11 @@ export default function SettingsPage() {
         </div>
         {saveMessage && (
           <span className={`text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 rounded-full animate-in fade-in ${
-            saveMessage === 'Saved' || saveMessage === 'Data exported'
+            ['Saved', 'Data exported', 'Avatar updated!', 'Username updated!', 'Profile is now public', 'Profile is now private'].includes(saveMessage)
               ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
               : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
           }`}>
-            {saveMessage === 'Saved' || saveMessage === 'Data exported' ? <Check className="w-4 h-4" /> : null}
+            {['Saved', 'Data exported', 'Avatar updated!', 'Username updated!', 'Profile is now public', 'Profile is now private'].includes(saveMessage) ? <Check className="w-4 h-4" /> : null}
             {saveMessage}
           </span>
         )}
@@ -263,6 +320,53 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-4">
+            {/* Avatar */}
+            <div className="flex items-center gap-5 py-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="relative group">
+                <div className="w-16 h-16 rounded-full bg-indigo-500/10 border-2 border-border overflow-hidden flex items-center justify-center">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-8 h-8 text-muted" />
+                  )}
+                </div>
+                <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                  {uploadingAvatar ? (
+                    <Loader2 className="w-5 h-5 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-5 h-5 text-white" />
+                  )}
+                  <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+                </label>
+              </div>
+              <div>
+                <p className="font-bold">{username}</p>
+                <p className="text-xs text-muted">Hover the photo to change</p>
+              </div>
+            </div>
+
+            {/* Profile Visibility */}
+            <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <p className="font-medium flex items-center gap-2">
+                  {isPublic ? <Globe className="w-4 h-4 text-emerald-500" /> : <Lock className="w-4 h-4 text-amber-500" />}
+                  Profile Visibility
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {isPublic ? 'Anyone can view your stats and progress' : 'Only you can see your stats'}
+                </p>
+              </div>
+              <button
+                onClick={handleTogglePublic}
+                className={`w-12 h-7 rounded-full transition-colors relative ${
+                  isPublic ? 'bg-emerald-600' : 'bg-slate-200 dark:bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${
+                  isPublic ? 'left-6' : 'left-1'
+                }`} />
+              </button>
+            </div>
             {/* Username */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex-1">
