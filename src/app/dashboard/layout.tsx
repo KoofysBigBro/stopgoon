@@ -25,6 +25,24 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
+  // Fetch user profile (username + last_seen_chat_at)
+  const { data: profile } = await supabase
+    .from('users')
+    .select('username, last_seen_chat_at')
+    .eq('id', user.id)
+    .single()
+
+  const displayName = profile?.username || user.email?.split('@')[0] || user.email
+
+  // Check for unread chat messages since last visit
+  const lastSeen = profile?.last_seen_chat_at || '2000-01-01T00:00:00Z'
+  const { count: unreadCount } = await supabase
+    .from('chat_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('room_id', 'global')
+    .neq('user_id', user.id)
+    .gt('created_at', lastSeen)
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Sidebar */}
@@ -62,9 +80,12 @@ export default async function DashboardLayout({
               <Users className="w-5 h-5" />
               Partners
             </Link>
-            <Link href="/dashboard/chat" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
+            <Link href="/dashboard/chat" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground relative">
               <MessageCircle className="w-5 h-5" />
               Community
+              {(unreadCount ?? 0) > 0 && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+              )}
             </Link>
 
           </nav>
@@ -72,7 +93,7 @@ export default async function DashboardLayout({
 
         <div className="p-6 border-t border-border">
           <div className="mb-4 truncate text-sm text-muted font-medium">
-            {user?.email}
+            {displayName}
           </div>
           <form action={handleSignOut}>
             <button className="flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">

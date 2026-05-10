@@ -18,22 +18,29 @@ export default async function ChatPage() {
     redirect('/login');
   }
 
-  // Fetch premium status
+  // Fetch premium status and username
   const { data: profile } = await supabase
     .from('users')
-    .select('subscription_tier')
+    .select('subscription_tier, username')
     .eq('id', user.id)
     .single();
 
   const isPremium = profile?.subscription_tier === 'premium';
+  const userUsername = profile?.username || user.email?.split('@')[0] || 'Anonymous';
+
+  // Mark chat as "seen" to clear the red notification dot
+  await supabase
+    .from('users')
+    .update({ last_seen_chat_at: new Date().toISOString() })
+    .eq('id', user.id);
 
   // Fetch accepted partners for DM tabs
   const { data: partnerships } = await supabase
     .from('accountability_partners')
     .select(`
       *,
-      user1:users!user1_id(id, email),
-      user2:users!user2_id(id, email)
+      user1:users!user1_id(id, email, username),
+      user2:users!user2_id(id, email, username)
     `)
     .eq('status', 'accepted')
     .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
@@ -47,6 +54,7 @@ export default async function ChatPage() {
     return {
       id: partner?.id,
       email: partner?.email || 'Partner',
+      username: partner?.username || partner?.email?.split('@')[0] || 'Partner',
       roomId,
     };
   });
@@ -55,6 +63,7 @@ export default async function ChatPage() {
     <ChatClient
       userId={user.id}
       userEmail={user.email || 'Anonymous'}
+      userUsername={userUsername}
       isPremium={isPremium}
       partners={partners}
     />

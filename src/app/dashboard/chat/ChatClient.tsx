@@ -7,6 +7,7 @@ import { MessageCircle, Send, Globe, Lock, Users } from 'lucide-react';
 interface Partner {
   id: string;
   email: string;
+  username: string;
   roomId: string;
 }
 
@@ -15,6 +16,7 @@ interface ChatMessage {
   user_id: string;
   content: string;
   sender_email: string;
+  sender_username: string;
   room_id: string;
   created_at: string;
 }
@@ -22,11 +24,13 @@ interface ChatMessage {
 export default function ChatClient({
   userId,
   userEmail,
+  userUsername,
   isPremium,
   partners,
 }: {
   userId: string;
   userEmail: string;
+  userUsername: string;
   isPremium: boolean;
   partners: Partner[];
 }) {
@@ -92,6 +96,7 @@ export default function ChatClient({
       user_id: userId,
       content: newMessage.trim(),
       sender_email: userEmail,
+      sender_username: userUsername,
       room_id: activeRoom,
     });
 
@@ -148,7 +153,7 @@ export default function ChatClient({
                   }`}
                 >
                   <Lock className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{p.email.split('@')[0]}</span>
+                  <span className="truncate">{p.username || p.email.split('@')[0]}</span>
                 </button>
               ))}
             </>
@@ -186,7 +191,7 @@ export default function ChatClient({
               }`}
             >
               <Lock className="w-3 h-3" />
-              {p.email.split('@')[0]}
+              {p.username || p.email.split('@')[0]}
             </button>
           ))}
         </div>
@@ -226,7 +231,7 @@ export default function ChatClient({
                     className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}
                   >
                     <p className={`text-xs mb-1 ${isOwn ? 'text-indigo-400' : 'text-muted'}`}>
-                      {isOwn ? 'You' : (msg.sender_email?.split('@')[0] || 'Anonymous')}
+                      {isOwn ? 'You' : (msg.sender_username || msg.sender_email?.split('@')[0] || 'Anonymous')}
                     </p>
                     <div
                       className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
@@ -249,7 +254,7 @@ export default function ChatClient({
           <form onSubmit={handleSendMessage} className="p-3 border-t border-border flex gap-3 flex-shrink-0">
             <input
               type="text"
-              placeholder={activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.email.split('@')[0] || 'partner'}...`}
+              placeholder={activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.username || activePartner?.email.split('@')[0] || 'partner'}...`}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               maxLength={500}

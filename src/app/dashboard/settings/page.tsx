@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
-  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck
+  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil
 } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -18,6 +18,12 @@ export default function SettingsPage() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userCreated, setUserCreated] = useState('')
+  const [username, setUsername] = useState('')
+  const [newUsername, setNewUsername] = useState('')
+  const [usernameChangedAt, setUsernameChangedAt] = useState<string | null>(null)
+  const [isPremium, setIsPremium] = useState(false)
+  const [editingUsername, setEditingUsername] = useState(false)
+  const [usernameError, setUsernameError] = useState<string | null>(null)
 
   // Settings state
   const { theme, setTheme } = useTheme()
@@ -41,6 +47,19 @@ export default function SettingsPage() {
         setUserCreated(new Date(user.created_at).toLocaleDateString(undefined, {
           year: 'numeric', month: 'long', day: 'numeric'
         }))
+
+        // Load username and premium status
+        const { data: profile } = await supabase
+          .from('users')
+          .select('username, username_changed_at, subscription_tier')
+          .eq('id', user.id)
+          .single()
+        if (profile) {
+          setUsername(profile.username || user.email?.split('@')[0] || '')
+          setNewUsername(profile.username || user.email?.split('@')[0] || '')
+          setUsernameChangedAt(profile.username_changed_at)
+          setIsPremium(profile.subscription_tier === 'premium')
+        }
       }
 
       const { data } = await supabase.from('settings').select('*').single()
@@ -56,6 +75,62 @@ export default function SettingsPage() {
       // settings might not exist yet
     }
     setIsLoading(false)
+  }
+
+  const getNextChangeDate = () => {
+    if (!usernameChangedAt) return null
+    const changed = new Date(usernameChangedAt)
+    const cooldownDays = isPremium ? 3 : 3.5 // 3.5 days = twice weekly
+    const nextChange = new Date(changed.getTime() + cooldownDays * 24 * 60 * 60 * 1000)
+    return nextChange
+  }
+
+  const canChangeUsername = () => {
+    if (!usernameChangedAt) return true
+    const nextDate = getNextChangeDate()
+    if (!nextDate) return true
+    return new Date() >= nextDate
+  }
+
+  const handleUsernameChange = async () => {
+    setUsernameError(null)
+    const trimmed = newUsername.trim()
+    if (!trimmed || trimmed.length < 2) {
+      setUsernameError('Username must be at least 2 characters.')
+      return
+    }
+    if (trimmed.length > 20) {
+      setUsernameError('Username must be 20 characters or less.')
+      return
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+      setUsernameError('Only letters, numbers, and underscores.')
+      return
+    }
+    if (!canChangeUsername()) {
+      const nextDate = getNextChangeDate()
+      setUsernameError(`You can change your username again on ${nextDate?.toLocaleDateString()}.`)
+      return
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { error } = await supabase
+      .from('users')
+      .update({ username: trimmed, username_changed_at: new Date().toISOString() })
+      .eq('id', user.id)
+
+    if (error) {
+      setUsernameError('Username may already be taken.')
+      return
+    }
+
+    setUsername(trimmed)
+    setUsernameChangedAt(new Date().toISOString())
+    setEditingUsername(false)
+    setSaveMessage('Username updated!')
+    setTimeout(() => setSaveMessage(null), 2000)
   }
 
   // Sync loaded theme with next-themes if available
@@ -188,6 +263,41 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-4">
+            {/* Username */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Username</p>
+                {editingUsername ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      maxLength={20}
+                      className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-medium focus:outline-none focus:border-indigo-500 w-48"
+                    />
+                    <button onClick={handleUsernameChange} className="text-sm font-bold text-indigo-600 hover:underline">Save</button>
+                    <button onClick={() => { setEditingUsername(false); setNewUsername(username); setUsernameError(null) }} className="text-sm text-slate-500 hover:underline">Cancel</button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold">{username}</p>
+                    <button
+                      onClick={() => setEditingUsername(true)}
+                      disabled={!canChangeUsername()}
+                      className="text-indigo-500 hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                      title={canChangeUsername() ? 'Edit username' : `Available again ${getNextChangeDate()?.toLocaleDateString()}`}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+                {usernameError && <p className="text-red-500 text-xs mt-1">{usernameError}</p>}
+                {!canChangeUsername() && !editingUsername && (
+                  <p className="text-xs text-muted mt-0.5">Next change: {getNextChangeDate()?.toLocaleDateString()}{isPremium ? ' (Premium: every 3 days)' : ' (Free: twice weekly)'}</p>
+                )}
+              </div>
+            </div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
               <div>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Email</p>
