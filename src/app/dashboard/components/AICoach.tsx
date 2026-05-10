@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useCompletion } from '@ai-sdk/react';
+
 import { Sparkles, Loader2, Lock } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,15 +10,34 @@ interface AICoachProps {
 }
 
 export default function AICoach({ isPremium }: AICoachProps) {
-  const { completion, complete, isLoading, error } = useCompletion({
-    api: '/api/ai/coach',
-  });
-  
+  const [completion, setCompletion] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setHasStarted(true);
-    complete('Can you analyze my recent journal entries and urge logs to give me personalized advice?');
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/ai/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: 'Can you analyze my recent journal entries and urge logs to give me personalized advice?' })
+      });
+      
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Failed to generate');
+      }
+      
+      const data = await res.json();
+      setCompletion(data.text);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,7 +84,7 @@ export default function AICoach({ isPremium }: AICoachProps) {
       ) : (
         <div className="bg-surface/80 border border-border rounded-xl p-5 min-h-[150px]">
           {error ? (
-            <p className="text-red-500 text-sm">{error.message || 'Something went wrong. Please try again later.'}</p>
+            <p className="text-red-500 text-sm">{error || 'Something went wrong. Please try again later.'}</p>
           ) : (
             <>
               <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">

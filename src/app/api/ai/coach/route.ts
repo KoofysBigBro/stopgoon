@@ -1,5 +1,5 @@
 import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
+import { generateText } from 'ai';
 import { createClient } from '@/utils/supabase/server';
 
 // Allow streaming responses up to 30 seconds
@@ -55,13 +55,13 @@ export async function POST(req: Request) {
       Analyze this data quietly, and respond to the user's prompt by referencing patterns you see (e.g., "I noticed your urges happen a lot when you feel lonely..."). Keep your response concise, warm, and actionable. Max 2 paragraphs.
     `;
 
-    const result = streamText({
+    const { text } = await generateText({
       model: google('gemini-1.5-flash'),
       system: systemPrompt,
       prompt: prompt || 'Can you analyze my recent entries and give me some advice?',
     });
 
-    return result.toTextStreamResponse();
+    return Response.json({ text });
   } catch (error) {
     console.error('AI Coach Error:', error);
     return new Response('Internal Server Error', { status: 500 });
