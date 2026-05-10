@@ -34,7 +34,7 @@ export default async function DashboardLayout({
             <div className="bg-primary/10 p-2 rounded-xl group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-foreground font-heading">Reclaim</span>
+            <span className="text-xl font-bold tracking-tight text-foreground font-heading">StopGoon</span>
           </Link>
 
           <nav className="space-y-1">

@@ -24,7 +24,7 @@ export default function UpgradePage() {
           Invest in Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-hover">Recovery</span>
         </h1>
         <p className="text-xl text-muted max-w-2xl mx-auto">
-          We believe core recovery tools should always be free. Reclaim Premium offers deeper insights and personalized coaching to accelerate your healing journey.
+          We believe core recovery tools should always be free. StopGoon Premium offers deeper insights and personalized coaching to accelerate your healing journey.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export default function UpgradePage() {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-2xl font-bold font-heading text-foreground mb-2">Reclaim Premium</h3>
+            <h3 className="text-2xl font-bold font-heading text-foreground mb-2">StopGoon Premium</h3>
             <div className="flex items-baseline gap-1">
               <span className="text-4xl font-bold">
                 ${billingCycle === 'monthly' ? '5.99' : '49.99'}

@@ -18,12 +18,12 @@ export default function TermsPage() {
           
           <section>
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1. Acceptance of Terms</h2>
-            <p>By accessing and using Reclaim ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
+            <p>By accessing and using StopGoon ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">2. Description of Service</h2>
-            <p>Reclaim is a digital wellness and habit-tracking tool. The Service is provided "as is" and is intended for personal self-improvement. It does not replace professional medical or psychological advice.</p>
+            <p>StopGoon is a digital wellness and habit-tracking tool. The Service is provided "as is" and is intended for personal self-improvement. It does not replace professional medical or psychological advice.</p>
           </section>
 
           <section>
@@ -38,7 +38,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">5. Disclaimer</h2>
-            <p>Reclaim makes no guarantees regarding the outcome or success of your habit-changing efforts. We provide tools to assist you, but the results depend on your individual effort.</p>
+            <p>StopGoon makes no guarantees regarding the outcome or success of your habit-changing efforts. We provide tools to assist you, but the results depend on your individual effort.</p>
           </section>
         </div>
       </div>

@@ -126,7 +126,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `reclaim-export-${new Date().toISOString().split('T')[0]}.json`
+      a.download = `stopgoon-export-${new Date().toISOString().split('T')[0]}.json`
       a.click()
       URL.revokeObjectURL(url)
 
