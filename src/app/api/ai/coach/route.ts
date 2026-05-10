@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       prompt: prompt || 'Can you analyze my recent entries and give me some advice?',
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('AI Coach Error:', error);
     return new Response('Internal Server Error', { status: 500 });
