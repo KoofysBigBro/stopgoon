@@ -1,7 +1,16 @@
 import Link from 'next/link'
 import { ShieldCheck, Heart, Lock, TrendingUp } from 'lucide-react'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    redirect('/dashboard')
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20 selection:text-primary">
       <nav className="border-b border-border bg-surface/80 backdrop-blur-xl sticky top-0 z-50 transition-all">
