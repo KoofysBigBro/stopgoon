@@ -34,6 +34,13 @@ export default function SettingsPage() {
   }, [])
 
   const loadSettings = async () => {
+    if (process.env.NODE_ENV === 'development') {
+      setUserEmail('offline-dev@example.com')
+      setUserCreated(new Date().toLocaleDateString())
+      setIsLoading(false)
+      return
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {

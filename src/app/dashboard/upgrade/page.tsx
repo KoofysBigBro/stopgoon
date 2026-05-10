@@ -5,11 +5,29 @@ import { CheckCircle2, Shield, Heart, Sparkles } from 'lucide-react';
 
 export default function UpgradePage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = () => {
-    // In the future, this will redirect to Lemon Squeezy/Paddle checkout
-    console.log(`Initiating checkout for ${billingCycle} plan`);
-    alert(`Checkout integration coming soon! Selected: ${billingCycle}`);
+  const handleSubscribe = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ billingCycle })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to initialize checkout');
+      }
+
+      window.location.href = data.url;
+    } catch (err: any) {
+      console.error(err);
+      alert('Error initiating checkout. Please try again later.');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -126,9 +144,17 @@ export default function UpgradePage() {
 
           <button 
             onClick={handleSubscribe}
-            className="w-full py-3 px-4 rounded-xl font-medium bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 transition-all active:scale-95"
+            disabled={isLoading}
+            className="w-full py-3 px-4 rounded-xl font-medium bg-primary hover:bg-primary-hover text-white shadow-md shadow-primary/20 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Upgrade to Premium
+            {isLoading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              'Upgrade to Premium'
+            )}
           </button>
         </div>
 

@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -33,6 +33,10 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes logic
   if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+    if (process.env.NODE_ENV === 'development') {
+      // Offline mode bypass
+      return supabaseResponse;
+    }
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
