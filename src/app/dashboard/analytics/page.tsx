@@ -4,6 +4,8 @@ import MoodBreakdownChart from './MoodBreakdownChart'
 import AICoach from '../components/AICoach'
 import PredictiveWarning from './PredictiveWarning'
 import RecoveryTimeline from './RecoveryTimeline'
+export const dynamic = 'force-dynamic'
+
 export default async function AnalyticsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -57,11 +59,11 @@ export default async function AnalyticsPage() {
       })
     }
 
-    // Current streak = unique days since last relapse
+    // Current streak = count of checkins since last relapse
+    // Using length instead of UTC date grouping to respect the user's local timezone
     if (checkins) {
       const sinceRelapse = checkins.filter(c => new Date(c.created_at) >= lastRelapseDate)
-      const uniqueDays = new Set(sinceRelapse.map(c => new Date(c.created_at).toISOString().split('T')[0]))
-      currentStreak = uniqueDays.size
+      currentStreak = sinceRelapse.length
     }
 
     // Longest streak calculation

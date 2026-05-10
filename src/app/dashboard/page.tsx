@@ -6,6 +6,8 @@ import DailyCheckin from './components/DailyCheckin'
 import UrgeIntensityChart from './components/UrgeIntensityChart'
 import RelapseButton from './components/RelapseButton'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const supabase = await createClient()
 
@@ -39,11 +41,10 @@ export default async function DashboardPage() {
         .gte('created_at', startDate.toISOString())
 
       if (checkins) {
-        // count unique days the user checked in
-        const uniqueDays = new Set(
-          checkins.map(c => new Date(c.created_at).toISOString().split('T')[0])
-        )
-        daysOfGrowth = uniqueDays.size
+        // Because the client already enforces 1 check-in per user's local day,
+        // we can safely rely on the length of checkins. Using UTC dates caused
+        // check-ins at 12 AM local time to be grouped into the same UTC day.
+        daysOfGrowth = checkins.length
       }
     }
   } catch {

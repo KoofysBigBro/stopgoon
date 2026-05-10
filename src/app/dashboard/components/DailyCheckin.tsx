@@ -116,12 +116,16 @@ export default function DailyCheckin() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
-      setSaved(mood)
-      router.refresh() // Refresh the server component to update the streak counter
-      checkToday() // Refresh streak visual
-    } catch {
-      // graceful
+      const { error } = await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
+      if (error) {
+        console.error('Checkin failed:', error)
+      } else {
+        setSaved(mood)
+        router.refresh() // Refresh the server component to update the streak counter
+        checkToday() // Refresh streak visual
+      }
+    } catch (e) {
+      console.error('Exception during checkin:', e)
     }
     setIsSaving(false)
   }
