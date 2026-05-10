@@ -1,94 +1,391 @@
-import { Palette, Accessibility, Database, CreditCard } from 'lucide-react'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import {
+  Palette, Accessibility, Database, CreditCard, User, LogOut,
+  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye
+} from 'lucide-react'
 
 export default function SettingsPage() {
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState<string | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [userCreated, setUserCreated] = useState('')
+
+  // Settings state
+  const [theme, setTheme] = useState('midnight')
+  const [fontScale, setFontScale] = useState('normal')
+  const [motion, setMotion] = useState('normal')
+  const [highContrast, setHighContrast] = useState(false)
+  const [dailyReminder, setDailyReminder] = useState(false)
+
+  const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+    loadSettings()
+  }, [])
+
+  const loadSettings = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserEmail(user.email || '')
+        setUserCreated(new Date(user.created_at).toLocaleDateString(undefined, {
+          year: 'numeric', month: 'long', day: 'numeric'
+        }))
+      }
+
+      const { data } = await supabase.from('settings').select('*').single()
+      if (data) {
+        setTheme(data.theme || 'midnight')
+        setFontScale(data.font_scale || 'normal')
+        setMotion(data.motion || 'normal')
+        setHighContrast(data.high_contrast || false)
+        setDailyReminder(data.daily_reminder || false)
+      }
+    } catch {
+      // settings might not exist yet
+    }
+    setIsLoading(false)
+  }
+
+  const saveSetting = async (field: string, value: string | boolean) => {
+    setIsSaving(true)
+    setSaveMessage(null)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      await supabase
+        .from('settings')
+        .upsert({ user_id: user.id, [field]: value, updated_at: new Date().toISOString() })
+
+      setSaveMessage('Saved')
+      setTimeout(() => setSaveMessage(null), 2000)
+    } catch {
+      setSaveMessage('Could not save')
+      setTimeout(() => setSaveMessage(null), 3000)
+    }
+    setIsSaving(false)
+  }
+
+  const handleExportData = async () => {
+    try {
+      const { data: journal } = await supabase.from('journal_entries').select('*').order('created_at', { ascending: false })
+      const { data: urges } = await supabase.from('urge_logs').select('*').order('created_at', { ascending: false })
+      const { data: checkins } = await supabase.from('daily_checkins').select('*').order('created_at', { ascending: false })
+      const { data: relapses } = await supabase.from('relapses').select('*').order('created_at', { ascending: false })
+
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        journal_entries: journal || [],
+        urge_logs: urges || [],
+        daily_checkins: checkins || [],
+        relapses: relapses || [],
+      }
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `stopgoon-export-${new Date().toISOString().split('T')[0]}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      setSaveMessage('Data exported')
+      setTimeout(() => setSaveMessage(null), 2000)
+    } catch {
+      setSaveMessage('Export failed')
+      setTimeout(() => setSaveMessage(null), 3000)
+    }
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
+  const handleDeleteAccount = async () => {
+    // In production, this would call a server-side function
+    // For now, sign out and show message
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+      </div>
+    )
+  }
+
   return (
-    <div className="animate-in fade-in zoom-in duration-500">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Settings & Preferences</h1>
-        <p className="text-slate-500 dark:text-slate-400">Customize your experience to make it comfortable for you.</p>
+    <div className="animate-in fade-in duration-300 max-w-3xl">
+      <header className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight mb-1">Settings</h1>
+          <p className="text-slate-500 dark:text-slate-400">Customize your experience.</p>
+        </div>
+        {saveMessage && (
+          <span className={`text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 rounded-full animate-in fade-in ${
+            saveMessage === 'Saved' || saveMessage === 'Data exported'
+              ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
+              : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
+          }`}>
+            {saveMessage === 'Saved' || saveMessage === 'Data exported' ? <Check className="w-4 h-4" /> : null}
+            {saveMessage}
+          </span>
+        )}
       </header>
 
-      <div className="grid grid-cols-1 gap-6 max-w-3xl">
-        {/* Subscription (SaaS Feature) */}
+      <div className="space-y-6">
+
+        {/* Account */}
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <CreditCard className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-xl font-bold">Subscription</h2>
-          </div>
-          
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-5 mb-6 flex justify-between items-center">
-            <div>
-              <p className="font-bold text-indigo-900 dark:text-indigo-100">Free Tier</p>
-              <p className="text-sm text-indigo-700 dark:text-indigo-300">Basic tracking and journaling.</p>
-            </div>
-            <span className="px-3 py-1 bg-white dark:bg-slate-800 text-xs font-bold rounded-full border border-indigo-200 dark:border-indigo-700">Active</span>
+          <div className="flex items-center gap-3 mb-5">
+            <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Account</h2>
           </div>
 
-          <button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm">
-            Upgrade to Premium
-          </button>
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Email</p>
+                <p className="font-medium">{userEmail}</p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3">
+              <div>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Member since</p>
+                <p className="font-medium">{userCreated}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+            {showLogoutConfirm ? (
+              <div className="flex items-center gap-3 animate-in fade-in">
+                <p className="text-sm text-slate-600 dark:text-slate-400">Are you sure?</p>
+                <button onClick={handleSignOut} className="text-sm font-semibold text-red-600 hover:underline">
+                  Yes, sign out
+                </button>
+                <button onClick={() => setShowLogoutConfirm(false)} className="text-sm text-slate-500 hover:underline">
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLogoutConfirm(true)}
+                className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign out
+              </button>
+            )}
+          </div>
         </section>
 
-        {/* Theme */}
+        {/* Appearance */}
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <Palette className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-xl font-bold">Theme Customization</h2>
+          <div className="flex items-center gap-3 mb-5">
+            <Palette className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Appearance</h2>
           </div>
-          
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Visual Theme</label>
-            <select className="w-full sm:w-1/2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="calm">Calm Minimalist (Light)</option>
-              <option value="midnight">Midnight Recovery (Dark)</option>
-            </select>
-            <p className="text-xs text-slate-500 mt-2">More themes available in Premium.</p>
+
+          <div className="space-y-6">
+            {/* Theme */}
+            <div>
+              <label className="text-sm font-semibold block mb-3">Theme</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => { setTheme('calm'); saveSetting('theme', 'calm') }}
+                  className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                    theme === 'calm'
+                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <Sun className="w-5 h-5 text-amber-500" />
+                  <div className="text-left">
+                    <p className="font-semibold text-sm">Light</p>
+                    <p className="text-xs text-slate-500">Calm &amp; minimal</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setTheme('midnight'); saveSetting('theme', 'midnight') }}
+                  className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                    theme === 'midnight'
+                      ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <Moon className="w-5 h-5 text-indigo-500" />
+                  <div className="text-left">
+                    <p className="font-semibold text-sm">Dark</p>
+                    <p className="text-xs text-slate-500">Midnight recovery</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Text Size */}
+            <div>
+              <label className="text-sm font-semibold block mb-3">
+                <Type className="w-4 h-4 inline mr-1.5" />
+                Text Size
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: 'normal', label: 'Normal', size: 'text-sm' },
+                  { value: 'large', label: 'Large', size: 'text-base' },
+                  { value: 'xlarge', label: 'Extra Large', size: 'text-lg' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => { setFontScale(opt.value); saveSetting('font_scale', opt.value) }}
+                    className={`py-3 rounded-xl border-2 font-medium transition-all ${opt.size} ${
+                      fontScale === opt.value
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300'
+                        : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
+                    }`}
+                  >{opt.label}</button>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Accessibility */}
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <Accessibility className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-xl font-bold">Accessibility</h2>
+          <div className="flex items-center gap-3 mb-5">
+            <Accessibility className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Accessibility</h2>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Text Size</label>
-              <select className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="normal">Normal (16px)</option>
-                <option value="large">Large (18px)</option>
-                <option value="xlarge">Extra Large (20px)</option>
-              </select>
+
+          <div className="space-y-4">
+            {/* Reduced motion */}
+            <div className="flex items-center justify-between py-3">
+              <div>
+                <p className="font-medium">Reduced Motion</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Minimize animations throughout the app</p>
+              </div>
+              <button
+                onClick={() => {
+                  const newVal = motion === 'reduced' ? 'normal' : 'reduced'
+                  setMotion(newVal)
+                  saveSetting('motion', newVal)
+                }}
+                className={`w-12 h-7 rounded-full transition-colors relative ${
+                  motion === 'reduced' ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${
+                  motion === 'reduced' ? 'left-6' : 'left-1'
+                }`} />
+              </button>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Animations & Motion</label>
-              <select className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="normal">Normal</option>
-                <option value="reduced">Reduced Motion</option>
-              </select>
+
+            {/* High contrast */}
+            <div className="flex items-center justify-between py-3 border-t border-slate-100 dark:border-slate-800">
+              <div>
+                <p className="font-medium flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-slate-400" />
+                  High Contrast
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Increase text contrast for readability</p>
+              </div>
+              <button
+                onClick={() => {
+                  const newVal = !highContrast
+                  setHighContrast(newVal)
+                  saveSetting('high_contrast', newVal)
+                }}
+                className={`w-12 h-7 rounded-full transition-colors relative ${
+                  highContrast ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${
+                  highContrast ? 'left-6' : 'left-1'
+                }`} />
+              </button>
             </div>
           </div>
         </section>
 
-        {/* Data */}
+        {/* Subscription */}
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <Database className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-xl font-bold">Data & Privacy</h2>
+          <div className="flex items-center gap-3 mb-5">
+            <CreditCard className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Subscription</h2>
           </div>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Your data is synced securely to the cloud. You can export a local copy at any time.</p>
-          
-          <div className="flex flex-wrap gap-4">
-            <button className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 px-6 py-2.5 rounded-lg font-medium transition-colors">
-              Export Data
-            </button>
-            <button className="bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-6 py-2.5 rounded-lg font-medium transition-colors border border-red-200 dark:border-red-800/50">
-              Delete Account
-            </button>
+
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-5 flex justify-between items-center">
+            <div>
+              <p className="font-bold text-indigo-900 dark:text-indigo-100">Free Plan</p>
+              <p className="text-sm text-indigo-700 dark:text-indigo-300">All core recovery tools included.</p>
+            </div>
+            <span className="px-3 py-1 bg-white dark:bg-slate-800 text-xs font-bold rounded-full border border-indigo-200 dark:border-indigo-700">
+              Active
+            </span>
           </div>
         </section>
+
+        {/* Data & Privacy */}
+        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Data &amp; Privacy</h2>
+          </div>
+
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
+            Your data is encrypted and stored securely. You can export or delete it at any time.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleExportData}
+              className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 px-5 py-2.5 rounded-lg font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Export All Data
+            </button>
+
+            {showDeleteConfirm ? (
+              <div className="flex items-center gap-3 animate-in fade-in">
+                <p className="text-sm text-red-600 font-medium">This cannot be undone.</p>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="text-sm font-bold text-red-600 hover:underline"
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-sm text-slate-500 hover:underline"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-5 py-2.5 rounded-lg font-medium transition-colors border border-red-200 dark:border-red-800/50"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Account
+              </button>
+            )}
+          </div>
+        </section>
+
       </div>
     </div>
   )

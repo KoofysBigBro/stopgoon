@@ -130,7 +130,22 @@ export default function RegisterPage() {
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-1">Must be at least 6 characters.</p>
+          {/* Password strength indicator */}
+          {password.length > 0 && (
+            <div className="mt-2 ml-1">
+              <div className="flex gap-1 mb-1">
+                <div className={`h-1.5 flex-1 rounded-full transition-colors ${password.length >= 1 ? (password.length >= 8 ? 'bg-emerald-500' : password.length >= 6 ? 'bg-amber-500' : 'bg-red-400') : 'bg-slate-200 dark:bg-slate-700'}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-colors ${password.length >= 6 ? (password.length >= 8 ? 'bg-emerald-500' : 'bg-amber-500') : 'bg-slate-200 dark:bg-slate-700'}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-colors ${password.length >= 8 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`} />
+              </div>
+              <p className={`text-xs ${password.length >= 8 ? 'text-emerald-600 dark:text-emerald-400' : password.length >= 6 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500'}`}>
+                {password.length >= 8 ? 'Strong password' : password.length >= 6 ? 'Acceptable — try 8+ characters' : 'Too short — need at least 6 characters'}
+              </p>
+            </div>
+          )}
+          {password.length === 0 && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-1">Must be at least 6 characters.</p>
+          )}
         </div>
 
         <button
