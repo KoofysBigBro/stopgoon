@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Star, Clock } from 'lucide-react'
 
 const MOODS = [
   { value: 'great', label: 'Great', emoji: '😊', color: 'emerald' },
@@ -15,6 +15,8 @@ export default function DailyCheckin() {
   const [saved, setSaved] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [streak, setStreak] = useState<{label: string, active: boolean}[]>([])
+  const [timeLeft, setTimeLeft] = useState('')
   const supabase = createClient()
   const router = useRouter()
 
@@ -22,25 +24,87 @@ export default function DailyCheckin() {
     checkToday()
   }, [])
 
+  useEffect(() => {
+    if (!saved) return
+    const updateTimer = () => {
+      const now = new Date()
+      const tomorrow = new Date(now)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0, 0, 0, 0)
+      const diff = tomorrow.getTime() - now.getTime()
+      
+      const h = Math.floor(diff / (1000 * 60 * 60))
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      setTimeLeft(`${h}h ${m}m`)
+    }
+    updateTimer()
+    const interval = setInterval(updateTimer, 60000)
+    return () => clearInterval(interval)
+  }, [saved])
+
   const checkToday = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // Get start of today in local time, then convert to ISO string for DB comparison
+      // Get last relapse to ensure we ignore checkins from before the relapse
+      const { data: relapses } = await supabase
+        .from('relapses')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        
+      const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(0)
+
+      // Get start of today in local time
       const today = new Date()
       today.setHours(0, 0, 0, 0)
+
+      // The valid checkin must be from today, OR after the relapse if the relapse happened today
+      const checkinStartTime = new Date(Math.max(today.getTime(), lastRelapseDate.getTime()))
 
       const { data } = await supabase
         .from('daily_checkins')
         .select('mood')
         .eq('user_id', user.id)
-        .gte('created_at', today.toISOString())
+        .gte('created_at', checkinStartTime.toISOString())
         .limit(1)
 
       if (data && data.length > 0) {
         setSaved(data[0].mood)
       }
+
+      // Fetch last 7 days of checkins for the visual streak
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 6)
+      weekAgo.setHours(0, 0, 0, 0)
+      
+      const fetchStart = new Date(Math.max(weekAgo.getTime(), lastRelapseDate.getTime()))
+      
+      const { data: weekCheckins } = await supabase
+        .from('daily_checkins')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', fetchStart.toISOString())
+
+      const streakArray = []
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        
+        const hasCheckin = weekCheckins?.some(c => {
+          const cDate = new Date(c.created_at)
+          return cDate.getDate() === d.getDate() && cDate.getMonth() === d.getMonth() && cDate.getFullYear() === d.getFullYear()
+        }) || false
+
+        streakArray.push({
+          label: d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0),
+          active: hasCheckin
+        })
+      }
+      setStreak(streakArray)
+
     } catch {
       // ignore
     }
@@ -55,6 +119,7 @@ export default function DailyCheckin() {
       await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
       setSaved(mood)
       router.refresh() // Refresh the server component to update the streak counter
+      checkToday() // Refresh streak visual
     } catch {
       // graceful
     }
@@ -72,15 +137,39 @@ export default function DailyCheckin() {
   if (saved) {
     return (
       <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm animate-in fade-in duration-300">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
-            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center">
+              <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-foreground">Checked in</h3>
+              <p className="text-muted text-sm flex items-center gap-1.5 mt-0.5">
+                <Clock className="w-3.5 h-3.5" />
+                Resets in {timeLeft}
+              </p>
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-foreground">Checked in</h3>
         </div>
-        <p className="text-muted text-sm">
-          You're feeling <strong>{saved}</strong> today. Thanks for being honest with yourself.
-        </p>
+        
+        {/* 7-Day Visual Streak Tracker */}
+        <div className="bg-background/50 border border-border rounded-xl p-4 mt-6">
+          <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week's Consistency</p>
+          <div className="flex justify-between items-center">
+            {streak.map((day, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                  day.active 
+                    ? 'bg-amber-100 dark:bg-amber-900/30 shadow-[0_0_15px_rgba(251,191,36,0.3)]' 
+                    : 'bg-surface border border-border opacity-50'
+                }`}>
+                  <Star className={`w-4 h-4 ${day.active ? 'text-amber-500 fill-amber-500' : 'text-muted'}`} />
+                </div>
+                <span className="text-xs font-medium text-muted">{day.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
@@ -106,6 +195,25 @@ export default function DailyCheckin() {
             {mood.label}
           </button>
         ))}
+      </div>
+
+      {/* 7-Day Visual Streak Tracker (Visible before checkin too) */}
+      <div className="bg-background/50 border border-border rounded-xl p-4 mt-8">
+        <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week's Consistency</p>
+        <div className="flex justify-between items-center">
+          {streak.map((day, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                day.active 
+                  ? 'bg-amber-100 dark:bg-amber-900/30 shadow-[0_0_15px_rgba(251,191,36,0.3)]' 
+                  : 'bg-surface border border-border opacity-50'
+              }`}>
+                <Star className={`w-4 h-4 ${day.active ? 'text-amber-500 fill-amber-500' : 'text-muted'}`} />
+              </div>
+              <span className="text-xs font-medium text-muted">{day.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
