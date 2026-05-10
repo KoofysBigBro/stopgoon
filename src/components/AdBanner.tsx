@@ -1,106 +1,97 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, Sparkles } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
-const AD_CONTENT = [
-  {
-    title: 'Master Your Mind',
-    description: 'Build unshakeable discipline with proven recovery techniques.',
-    gradient: 'from-indigo-600 to-purple-600',
-    cta: 'Start Free',
-    link: '/dashboard'
-  },
-  {
-    title: 'Track Your Progress',
-    description: 'See how far you\'ve come with detailed analytics and insights.',
-    gradient: 'from-emerald-600 to-teal-600',
-    cta: 'View Analytics',
-    link: '/dashboard/analytics'
-  },
-  {
-    title: 'Go Premium ✨',
-    description: 'Unlock AI coaching, custom routines, and an ad-free experience.',
-    gradient: 'from-amber-500 to-orange-600',
-    cta: 'Upgrade Now',
-    link: '/dashboard/upgrade'
-  },
-  {
-    title: 'You\'re Not Alone',
-    description: 'Join the community chat and connect with people on the same journey.',
-    gradient: 'from-pink-500 to-rose-600',
-    cta: 'Join Chat',
-    link: '/dashboard/chat'
-  },
-  {
-    title: 'Emergency? Hit SOS',
-    description: 'Breathing exercises and grounding techniques when you need them most.',
-    gradient: 'from-red-500 to-red-700',
-    cta: 'SOS Mode',
-    link: '/dashboard/sos'
+declare global {
+  interface Window {
+    adsbygoogle: any[]
   }
-]
+}
 
-export default function AdBanner({ isPremium }: { isPremium: boolean }) {
-  const [currentAd, setCurrentAd] = useState(0)
-  const [dismissed, setDismissed] = useState(false)
+interface AdBannerProps {
+  isPremium: boolean
+  slot?: string           // AdSense ad slot ID
+  format?: string         // 'auto' | 'horizontal' | 'vertical' | 'rectangle'
+  layout?: string         // 'in-article' | 'in-feed' | etc
+  responsive?: boolean
+}
 
-  // Rotate ads every 15 seconds
+export default function AdBanner({ 
+  isPremium, 
+  slot,
+  format = 'auto',
+  responsive = true
+}: AdBannerProps) {
+  const adRef = useRef<HTMLDivElement>(null)
+  const pushed = useRef(false)
+
+  const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID
+  const adSlot = slot || process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID
+
   useEffect(() => {
-    if (isPremium || dismissed) return
-    const timer = setInterval(() => {
-      setCurrentAd(prev => (prev + 1) % AD_CONTENT.length)
-    }, 15000)
-    return () => clearInterval(timer)
-  }, [isPremium, dismissed])
+    if (isPremium || !pubId || !adSlot || pushed.current) return
+
+    try {
+      // Push the ad after mount
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        window.adsbygoogle.push({})
+        pushed.current = true
+      }
+    } catch (e) {
+      // AdSense not loaded or blocked by adblocker
+      console.log('AdSense not available')
+    }
+  }, [isPremium, pubId, adSlot])
 
   // Don't render for premium users
-  if (isPremium || dismissed) return null
+  if (isPremium) return null
 
-  const ad = AD_CONTENT[currentAd]
+  // If no AdSense config, show a fallback internal ad
+  if (!pubId || !adSlot) {
+    return <FallbackAd />
+  }
 
   return (
-    <div className="relative mb-6 animate-in fade-in duration-300">
-      <div className={`bg-gradient-to-r ${ad.gradient} rounded-2xl p-5 pr-12 shadow-lg overflow-hidden relative`}>
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-10 w-20 h-20 bg-white/5 rounded-full translate-y-1/2" />
-        
-        <div className="relative z-10">
-          <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">Sponsored</p>
-          <h3 className="text-white font-bold text-lg mb-1">{ad.title}</h3>
-          <p className="text-white/80 text-sm mb-3">{ad.description}</p>
-          <Link
-            href={ad.link}
-            className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
-          >
-            {ad.cta}
-          </Link>
-        </div>
-
-        {/* Dismiss button */}
-        <button
-          onClick={() => setDismissed(true)}
-          className="absolute top-3 right-3 text-white/40 hover:text-white/80 transition-colors"
-          title="Dismiss ad"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        {/* Ad dots */}
-        <div className="absolute bottom-3 right-3 flex gap-1">
-          {AD_CONTENT.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentAd(i)}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentAd ? 'bg-white' : 'bg-white/30'}`}
-            />
-          ))}
-        </div>
+    <div className="mb-6">
+      <div ref={adRef} className="bg-surface border border-border rounded-2xl overflow-hidden min-h-[90px]">
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client={pubId}
+          data-ad-slot={adSlot}
+          data-ad-format={format}
+          data-full-width-responsive={responsive ? 'true' : 'false'}
+        />
       </div>
+      <div className="flex items-center justify-center gap-2 mt-2">
+        <Sparkles className="w-3 h-3 text-amber-500" />
+        <Link href="/dashboard/upgrade" className="text-xs text-muted hover:text-amber-500 transition-colors">
+          Remove ads with Premium
+        </Link>
+      </div>
+    </div>
+  )
+}
 
-      {/* Upgrade CTA below ad */}
+// Fallback ad when AdSense isn't configured yet
+function FallbackAd() {
+  const ads = [
+    { title: 'Go Premium ✨', desc: 'Unlock AI coaching, custom routines, and ad-free browsing.', gradient: 'from-amber-500 to-orange-600', link: '/dashboard/upgrade' },
+    { title: 'You\'re Not Alone', desc: 'Join the community and connect with others on the same path.', gradient: 'from-indigo-600 to-purple-600', link: '/dashboard/chat' },
+    { title: 'Emergency? SOS', desc: 'Breathing exercises and grounding when urges hit.', gradient: 'from-red-500 to-red-700', link: '/dashboard/sos' },
+  ]
+  const ad = ads[Math.floor(Math.random() * ads.length)]
+
+  return (
+    <div className="mb-6">
+      <Link href={ad.link} className={`block bg-gradient-to-r ${ad.gradient} rounded-2xl p-5 shadow-lg relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">Sponsored</p>
+        <h3 className="text-white font-bold text-lg mb-1">{ad.title}</h3>
+        <p className="text-white/80 text-sm">{ad.desc}</p>
+      </Link>
       <div className="flex items-center justify-center gap-2 mt-2">
         <Sparkles className="w-3 h-3 text-amber-500" />
         <Link href="/dashboard/upgrade" className="text-xs text-muted hover:text-amber-500 transition-colors">
