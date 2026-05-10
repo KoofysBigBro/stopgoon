@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame } from 'lucide-react';
+import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Volume2, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame, UserCheck } from 'lucide-react';
 
 interface Partner {
   id: string;
@@ -174,6 +174,16 @@ export default function ChatClient({
     }
   };
 
+  const handleUnmuteUser = async (targetUserId: string) => {
+    await supabase.rpc('admin_unmute_user', { target_user_id: targetUserId });
+    setAdminMenuOpen(null);
+  };
+
+  const handleUnbanUser = async (targetUserId: string) => {
+    await supabase.rpc('admin_unban_user', { target_user_id: targetUserId });
+    setAdminMenuOpen(null);
+  };
+
   const handleAvatarClick = async (targetUserId: string) => {
     if (targetUserId === userId) return;
     // Fetch public profile
@@ -190,6 +200,12 @@ export default function ChatClient({
     }
 
     setProfilePopup({ profile, stats, targetId: targetUserId });
+  };
+
+  const getRoleIcon = (role: string) => {
+    if (role === 'owner') return <Crown className="w-3.5 h-3.5 text-amber-400 inline" />;
+    if (role === 'admin') return <Shield className="w-3.5 h-3.5 text-indigo-400 inline" />;
+    return null;
   };
 
   const getRoleBadge = (role: string) => {
@@ -349,13 +365,15 @@ export default function ChatClient({
                       {/* Avatar */}
                       <button
                         onClick={() => handleAvatarClick(msg.user_id)}
-                        className="w-8 h-8 rounded-full bg-indigo-500/10 border border-border overflow-hidden flex-shrink-0 hover:ring-2 hover:ring-indigo-500/50 transition-all cursor-pointer"
+                        className={`w-9 h-9 rounded-full border-2 overflow-hidden flex-shrink-0 hover:ring-2 hover:ring-indigo-500/50 transition-all cursor-pointer ${
+                          msg.sender_role === 'owner' ? 'border-amber-500/60 bg-amber-500/20' : msg.sender_role === 'admin' ? 'border-indigo-500/60 bg-indigo-500/20' : 'border-border bg-slate-600'
+                        }`}
                         title={`View ${msg.sender_username}'s profile`}
                       >
                         {msg.sender_avatar_url ? (
                           <img src={msg.sender_avatar_url} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <span className="flex items-center justify-center w-full h-full text-xs font-bold text-muted">
+                          <span className="flex items-center justify-center w-full h-full text-sm font-bold text-white">
                             {(msg.sender_username || '?')[0]?.toUpperCase()}
                           </span>
                         )}
@@ -364,10 +382,12 @@ export default function ChatClient({
                       {/* Message content */}
                       <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[75%]`}>
                         <div className={`flex items-center gap-1.5 mb-0.5 ${isOwn ? 'flex-row-reverse' : ''}`}>
-                          <p className={`text-xs font-semibold ${isOwn ? 'text-indigo-400' : 'text-muted'}`}>
+                          <p className={`text-xs font-semibold flex items-center gap-1 ${
+                            msg.sender_role === 'owner' ? 'text-amber-400' : msg.sender_role === 'admin' ? 'text-indigo-400' : isOwn ? 'text-indigo-400' : 'text-muted'
+                          }`}>
+                            {getRoleIcon(msg.sender_role)}
                             {isOwn ? 'You' : (msg.sender_username || 'Anonymous')}
                           </p>
-                          {getRoleBadge(msg.sender_role)}
                           {/* Admin controls */}
                           {canModerate && !isOwn && (
                             <div className="relative">
@@ -375,15 +395,23 @@ export default function ChatClient({
                                 <Shield className="w-3 h-3" />
                               </button>
                               {adminMenuOpen === msg.id && (
-                                <div className="absolute z-50 top-5 left-0 bg-surface border border-border rounded-xl shadow-xl p-2 min-w-[160px] space-y-1">
+                                <div className="absolute z-50 top-5 left-0 bg-surface border border-border rounded-xl shadow-xl p-2 min-w-[180px] space-y-1">
                                   <button onClick={() => handleDeleteMessage(msg.id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg hover:bg-red-500/10 text-red-500 transition-colors">
                                     <Trash2 className="w-3.5 h-3.5" /> Delete Message
                                   </button>
+                                  <div className="border-t border-border my-1" />
                                   <button onClick={() => handleMuteUser(msg.user_id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg hover:bg-amber-500/10 text-amber-500 transition-colors">
                                     <VolumeX className="w-3.5 h-3.5" /> Mute 24h
                                   </button>
+                                  <button onClick={() => handleUnmuteUser(msg.user_id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg hover:bg-emerald-500/10 text-emerald-500 transition-colors">
+                                    <Volume2 className="w-3.5 h-3.5" /> Unmute
+                                  </button>
+                                  <div className="border-t border-border my-1" />
                                   <button onClick={() => handleBanUser(msg.user_id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg hover:bg-red-500/10 text-red-500 transition-colors">
                                     <Ban className="w-3.5 h-3.5" /> Ban User
+                                  </button>
+                                  <button onClick={() => handleUnbanUser(msg.user_id)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg hover:bg-emerald-500/10 text-emerald-500 transition-colors">
+                                    <UserCheck className="w-3.5 h-3.5" /> Unban User
                                   </button>
                                 </div>
                               )}
