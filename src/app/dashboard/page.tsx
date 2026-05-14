@@ -1,10 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
-import { LifeBuoy, Zap, BookHeart } from 'lucide-react'
+import { LifeBuoy, BookHeart, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import UrgeLogger from './components/UrgeLogger'
 import DailyCheckin from './components/DailyCheckin'
 import UrgeIntensityChart from './components/UrgeIntensityChart'
 import RelapseButton from './components/RelapseButton'
+import AIInsightCard from './components/AIInsightCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,8 @@ export default async function DashboardPage() {
   let daysOfGrowth = 0
   let nextMilestone = 7
   let isPremium = false
+  let totalUrges = 0
+  let totalJournals = 0
 
   try {
     const { data: { user } } = await supabase.auth.getUser()
@@ -46,6 +49,14 @@ export default async function DashboardPage() {
         // check-ins at 12 AM local time to be grouped into the same UTC day.
         daysOfGrowth = checkins.length
       }
+
+      const [{ count: urgeCount }, { count: journalCount }] = await Promise.all([
+        supabase.from('urge_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('journal_entries').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+      ])
+
+      totalUrges = urgeCount || 0
+      totalJournals = journalCount || 0
     }
   } catch {
     // Tables might not exist yet
@@ -55,12 +66,20 @@ export default async function DashboardPage() {
   const milestones = [7, 14, 30, 60, 90, 180, 365]
   nextMilestone = milestones.find(m => m > daysOfGrowth) || 365
 
+  const badges = [
+    { label: 'Consistency Starter', unlocked: daysOfGrowth >= 3 },
+    { label: 'Steady Momentum', unlocked: daysOfGrowth >= 14 },
+    { label: 'Reflection Builder', unlocked: totalJournals >= 5 },
+    { label: 'Urge Observer', unlocked: totalUrges >= 10 },
+  ]
+  const unlockedBadges = badges.filter(badge => badge.unlocked).length
+
   return (
-    <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+    <div className="animate-fade-up max-w-5xl mx-auto">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Dashboard</h1>
-          <p className="text-muted mt-1 text-lg">Every day is a step forward. Let's keep going.</p>
+          <p className="text-muted mt-1 text-lg">Every day is a step forward. Let&apos;s keep going.</p>
         </div>
         <div className="flex gap-3">
           <Link
@@ -80,13 +99,22 @@ export default async function DashboardPage() {
         </div>
       </header>
 
+      <div className="mb-6 rounded-2xl border border-border bg-background/70 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p className="text-sm text-muted">Turn on daily reminders to stay consistent during high-risk windows.</p>
+        <Link href="/dashboard/settings" className="text-sm font-bold text-primary hover:text-primary-hover inline-flex items-center gap-1.5">
+          Configure nudges <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+
       {/* Main Hero: Streak & Progress */}
-      <section className="bg-surface border border-border rounded-3xl p-10 text-center shadow-md mb-8 relative overflow-hidden">
-        {/* Soft glowing background effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-full bg-primary/5 blur-[100px] pointer-events-none rounded-full" />
+      <section className="glass-card rounded-3xl p-7 md:p-10 text-center shadow-md mb-8 relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-full bg-primary/10 blur-[100px] pointer-events-none rounded-full" />
         
         <div className="relative z-10">
-          <h2 className="text-7xl font-bold text-primary mb-3 tracking-tighter">{daysOfGrowth}</h2>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
+            <Sparkles className="w-3.5 h-3.5" /> Recovery momentum
+          </div>
+          <h2 className="text-6xl md:text-7xl font-bold text-primary mb-3 tracking-tighter">{daysOfGrowth}</h2>
           <p className="font-semibold text-xl tracking-wide">Days of Growth</p>
           <p className="text-muted text-sm mt-3 max-w-md mx-auto leading-relaxed">
             You are building a new life, one day at a time. Lapses are just lessons, not failures.
@@ -101,12 +129,36 @@ export default async function DashboardPage() {
           <p className="text-xs text-muted mt-4 font-semibold uppercase tracking-widest">
             Next Milestone: {nextMilestone} Days
           </p>
+
+          <div className="mt-6 flex flex-wrap gap-3 items-center justify-center">
+            <Link href="/dashboard/analytics" className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-full text-sm font-bold hover:bg-primary-hover transition-colors">
+              View Insights <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link href="/dashboard/motivation" className="inline-flex items-center gap-2 bg-background border border-border px-4 py-2.5 rounded-full text-sm font-bold hover:bg-surface-hover transition-colors">
+              Stay Motivated
+            </Link>
+          </div>
           
           <RelapseButton />
         </div>
       </section>
 
       {/* Grid Layout for Tools & Analytics */}
+      <section className="glass-card rounded-2xl p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold">Progress Badges</h3>
+          <span className="text-xs font-bold uppercase tracking-wider text-muted">{unlockedBadges}/{badges.length} unlocked</span>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {badges.map((badge) => (
+            <div key={badge.label} className={`rounded-xl border p-4 ${badge.unlocked ? 'border-primary/40 bg-primary/10' : 'border-border bg-background/60'}`}>
+              <p className="text-sm font-semibold text-foreground">{badge.label}</p>
+              <p className="text-xs text-muted mt-1">{badge.unlocked ? 'Unlocked' : 'Keep going'}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Column: Actions */}
@@ -119,38 +171,8 @@ export default async function DashboardPage() {
         <div className="lg:col-span-7 space-y-8">
           <UrgeIntensityChart />
           
-          {/* AI Insight (Blurred for Free Users) */}
-          <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm group">
-            <div className={`p-6 bg-surface flex items-start gap-4 transition-all ${!isPremium ? 'blur-sm opacity-50' : ''}`}>
-              <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
-                <Zap className="w-6 h-6 text-indigo-500" />
-              </div>
-              <div>
-                <h4 className="font-bold text-foreground">AI Predictive Insight</h4>
-                <p className="text-sm text-muted mt-1 leading-relaxed">
-                  Based on your history, your urges peak on Day 7 around 10 PM. Consider starting a proactive focus routine at 9 PM tonight to lower dopamine levels.
-                </p>
-              </div>
-            </div>
-            
-            {!isPremium && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/40 backdrop-blur-md p-6 text-center">
-                <div className="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-md">
-                  PREMIUM FEATURE
-                </div>
-                <h4 className="font-bold text-lg mb-2">Predictive AI Insights</h4>
-                <p className="text-sm text-muted mb-4 max-w-sm">
-                  Stop relapses before they happen. Our AI analyzes your tracking data to predict your highest-risk windows.
-                </p>
-                <Link 
-                  href="/dashboard/upgrade"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 transition-all hover:scale-105"
-                >
-                  Unlock Insights
-                </Link>
-              </div>
-            )}
-          </div>
+          {/* AI Insight — live for premium, upgrade prompt for free */}
+          <AIInsightCard isPremium={isPremium} />
         </div>
 
       </div>

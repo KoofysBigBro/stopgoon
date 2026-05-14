@@ -1,9 +1,19 @@
 import { createClient } from '@/utils/supabase/server'
+import dynamicImport from 'next/dynamic'
 import { Flame, Calendar, TrendingUp, BookHeart, Zap, Target } from 'lucide-react'
-import MoodBreakdownChart from './MoodBreakdownChart'
-import AICoach from '../components/AICoach'
-import PredictiveWarning from './PredictiveWarning'
-import RecoveryTimeline from './RecoveryTimeline'
+
+const MoodBreakdownChart = dynamicImport(() => import('./MoodBreakdownChart'), {
+  loading: () => <div className="h-20 rounded-xl bg-surface-hover animate-pulse" />,
+})
+const AICoach = dynamicImport(() => import('../components/AICoach'), {
+  loading: () => <div className="h-56 rounded-2xl bg-surface-hover animate-pulse" />,
+})
+const PredictiveWarning = dynamicImport(() => import('./PredictiveWarning'), {
+  loading: () => <div className="h-28 rounded-2xl bg-surface-hover animate-pulse mb-8" />,
+})
+const RecoveryTimeline = dynamicImport(() => import('./RecoveryTimeline'), {
+  loading: () => <div className="h-64 rounded-2xl bg-surface-hover animate-pulse" />,
+})
 export const dynamic = 'force-dynamic'
 
 export default async function AnalyticsPage() {
@@ -18,7 +28,7 @@ export default async function AnalyticsPage() {
   let longestStreak = 0
   let averageIntensity = 0
   let checkinCalendar: { date: string; count: number }[] = []
-  let moodCounts: Record<string, number> = {}
+  const moodCounts: Record<string, number> = {}
   let isPremium = false;
 
   // Predictive & Timeline data
@@ -196,10 +206,10 @@ export default async function AnalyticsPage() {
   }
 
   return (
-    <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+    <div className="animate-fade-up max-w-5xl mx-auto">
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight mb-1">Progress Analytics</h1>
-        <p className="text-muted text-lg">Visualize your journey. Every step is progress.</p>
+        <p className="text-muted text-lg">Visualize your journey with cleaner signals and better decisions.</p>
       </header>
 
       {/* AI Coach */}
@@ -219,7 +229,7 @@ export default async function AnalyticsPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <Flame className="w-5 h-5 text-primary" />
@@ -230,7 +240,7 @@ export default async function AnalyticsPage() {
           <p className="text-xs text-muted mt-1">days</p>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
               <Target className="w-5 h-5 text-amber-500" />
@@ -241,7 +251,7 @@ export default async function AnalyticsPage() {
           <p className="text-xs text-muted mt-1">days</p>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
               <Calendar className="w-5 h-5 text-emerald-500" />
@@ -252,7 +262,7 @@ export default async function AnalyticsPage() {
           <p className="text-xs text-muted mt-1">logged</p>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-rose-500" />
@@ -266,17 +276,17 @@ export default async function AnalyticsPage() {
 
       {/* Second row stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-              <BookHeart className="w-5 h-5 text-indigo-500" />
+            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+              <BookHeart className="w-5 h-5 text-primary" />
             </div>
             <span className="text-sm font-semibold text-muted">Journal Entries</span>
           </div>
           <p className="text-4xl font-bold text-foreground tracking-tight">{totalJournalEntries}</p>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
               <Zap className="w-5 h-5 text-orange-500" />
@@ -289,15 +299,15 @@ export default async function AnalyticsPage() {
           )}
         </div>
 
-        <div className="col-span-2 lg:col-span-1 bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="col-span-2 lg:col-span-1 glass-card rounded-2xl p-6 shadow-sm">
           <MoodBreakdownChart moodCounts={moodCounts} totalCheckins={totalCheckins} />
         </div>
       </div>
 
       {/* 30-Day Activity Heatmap */}
-      <div className="bg-surface border border-border rounded-2xl p-8 shadow-sm">
+      <div className="glass-card rounded-2xl p-8 shadow-sm">
         <h3 className="font-semibold text-lg mb-2 text-foreground">30-Day Check-in Activity</h3>
-        <p className="text-sm text-muted mb-6">Your consistency over the past month.</p>
+        <p className="text-sm text-muted mb-6">Your consistency over the past month at a glance.</p>
         <div className="grid grid-cols-10 gap-2">
           {checkinCalendar.map((day) => {
             const d = new Date(day.date + 'T00:00:00')
@@ -306,7 +316,7 @@ export default async function AnalyticsPage() {
               <div key={day.date} className="group relative" title={`${label}: ${day.count} check-in(s)`}>
                 <div className={`aspect-square rounded-lg transition-all ${
                   day.count > 0
-                    ? 'bg-primary shadow-[0_0_10px_rgba(99,102,241,0.25)]'
+                    ? 'bg-primary shadow-[0_0_10px_rgb(44_199_165_/_0.35)]'
                     : 'bg-surface-hover border border-border opacity-50'
                 }`} />
                 <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">

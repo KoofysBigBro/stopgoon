@@ -24,6 +24,9 @@ export default async function LandingPage() {
             <span className="text-xl font-bold tracking-tight font-heading">StopGoon</span>
           </div>
           <div className="flex items-center gap-6">
+            <Link href="/blog" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
+              Blog
+            </Link>
             <Link href="/login" transitionTypes={['nav-forward']} className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
               Log in
             </Link>
@@ -323,6 +326,9 @@ export default async function LandingPage() {
             <div className="grid sm:grid-cols-2 gap-3 text-sm">
               <Link href="/quit-doomscrolling" className="rounded-xl border border-border px-4 py-3 hover:bg-surface-hover transition-colors font-semibold">Quit Doomscrolling Tracker</Link>
               <Link href="/porn-recovery-tracker" className="rounded-xl border border-border px-4 py-3 hover:bg-surface-hover transition-colors font-semibold">Porn Recovery Tracker Plan</Link>
+              <Link href="/blog" className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 hover:bg-primary/10 transition-colors font-semibold text-primary col-span-full text-center">
+                Browse All Blog Articles →
+              </Link>
             </div>
           </div>
         </section>
@@ -342,6 +348,7 @@ export default async function LandingPage() {
             </p>
           </div>
           <div className="flex flex-col md:items-end gap-3 text-sm text-muted font-medium">
+            <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
             <Link href="/privacy" transitionTypes={['nav-forward']} className="hover:text-foreground transition-colors">Privacy Policy</Link>
             <Link href="/terms" transitionTypes={['nav-forward']} className="hover:text-foreground transition-colors">Terms of Service</Link>
             <Link href="mailto:stopgoonsupport@gmail.com" className="hover:text-foreground transition-colors">Contact Us: stopgoonsupport@gmail.com</Link>

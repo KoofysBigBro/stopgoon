@@ -1,20 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Palette, Accessibility, Database, CreditCard, User, LogOut,
-  Check, Loader2, Download, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock, Smartphone
+  Check, Loader2, Trash2, Moon, Sun, Type, Eye, ArrowRight, ShieldCheck, Pencil, Camera, Globe, Lock, Bell, Sparkles, Crown, X
 } from 'lucide-react'
 import DataExport from './DataExport'
 import DeviceSettings from './DeviceSettings'
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -29,7 +29,9 @@ export default function SettingsPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [isPublic, setIsPublic] = useState(true)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState('')
+
+  const searchParams = useSearchParams()
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(searchParams.get('upgrade') === 'success')
 
   // Settings state
   const { theme, setTheme } = useTheme()
@@ -41,11 +43,7 @@ export default function SettingsPage() {
   const supabase = createClient()
   const router = useRouter()
 
-  useEffect(() => {
-    loadSettings()
-  }, [])
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -67,7 +65,6 @@ export default function SettingsPage() {
           setIsPremium(profile.subscription_tier === 'premium')
           setAvatarUrl(profile.avatar_url || null)
           setIsPublic(profile.is_public !== false) // default true
-          setCurrentUserId(user.id)
         }
       }
 
@@ -84,7 +81,12 @@ export default function SettingsPage() {
       // settings might not exist yet
     }
     setIsLoading(false)
-  }
+  }, [setTheme, supabase])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadSettings()
+  }, [loadSettings])
 
   const getNextChangeDate = () => {
     if (!usernameChangedAt) return null
@@ -222,7 +224,6 @@ export default function SettingsPage() {
   }, [highContrast])
 
   const saveSetting = async (field: string, value: string | boolean) => {
-    setIsSaving(true)
     setSaveMessage(null)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -238,7 +239,6 @@ export default function SettingsPage() {
       setSaveMessage('Could not save')
       setTimeout(() => setSaveMessage(null), 3000)
     }
-    setIsSaving(false)
   }
 
   const handleSignOut = async () => {
@@ -286,6 +286,27 @@ export default function SettingsPage() {
         )}
       </header>
 
+      {/* Upgrade success banner */}
+      {showUpgradeSuccess && (
+        <div className="mb-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-primary/10 p-5 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-transparent to-primary/5 animate-gradient-shift" style={{backgroundSize: '200% 200%'}} />
+          <button onClick={() => setShowUpgradeSuccess(false)} className="absolute top-3 right-3 text-muted hover:text-foreground transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+          <div className="relative z-10 flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-primary flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
+              <Crown className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold font-heading mb-1">Welcome to Premium!</h3>
+              <p className="text-sm text-muted leading-relaxed">
+                You now have full access to AI coaching, predictive warnings, custom SOS routines, advanced analytics, and more. All premium features are unlocked.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
 
         {/* Account */}
@@ -301,7 +322,7 @@ export default function SettingsPage() {
               <div className="relative group">
                 <div className="w-16 h-16 rounded-full bg-indigo-500/10 border-2 border-border overflow-hidden flex items-center justify-center">
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    <Image src={avatarUrl} alt="Avatar" width={64} height={64} className="w-full h-full object-cover" unoptimized />
                   ) : (
                     <User className="w-8 h-8 text-muted" />
                   )}
@@ -412,6 +433,39 @@ export default function SettingsPage() {
                 Sign out
               </button>
             )}
+          </div>
+        </section>
+
+        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-5">
+            <Bell className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold">Retention Nudges</h2>
+          </div>
+
+          <div className="flex items-center justify-between py-2">
+            <div>
+              <p className="font-medium">Daily Recovery Reminder</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Gentle check-in reminder with supportive language</p>
+            </div>
+            <button
+              onClick={() => {
+                const next = !dailyReminder
+                setDailyReminder(next)
+                saveSetting('daily_reminder', next)
+              }}
+              className={`w-12 h-7 rounded-full transition-colors relative ${
+                dailyReminder ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
+              }`}
+            >
+              <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-all shadow-sm ${
+                dailyReminder ? 'left-6' : 'left-1'
+              }`} />
+            </button>
+          </div>
+
+          <div className="mt-4 rounded-xl border border-border bg-background/70 p-4">
+            <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-2">Nudge examples</p>
+            <p className="text-sm text-foreground">&quot;Two minutes now protects your focus later. Want to check in?&quot;</p>
           </div>
         </section>
 

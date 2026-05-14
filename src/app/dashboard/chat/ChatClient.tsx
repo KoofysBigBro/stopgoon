@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Volume2, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame, UserCheck } from 'lucide-react';
+import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Volume2, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame, UserCheck, Zap } from 'lucide-react';
 
 interface Partner {
   id: string;
@@ -21,6 +21,7 @@ interface ChatMessage {
   sender_role: string;
   room_id: string;
   created_at: string;
+  is_deleted?: boolean;
 }
 
 interface UserProfile {
@@ -69,14 +70,29 @@ export default function ChatClient({
   const [lastSentAt, setLastSentAt] = useState(0);
   const [adminMenuOpen, setAdminMenuOpen] = useState<string | null>(null);
   const [profilePopup, setProfilePopup] = useState<{ profile: UserProfile; stats: UserStats | null; targetId: string } | null>(null);
-  const [userProfiles, setUserProfiles] = useState<Record<string, { avatar_url: string | null; role: string; username: string }>>({
-    [userId]: { avatar_url: userAvatarUrl, role: userRole, username: userUsername }
+  const [userProfiles, setUserProfiles] = useState<Record<string, { avatar_url: string | null; role: string; username: string; subscription_tier?: string }>>({
+    [userId]: { avatar_url: userAvatarUrl, role: userRole, username: userUsername, subscription_tier: isPremium ? 'premium' : 'free' }
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const GLOBAL_COOLDOWN_MS = 5000;
   const canModerate = userRole === 'admin' || userRole === 'owner';
+
+  const BAD_WORDS = [
+    'fuck', 'shit', 'bitch', 'cunt', 'nigger', 'nigga', 'faggot', 'dick', 'cock', 'pussy', 
+    'whore', 'slut', 'retard', 'porn', 'rape', 'asshole', 'motherfucker', 'bastard', 'fag', 'dyke'
+  ];
+
+  const filterText = (text: string) => {
+    let filtered = text;
+    BAD_WORDS.forEach(word => {
+      // Replace with asterisks of same length
+      const regex = new RegExp(`\\b${word}\\b`, 'gi');
+      filtered = filtered.replace(regex, match => '*'.repeat(match.length));
+    });
+    return filtered;
+  };
 
   useEffect(() => {
     if (cooldownRemaining <= 0) return;
@@ -109,12 +125,12 @@ export default function ChatClient({
         if (missingIds.length > 0) {
           const { data: profiles } = await supabase
             .from('users')
-            .select('id, avatar_url, role, username')
+            .select('id, avatar_url, role, username, subscription_tier')
             .in('id', missingIds);
           if (profiles) {
             const newProfiles: Record<string, any> = {};
             profiles.forEach((p: any) => {
-              newProfiles[p.id] = { avatar_url: p.avatar_url, role: p.role || 'user', username: p.username };
+              newProfiles[p.id] = { avatar_url: p.avatar_url, role: p.role || 'user', username: p.username, subscription_tier: p.subscription_tier };
             });
             setUserProfiles(prev => ({ ...prev, ...newProfiles }));
           }
@@ -142,6 +158,13 @@ export default function ChatClient({
       }, (payload) => {
         setMessages((prev) => prev.filter(m => m.id !== (payload.old as any).id));
       })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'chat_messages',
+      }, (payload) => {
+        setMessages((prev) => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } as ChatMessage : m));
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
@@ -151,7 +174,7 @@ export default function ChatClient({
     e.preventDefault();
     if (!newMessage.trim() || sending || isBanned || isMuted) return;
 
-    if (activeRoom === 'global') {
+    if (activeRoom === 'global' && !canModerate) {
       const timeSinceLast = Date.now() - lastSentAt;
       if (timeSinceLast < GLOBAL_COOLDOWN_MS) {
         setCooldownRemaining(GLOBAL_COOLDOWN_MS - timeSinceLast);
@@ -159,10 +182,12 @@ export default function ChatClient({
       }
     }
 
+    const filteredContent = filterText(newMessage.trim());
+
     setSending(true);
     await supabase.from('chat_messages').insert({
       user_id: userId,
-      content: newMessage.trim(),
+      content: filteredContent,
       sender_email: userEmail,
       sender_username: userUsername,
       sender_avatar_url: userAvatarUrl,
@@ -182,6 +207,11 @@ export default function ChatClient({
     await supabase.rpc('admin_delete_message', { message_id: messageId });
     setMessages((prev) => prev.filter(m => m.id !== messageId));
     setAdminMenuOpen(null);
+  };
+
+  const handleUserDeleteMessage = async (messageId: string) => {
+    setMessages((prev) => prev.map(m => m.id === messageId ? { ...m, is_deleted: true } : m));
+    await supabase.rpc('user_delete_own_message', { msg_id: messageId });
   };
 
   const handleMuteUser = async (targetUserId: string) => {
@@ -246,6 +276,16 @@ export default function ChatClient({
     return null;
   };
 
+  const getPremiumBadge = (tier: string | undefined) => {
+    if (tier === 'premium' || tier === 'pro') return (
+      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-indigo-500 text-white text-[9px] font-bold uppercase tracking-wider shadow-sm">
+        <Zap className="w-2.5 h-2.5" />
+        Premium
+      </span>
+    );
+    return null;
+  };
+
   const activePartner = partners.find((p) => p.roomId === activeRoom);
   const roomLabel = activeRoom === 'global' ? 'Global Community' : activePartner?.username || 'Direct Message';
   const formatTime = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -270,6 +310,7 @@ export default function ChatClient({
                   <p className="font-bold flex items-center gap-1.5 flex-wrap">
                     {profilePopup.profile.username}
                     {getRoleBadge(profilePopup.profile.role)}
+                    {getPremiumBadge(userProfiles[profilePopup.targetId]?.subscription_tier)}
                   </p>
                   <p className="text-xs text-muted">Member since {new Date(profilePopup.profile.created_at).toISOString().split('T')[0]}</p>
                 </div>
@@ -381,6 +422,8 @@ export default function ChatClient({
                 </div>
               ) : (
                 messages.map((msg) => {
+                  if (msg.is_deleted && !canModerate) return null;
+
                   const isOwn = msg.user_id === userId;
                   // Use live profile data (falls back to message data for users not yet loaded)
                   const liveProfile = userProfiles[msg.user_id];
@@ -414,7 +457,15 @@ export default function ChatClient({
                           }`}>
                             {getRoleIcon(role)}
                             {isOwn ? 'You' : displayName}
+                            {getPremiumBadge(liveProfile?.subscription_tier)}
                           </p>
+
+                          {isOwn && !msg.is_deleted && (
+                            <button onClick={() => handleUserDeleteMessage(msg.id)} className="text-muted hover:text-red-500 transition-colors" title="Delete Message">
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+
                           {/* Admin controls */}
                           {canModerate && !isOwn && (
                             <div className="relative">
@@ -446,9 +497,11 @@ export default function ChatClient({
                           )}
                         </div>
                         <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                          msg.is_deleted ? 'bg-red-500/10 border border-red-500/30 text-red-500 rounded-bl-md' :
                           isOwn ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-background border border-border text-foreground rounded-bl-md'
                         }`}>
                           {msg.content}
+                          {msg.is_deleted && <p className="text-[10px] text-red-400 mt-1 uppercase font-bold tracking-wider">Deleted Message</p>}
                         </div>
                         <p className="text-[10px] text-muted mt-0.5">{formatTime(msg.created_at)}</p>
                       </div>

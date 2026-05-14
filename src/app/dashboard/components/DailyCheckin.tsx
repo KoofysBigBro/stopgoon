@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Star, Clock } from 'lucide-react'
+import Link from 'next/link'
 
 const MOODS = [
   { value: 'great', label: 'Great', emoji: '😊', color: 'emerald' },
@@ -20,9 +22,66 @@ export default function DailyCheckin() {
   const supabase = createClient()
   const router = useRouter()
 
+  const checkToday = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: relapses } = await supabase
+        .from('relapses')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(0)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const checkinStartTime = new Date(Math.max(today.getTime(), lastRelapseDate.getTime()))
+
+      const { data } = await supabase
+        .from('daily_checkins')
+        .select('mood')
+        .eq('user_id', user.id)
+        .gte('created_at', checkinStartTime.toISOString())
+        .limit(1)
+
+      if (data && data.length > 0) {
+        setSaved(data[0].mood)
+      }
+
+      const weekAgo = new Date()
+      weekAgo.setDate(weekAgo.getDate() - 6)
+      weekAgo.setHours(0, 0, 0, 0)
+      const fetchStart = new Date(Math.max(weekAgo.getTime(), lastRelapseDate.getTime()))
+
+      const { data: weekCheckins } = await supabase
+        .from('daily_checkins')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', fetchStart.toISOString())
+
+      const streakArray = []
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        const hasCheckin = weekCheckins?.some(c => {
+          const cDate = new Date(c.created_at)
+          return cDate.getDate() === d.getDate() && cDate.getMonth() === d.getMonth() && cDate.getFullYear() === d.getFullYear()
+        }) || false
+        streakArray.push({ label: d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0), active: hasCheckin })
+      }
+      setStreak(streakArray)
+    } catch {
+      // ignore
+    }
+    setIsLoading(false)
+  }, [supabase])
+
   useEffect(() => {
-    checkToday()
-  }, [])
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void checkToday()
+  }, [checkToday])
 
   useEffect(() => {
     if (!saved) return
@@ -42,75 +101,6 @@ export default function DailyCheckin() {
     return () => clearInterval(interval)
   }, [saved])
 
-  const checkToday = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      // Get last relapse to ensure we ignore checkins from before the relapse
-      const { data: relapses } = await supabase
-        .from('relapses')
-        .select('created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        
-      const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(0)
-
-      // Get start of today in local time
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-
-      // The valid checkin must be from today, OR after the relapse if the relapse happened today
-      const checkinStartTime = new Date(Math.max(today.getTime(), lastRelapseDate.getTime()))
-
-      const { data } = await supabase
-        .from('daily_checkins')
-        .select('mood')
-        .eq('user_id', user.id)
-        .gte('created_at', checkinStartTime.toISOString())
-        .limit(1)
-
-      if (data && data.length > 0) {
-        setSaved(data[0].mood)
-      }
-
-      // Fetch last 7 days of checkins for the visual streak
-      const weekAgo = new Date()
-      weekAgo.setDate(weekAgo.getDate() - 6)
-      weekAgo.setHours(0, 0, 0, 0)
-      
-      const fetchStart = new Date(Math.max(weekAgo.getTime(), lastRelapseDate.getTime()))
-      
-      const { data: weekCheckins } = await supabase
-        .from('daily_checkins')
-        .select('created_at')
-        .eq('user_id', user.id)
-        .gte('created_at', fetchStart.toISOString())
-
-      const streakArray = []
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date()
-        d.setDate(d.getDate() - i)
-        
-        const hasCheckin = weekCheckins?.some(c => {
-          const cDate = new Date(c.created_at)
-          return cDate.getDate() === d.getDate() && cDate.getMonth() === d.getMonth() && cDate.getFullYear() === d.getFullYear()
-        }) || false
-
-        streakArray.push({
-          label: d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0),
-          active: hasCheckin
-        })
-      }
-      setStreak(streakArray)
-
-    } catch {
-      // ignore
-    }
-    setIsLoading(false)
-  }
-
   const handleCheckin = async (mood: string) => {
     setIsSaving(true)
     try {
@@ -121,8 +111,8 @@ export default function DailyCheckin() {
         console.error('Checkin failed:', error)
       } else {
         setSaved(mood)
-        router.refresh() // Refresh the server component to update the streak counter
-        checkToday() // Refresh streak visual
+        router.refresh()
+        void checkToday()
       }
     } catch (e) {
       console.error('Exception during checkin:', e)
@@ -158,7 +148,7 @@ export default function DailyCheckin() {
         
         {/* 7-Day Visual Streak Tracker */}
         <div className="bg-background/50 border border-border rounded-xl p-4 mt-6">
-          <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week's Consistency</p>
+          <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week&apos;s Consistency</p>
           <div className="flex justify-between items-center">
             {streak.map((day, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
@@ -172,6 +162,14 @@ export default function DailyCheckin() {
                 <span className="text-xs font-medium text-muted">{day.label}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-xl border border-primary/20 bg-primary/5 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Next step</p>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/dashboard/journal" className="px-3 py-2 text-xs font-bold rounded-lg bg-background border border-border hover:bg-surface-hover transition-colors">Write one reflection</Link>
+            <Link href="/dashboard/analytics" className="px-3 py-2 text-xs font-bold rounded-lg bg-background border border-border hover:bg-surface-hover transition-colors">Review today&apos;s trend</Link>
           </div>
         </div>
       </div>
@@ -203,7 +201,7 @@ export default function DailyCheckin() {
 
       {/* 7-Day Visual Streak Tracker (Visible before checkin too) */}
       <div className="bg-background/50 border border-border rounded-xl p-4 mt-8">
-        <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week's Consistency</p>
+        <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week&apos;s Consistency</p>
         <div className="flex justify-between items-center">
           {streak.map((day, i) => (
             <div key={i} className="flex flex-col items-center gap-2">

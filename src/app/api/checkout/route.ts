@@ -5,6 +5,9 @@ import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json().catch(() => ({}));
+    const requestedPlan = typeof body?.plan === 'string' ? body.plan : 'monthly';
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -18,14 +21,26 @@ export async function POST(request: Request) {
     setupLemonSqueezy();
 
     const storeId = process.env.LEMONSQUEEZY_STORE_ID!;
-    const variantId = process.env.LEMONSQUEEZY_VARIANT_ID!;
+
+    const variantByPlan: Record<string, string | undefined> = {
+      monthly: process.env.LEMONSQUEEZY_VARIANT_ID_MONTHLY || process.env.LEMONSQUEEZY_VARIANT_ID,
+      quarterly: process.env.LEMONSQUEEZY_VARIANT_ID_QUARTERLY,
+      yearly: process.env.LEMONSQUEEZY_VARIANT_ID_YEARLY,
+    };
+
+    const variantId = variantByPlan[requestedPlan] || variantByPlan.monthly;
+
+    if (!variantId) {
+      return NextResponse.json({ error: 'Missing variant configuration for selected plan' }, { status: 500 });
+    }
 
     // Create a Lemon Squeezy checkout
     const checkoutResult = await createCheckout(storeId, variantId, {
       checkoutData: {
         email: email,
         custom: {
-          user_id: userId // Pass the user's Supabase ID so the webhook can identify them
+          user_id: userId,
+          plan: requestedPlan,
         }
       },
       productOptions: {

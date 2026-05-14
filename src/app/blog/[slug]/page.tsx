@@ -1,52 +1,29 @@
 import Link from 'next/link'
-import { ArrowLeft, BookOpen } from 'lucide-react'
+import { notFound } from 'next/navigation'
+import { ArrowLeft, Clock, Tag } from 'lucide-react'
+import { getBlogPostBySlug, getRelatedPosts } from '@/data/blog'
 
-// Dummy data for rendering the article. In production, fetch this from markdown or a DB.
-const ARTICLES: Record<string, { title: string, content: string }> = {
-  'dopamine-detox-guide': {
-    title: 'The Ultimate Dopamine Detox Guide: Rewire Your Brain in 2026',
-    content: `
-      <h2>The Science of Dopamine</h2>
-      <p>Dopamine is not the "pleasure" molecule—it is the "motivation" molecule. When you constantly flood your brain with cheap dopamine from doomscrolling, your baseline drops. This is why you feel unmotivated to do difficult tasks.</p>
-      <h2>How to Detox Correctly</h2>
-      <p>A true detox isn't about locking yourself in a dark room. It's about replacing high-dopamine activities (social media, compulsive habits) with low-dopamine, high-effort activities (reading, walking, deep work).</p>
-      <p>Use StopGoon's urge tracking to identify the specific times of day your brain craves those cheap dopamine hits, and build a proactive routine to counter them.</p>
-    `
-  },
-  'stop-doomscrolling': {
-    title: 'How to Stop Doomscrolling Late at Night',
-    content: `
-      <h2>The Evening Trap</h2>
-      <p>When you are tired, your prefrontal cortex (the part of your brain responsible for willpower) is exhausted. This makes 10 PM to 2 AM the highest-risk window for compulsive habits.</p>
-      <h2>Actionable Fixes</h2>
-      <ul>
-        <li><strong>Physical Distance:</strong> Put your phone charger across the room.</li>
-        <li><strong>The 10-Minute Rule:</strong> Tell yourself you can scroll, but you have to read a physical book for 10 minutes first. Usually, the urge passes.</li>
-        <li><strong>Use the SOS Button:</strong> StopGoon's SOS feature is designed specifically to intercept these late-night urges with guided breathing.</li>
-      </ul>
-    `
-  },
-  'anti-streak-philosophy': {
-    title: 'Why "Don\'t Break the Streak" is Terrible Advice for Addiction Recovery',
-    content: `
-      <h2>The "What the Hell" Effect</h2>
-      <p>If you have a 60-day streak and you relapse, traditional counters drop back to zero. This induces immense shame. Psychologically, your brain says, "Well, the streak is broken, might as well binge."</p>
-      <h2>Days of Growth > Streaks</h2>
-      <p>StopGoon measures <strong>Days of Growth</strong>. If you were clean for 60 days, relapsed once, and then stayed clean for another 10 days, your growth is 70 days, not 10. A single lapse does not erase two months of brain rewiring.</p>
-    `
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
+  if (!post) return { title: 'Article Not Found | StopGoon' }
+  return {
+    title: `${post.title} | StopGoon Blog`,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+    },
   }
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const article = ARTICLES[params.slug]
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const article = getBlogPostBySlug(slug)
+  const related = getRelatedPosts(slug)
 
   if (!article) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Article not found</h1>
-        <Link href="/blog" className="text-indigo-500 hover:underline">Return to Blog</Link>
-      </div>
-    )
+    notFound()
   }
 
   return (
@@ -57,24 +34,149 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <ArrowLeft className="w-5 h-5" />
             <span className="font-semibold">Back to Blog</span>
           </Link>
+          <span className="text-xs font-bold tracking-wider uppercase text-primary bg-primary/10 px-3 py-1 rounded-full">
+            {article.category}
+          </span>
         </div>
       </nav>
 
       <main className="max-w-3xl mx-auto px-6 py-20">
-        <article className="prose prose-invert prose-indigo prose-lg max-w-none">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-8 font-heading leading-tight">
-            {article.title}
-          </h1>
-          <div className="text-muted leading-relaxed" dangerouslySetInnerHTML={{ __html: article.content }} />
+        <article>
+          <header className="mb-12">
+            <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-muted">
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                {article.readingTime}
+              </span>
+              <span>{article.date}</span>
+              <span>By {article.author}</span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 font-heading leading-tight">
+              {article.title}
+            </h1>
+
+            <p className="text-lg text-muted leading-relaxed border-l-4 border-primary/30 pl-4">
+              {article.excerpt}
+            </p>
+
+            <div className="flex flex-wrap gap-2 mt-6">
+              {article.tags.map(tag => (
+                <span key={tag} className="inline-flex items-center gap-1 text-xs text-muted bg-surface border border-border px-2.5 py-1 rounded-full">
+                  <Tag className="w-3 h-3" />
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </header>
+
+          <div
+            className="prose-custom"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+
+          <div className="mt-16 pt-8 border-t border-border/50 text-center">
+            <h3 className="text-2xl font-bold font-heading mb-4">Ready to take control?</h3>
+            <p className="text-muted mb-6 max-w-md mx-auto">
+              Join thousands of people using StopGoon to break compulsive habits and build lasting discipline.
+            </p>
+            <Link
+              href="/register"
+              className="inline-block bg-primary text-white font-bold px-8 py-4 rounded-xl hover:bg-primary-hover transition-colors shadow-lg shadow-primary/25"
+            >
+              Start Your Free Recovery Journey
+            </Link>
+          </div>
         </article>
 
-        <div className="mt-16 pt-8 border-t border-border/50 text-center">
-          <h3 className="text-2xl font-bold font-heading mb-4">Ready to take control?</h3>
-          <Link href="/register" className="inline-block bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">
-            Start Your Free Recovery Journey
-          </Link>
-        </div>
+        {related.length > 0 && (
+          <section className="mt-16 pt-8 border-t border-border/50">
+            <h2 className="text-2xl font-bold font-heading mb-8">Related Articles</h2>
+            <div className="grid sm:grid-cols-2 gap-6">
+              {related.map(post => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group block bg-surface border border-border hover:border-primary/30 rounded-2xl p-6 transition-all hover:shadow-lg"
+                >
+                  <span className="text-xs font-bold tracking-wider uppercase text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                    {post.category}
+                  </span>
+                  <h3 className="text-lg font-bold mt-3 mb-2 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-muted leading-relaxed line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
+
+      <style>{`
+        .prose-custom h2 {
+          font-size: 1.75rem;
+          font-weight: 800;
+          margin-top: 2.5rem;
+          margin-bottom: 1rem;
+          font-family: var(--font-heading);
+          letter-spacing: -0.02em;
+          color: var(--foreground);
+        }
+        .prose-custom h3 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin-top: 2rem;
+          margin-bottom: 0.75rem;
+          font-family: var(--font-heading);
+          color: var(--foreground);
+        }
+        .prose-custom p {
+          margin-bottom: 1.25rem;
+          line-height: 1.8;
+          color: var(--foreground);
+        }
+        .prose-custom ul, .prose-custom ol {
+          margin-bottom: 1.5rem;
+          padding-left: 1.5rem;
+        }
+        .prose-custom li {
+          margin-bottom: 0.5rem;
+          line-height: 1.7;
+          color: var(--foreground);
+        }
+        .prose-custom ul li {
+          list-style-type: disc;
+        }
+        .prose-custom ol li {
+          list-style-type: decimal;
+        }
+        .prose-custom strong {
+          font-weight: 700;
+          color: var(--primary);
+        }
+        .prose-custom blockquote {
+          border-left: 4px solid var(--primary);
+          padding-left: 1.25rem;
+          margin: 2rem 0;
+          font-style: italic;
+          color: var(--muted);
+          font-size: 1.125rem;
+        }
+        .prose-custom a {
+          color: var(--primary);
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+        .prose-custom code {
+          background: var(--surface);
+          padding: 0.2em 0.4em;
+          border-radius: 4px;
+          font-size: 0.875em;
+        }
+      `}</style>
     </div>
   )
 }

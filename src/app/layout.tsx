@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { ViewTransition } from "react";
+import { Manrope, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import PWAInit from "@/components/PWAInit";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
 });
 
@@ -62,7 +63,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
+      className={`${manrope.variable} ${sora.variable} h-full antialiased`}
     >
       <head>
         {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && (
@@ -73,7 +74,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans smooth-ui">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -81,7 +82,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PWAInit />
-          {children}
+          <ViewTransition enter="auto" exit="auto" share="auto">
+            {children}
+          </ViewTransition>
         </ThemeProvider>
       </body>
     </html>

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Zap, ChevronDown, ChevronUp, Check, Wind, Clock, Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 const TRIGGERS = ['Boredom', 'Stress', 'Loneliness', 'Late Night', 'Social Media', 'Anxiety', 'Sadness', 'Anger']
 const EMOTIONS = ['Restless', 'Anxious', 'Numb', 'Frustrated', 'Lonely', 'Tired', 'Overwhelmed']
@@ -41,11 +42,7 @@ export default function UrgeLogger() {
 
   const supabase = createClient()
 
-  useEffect(() => {
-    loadRecentLogs()
-  }, [])
-
-  const loadRecentLogs = async () => {
+  const loadRecentLogs = useCallback(async () => {
     try {
       const { data } = await supabase
         .from('urge_logs')
@@ -56,7 +53,12 @@ export default function UrgeLogger() {
     } catch {
       // silently fail — table might not exist yet
     }
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadRecentLogs()
+  }, [loadRecentLogs])
 
   const handleQuickLog = async () => {
     setIsSaving(true)
@@ -66,7 +68,7 @@ export default function UrgeLogger() {
 
       const { data, error } = await supabase
         .from('urge_logs')
-        .insert({ user_id: user.id, intensity: 5, urge_passed: false })
+        .insert({ user_id: user.id, intensity, urge_passed: false })
         .select()
         .single()
 
@@ -75,7 +77,7 @@ export default function UrgeLogger() {
       setActiveLogId(data.id)
       setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
       setShowSuccess(true)
-      loadRecentLogs()
+      void loadRecentLogs()
     } catch {
       // If table doesn't exist, still show the UI flow
       setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
@@ -133,7 +135,7 @@ export default function UrgeLogger() {
     setSelectedEmotion(null)
     setNotes('')
     setActiveLogId(null)
-    loadRecentLogs()
+    void loadRecentLogs()
   }
 
   // Success / coping state
@@ -160,6 +162,15 @@ export default function UrgeLogger() {
           <Wind className="w-5 h-5" />
           The urge has passed
         </button>
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link href="/dashboard/sos" className="text-center bg-background border border-border rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-surface-hover transition-colors">
+            Open SOS reset
+          </Link>
+          <Link href="/dashboard/journal" className="text-center bg-background border border-border rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-surface-hover transition-colors">
+            Write 1 line journal
+          </Link>
+        </div>
       </div>
     )
   }
