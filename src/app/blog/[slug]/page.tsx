@@ -5,6 +5,7 @@ import { getBlogPostBySlug, getRelatedPosts } from '@/data/blog'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import ReactionButtons from '@/components/blog/ReactionButtons'
 import ArticleQuiz from '@/components/blog/ArticleQuiz'
+import BlogImage from '@/components/blog/BlogImage'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -68,8 +69,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </nav>
 
       {/* Hero Image */}
-      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
-        <img
+      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden bg-gradient-to-br from-primary/10 via-indigo-500/10 to-purple-500/10">
+        <BlogImage
           src={article.image}
           alt={article.title}
           className="w-full h-full object-cover"
@@ -158,7 +159,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   className="group block bg-surface border border-border hover:border-primary/30 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5"
                 >
                   <div className="aspect-[16/9] overflow-hidden">
-                    <img
+                    <BlogImage
                       src={post.image}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

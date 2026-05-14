@@ -81,7 +81,7 @@ const POSTS: BlogPost[] = [
     readingTime: '6 min read',
     author: 'StopGoon Team',
     tags: ['doomscrolling', 'sleep', 'habits', 'phone'],
-    image: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f1?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80',
     quiz: [
       { question: 'What part of your brain is exhausted at night, making willpower harder?', options: ['Cerebellum', 'Prefrontal cortex', 'Amygdala', 'Brain stem'], answer: 1 },
       { question: 'What is the 10-Minute Rule?', options: ['Scroll for 10 more minutes', 'Read a book for 10 minutes before scrolling', 'Sleep for 10 minutes', 'Exercise for 10 minutes'], answer: 1 },

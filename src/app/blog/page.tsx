@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, BookOpen, Search, Clock, Tag, ChevronRight, Sparkles } from 'lucide-react'
 import { getBlogPosts, getCategories } from '@/data/blog'
 import { playClick } from '@/utils/sound'
+import BlogImage from '@/components/blog/BlogImage'
 
 export default function BlogIndexPage() {
   const [search, setSearch] = useState('')
@@ -57,7 +58,7 @@ export default function BlogIndexPage() {
           className="group block relative mb-12 rounded-3xl overflow-hidden border border-border hover:border-primary/30 transition-all hover:shadow-xl hover:shadow-primary/5"
         >
           <div className="aspect-[2/1] md:aspect-[3/1] relative">
-            <img
+            <BlogImage
               src={featured.image}
               alt={featured.title}
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
@@ -143,7 +144,7 @@ export default function BlogIndexPage() {
                 className="group block bg-surface border border-border hover:border-primary/30 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5"
               >
                 <div className="aspect-[16/9] relative overflow-hidden">
-                  <img
+                  <BlogImage
                     src={post.image}
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
