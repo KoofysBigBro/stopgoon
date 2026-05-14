@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ShieldCheck, Lock, TrendingDown, ArrowRight, CheckCircle2, Sparkles, Activity, HeartPulse, Zap, Compass, Users, BadgeCheck } from 'lucide-react'
+import { ShieldCheck, Lock, TrendingDown, ArrowRight, CheckCircle2, Sparkles, Activity, HeartPulse, Zap, Compass, Users, BadgeCheck, Crown, Star } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getVariant } from '@/utils/experiments'
@@ -207,88 +207,96 @@ export default async function LandingPage() {
 
         <section className="py-24 bg-surface border-t border-border px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading">Simple pricing, stronger commitment options.</h2>
-              <p className="text-muted">Start free, then pick monthly, quarterly, or yearly premium based on the level of support you want.</p>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 font-heading tracking-tight">Simple pricing, stronger commitment.</h2>
+              <p className="text-muted text-sm md:text-base">Start free, then unlock premium when you&apos;re ready to go further.</p>
             </div>
 
-            <div className="grid md:grid-cols-4 gap-6">
-              <div className="p-8 rounded-3xl bg-background border border-border flex flex-col">
-                <h3 className="text-xl font-bold mb-2">The Essentials</h3>
-                <div className="flex items-baseline gap-2 mb-6">
-                  <span className="text-4xl font-bold">$0</span>
-                  <span className="text-muted">forever</span>
+            <div className="grid md:grid-cols-4 gap-4">
+              {/* Free Tier */}
+              <div className="rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-border/80 transition-colors group">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-primary/10 p-1.5 rounded-lg">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-sm">Essentials</h3>
                 </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-muted" /> Daily Check-ins</li>
-                  <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-muted" /> Urge Log</li>
-                  <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-muted" /> SOS Reset Button</li>
-                  <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-muted" /> Community Chat</li>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-3xl font-bold">$0</span>
+                  <span className="text-xs text-muted">forever</span>
+                </div>
+                <ul className="space-y-2 mb-5 flex-1">
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Daily Check-ins</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Urge Log</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> SOS Reset Button</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Community Chat</li>
                 </ul>
-                <Link href="/register" transitionTypes={['nav-forward']} className="w-full py-3 rounded-xl border border-border text-center font-bold hover:bg-surface transition-colors">
+                <Link href="/register" className="w-full py-2.5 rounded-xl border border-border text-center text-xs font-bold hover:bg-surface transition-colors">
                   Get Started
                 </Link>
               </div>
 
-              <div className="p-6 rounded-3xl bg-background border border-border flex flex-col">
-                <h3 className="text-lg font-bold mb-2">1 Month Premium</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-bold">$5.99</span>
-                  <span className="text-muted">/month</span>
+              {/* 1 Month Premium */}
+              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-primary/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
+                    <Crown className="w-4 h-4 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-sm">1 Month</h3>
                 </div>
-                <p className="text-sm text-muted mb-6">Flexible access to all premium features.</p>
-                <Link href="/register" transitionTypes={['nav-forward']} className="mt-auto w-full py-3 rounded-xl border border-border text-center font-bold hover:bg-surface transition-colors">
-                  Start Monthly
-                </Link>
-              </div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-2xl font-bold">$5.99</span>
+                  <span className="text-xs text-muted">/month</span>
+                </div>
+                <p className="text-[10px] text-muted mb-4 leading-relaxed">Flexible access to all premium features.</p>
+                <div className="mt-auto flex items-center gap-1.5 text-primary text-xs font-bold">
+                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
 
-              <div className="p-6 rounded-3xl bg-gradient-to-b from-primary/25 to-background border-2 border-primary shadow-xl shadow-primary/20 flex flex-col relative">
-                <div className="absolute top-0 right-6 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+              {/* 3 Months Premium - Highlighted */}
+              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 to-background p-5 flex flex-col shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
+                <div className="absolute -top-2.5 right-4 bg-gradient-to-r from-primary to-indigo-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full">
                   MOST POPULAR
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-primary">3 Months Premium</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-bold">$14.99</span>
-                  <span className="text-muted">/3 months</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-primary/15 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
+                    <Star className="w-4 h-4 text-primary fill-primary" />
+                  </div>
+                  <h3 className="font-bold text-sm text-primary">3 Months</h3>
                 </div>
-                <p className="text-sm text-muted mb-1">Save 17% vs monthly.</p>
-                <Link href="/register" transitionTypes={['nav-forward']} className="mt-auto w-full py-3 rounded-xl bg-primary text-white text-center font-bold hover:bg-primary-hover transition-colors shadow-lg">
-                  Start Quarterly
-                </Link>
-              </div>
+                <div className="flex items-baseline gap-1 mb-0.5">
+                  <span className="text-2xl font-bold">$14.99</span>
+                  <span className="text-xs text-muted">/3 months</span>
+                </div>
+                <p className="text-[10px] text-emerald-500 font-semibold mb-3">Save 17% vs monthly</p>
+                <p className="text-[10px] text-muted mb-4 leading-relaxed flex-1">Best balance of commitment and savings.</p>
+                <div className="flex items-center gap-1.5 text-primary text-xs font-bold">
+                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
 
-              <div className="p-6 rounded-3xl bg-background border border-border flex flex-col relative">
-                <div className="absolute top-0 right-6 -translate-y-1/2 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+              {/* 1 Year Premium */}
+              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-amber-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+                <div className="absolute -top-2.5 right-4 bg-amber-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full">
                   SAVE 30%
                 </div>
-                <h3 className="text-lg font-bold mb-2">1 Year Premium</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-bold">$49.99</span>
-                  <span className="text-muted">/year</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="bg-amber-500/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
+                    <Crown className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <h3 className="font-bold text-sm">1 Year</h3>
                 </div>
-                <p className="text-sm text-muted mb-6">Lowest monthly cost for long-term support.</p>
-                <Link href="/register" transitionTypes={['nav-forward']} className="mt-auto w-full py-3 rounded-xl border border-border text-center font-bold hover:bg-surface transition-colors">
-                  Start Yearly
-                </Link>
-              </div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-2xl font-bold">$49.99</span>
+                  <span className="text-xs text-muted">/year</span>
+                </div>
+                <p className="text-[10px] text-muted mb-4 leading-relaxed flex-1">Lowest monthly cost for long-term support.</p>
+                <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold">
+                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
             </div>
-          </div>
-        </section>
-
-        {/* Premium upgrade CTA */}
-        <section className="px-6 pb-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <Link
-              href="/dashboard/upgrade"
-              className="inline-flex items-center gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-primary/10 via-indigo-500/10 to-accent/10 border border-primary/20 hover:border-primary/40 transition-all group animate-fade-up"
-            >
-              <Sparkles className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
-              <div className="text-left">
-                <p className="text-sm font-bold text-foreground">See everything you get with Premium</p>
-                <p className="text-xs text-muted">AI coaching, predictive warnings, custom SOS, advanced analytics & more</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted group-hover:translate-x-1 transition-transform" />
-            </Link>
           </div>
         </section>
 
