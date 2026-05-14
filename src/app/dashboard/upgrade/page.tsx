@@ -14,7 +14,8 @@ type PlanId = 'monthly' | 'quarterly' | 'yearly';
 const plans = [
   {
     id: 'monthly' as const,
-    name: 'Starter',
+    name: '1 Month — Starter',
+    shortName: 'Starter',
     price: 5.99,
     cadence: '/month',
     badge: null,
@@ -28,7 +29,8 @@ const plans = [
   },
   {
     id: 'quarterly' as const,
-    name: 'Balanced',
+    name: '3 Months — Balanced',
+    shortName: 'Balanced',
     price: 14.99,
     cadence: '/3 months',
     badge: 'Most Popular',
@@ -42,7 +44,8 @@ const plans = [
   },
   {
     id: 'yearly' as const,
-    name: 'Ultimate',
+    name: '1 Year — Ultimate',
+    shortName: 'Ultimate',
     price: 49.99,
     cadence: '/year',
     badge: 'Best Value',
