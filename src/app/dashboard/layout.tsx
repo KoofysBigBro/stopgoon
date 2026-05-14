@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Users, MessageCircle, Sparkles, CalendarCheck2, BookOpen, Crown } from 'lucide-react'
+import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Users, MessageCircle, Sparkles, CalendarCheck2, BookOpen, Crown, Mail } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
@@ -110,8 +110,8 @@ export default async function DashboardLayout({
               <span className="text-sm">Settings</span>
             </Link>
             <a href="mailto:stopgoonsupport@gmail.com" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-sm">Contact Us</span>
+              <Mail className="w-4 h-4" />
+              <span className="text-sm truncate">stopgoonsupport@gmail.com</span>
             </a>
             <form action={handleSignOut} className="md:hidden flex">
               <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
@@ -146,8 +146,8 @@ export default async function DashboardLayout({
               Settings
             </Link>
             <a href="mailto:stopgoonsupport@gmail.com" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
-              <MessageCircle className="w-5 h-5" />
-              Contact Us
+              <Mail className="w-5 h-5" />
+              <span className="truncate">stopgoonsupport@gmail.com</span>
             </a>
           </nav>
           <form action={handleSignOut}>
