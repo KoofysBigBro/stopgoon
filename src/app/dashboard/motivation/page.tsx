@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Sparkles, Plus, Trash2, Quote, Video, Target, Heart } from 'lucide-react'
+import { Sparkles, Plus, Trash2, Quote, Video, Target, Heart, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
 
-// Rotating quotes based on day of the year
 const DAILY_QUOTES = [
   "Discipline is choosing between what you want now and what you want most.",
   "You are not your urges. You are the awareness that observes them.",
@@ -19,11 +18,9 @@ const DAILY_QUOTES = [
   "You don't have to control your thoughts. You just have to stop letting them control you."
 ]
 
-// Rotating YouTube motivational videos (embed URLs)
-// Large pool so we rarely repeat, and params ensure embedding is allowed
-const DAILY_VIDEOS = [
-  { embed: "https://www.youtube.com/embed/tbnzAVRZ9Xc?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=tbnzAVRZ9Xc", title: "David Goggins – Can't Hurt Me" },
-  { embed: "https://www.youtube.com/embed/D1R-jKKp3NA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=D1R-jKKp3NA", title: "You Have to Want It – Motivation" },
+const VIDEOS = [
+  { embed: "https://www.youtube.com/embed/tbnzAVRZ9Xc?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=tbnzAVRZ9Xc", title: "Denzel Washington – Fall Forward" },
+  { embed: "https://www.youtube.com/embed/D1R-jKKp3NA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=D1R-jKKp3NA", title: "Steve Jobs – Stay Hungry, Stay Foolish" },
   { embed: "https://www.youtube.com/embed/pDnOHCpPdNk?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=pDnOHCpPdNk", title: "Discipline Over Motivation" },
   { embed: "https://www.youtube.com/embed/O-cawByg2aA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=O-cawByg2aA", title: "Dopamine Nation – Take Control" },
   { embed: "https://www.youtube.com/embed/q06YIWCR2Js?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=q06YIWCR2Js", title: "How to Build Self-Control" },
@@ -40,14 +37,47 @@ export default function MotivationPage() {
   const [loading, setLoading] = useState(true)
   const [reasons, setReasons] = useState<string[]>([])
   const [newReason, setNewReason] = useState('')
-  const [videoError, setVideoError] = useState(false)
+  const [videoIndex, setVideoIndex] = useState(-1)
+  const [videoFailed, setVideoFailed] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const failTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Determine daily content — use a stable numeric seed so it changes each day
   const today = new Date()
-  // dayIndex: 0-indexed from Unix epoch in days, so it advances exactly at midnight UTC
   const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24))
   const dailyQuote = DAILY_QUOTES[dayIndex % DAILY_QUOTES.length]
-  const dailyVideo = DAILY_VIDEOS[dayIndex % DAILY_VIDEOS.length]
+
+  useEffect(() => {
+    setVideoIndex(dayIndex % VIDEOS.length)
+  }, [dayIndex])
+
+  const currentVideo = videoIndex >= 0 ? VIDEOS[videoIndex] : null
+
+  useEffect(() => {
+    setVideoFailed(false)
+    if (failTimer.current) clearTimeout(failTimer.current)
+    failTimer.current = setTimeout(() => {
+      const iframe = iframeRef.current
+      if (iframe) {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow?.document
+          if (!doc || doc.body?.innerHTML?.includes('unavailable') || doc.body?.innerHTML?.includes('error')) {
+            setVideoFailed(true)
+          }
+        } catch {
+          // cross-origin — can't access, assume it loaded
+        }
+      }
+    }, 8000)
+    return () => { if (failTimer.current) clearTimeout(failTimer.current) }
+  }, [videoIndex])
+
+  const goToPrev = () => {
+    setVideoIndex(i => (i - 1 + VIDEOS.length) % VIDEOS.length)
+  }
+
+  const goToNext = () => {
+    setVideoIndex(i => (i + 1) % VIDEOS.length)
+  }
 
   useEffect(() => {
     loadData()
@@ -194,39 +224,68 @@ export default function MotivationPage() {
 
       {/* Daily Video */}
       <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="flex items-center gap-2 mb-6">
-          <Video className="w-6 h-6 text-red-500" />
-          <div>
-            <h2 className="text-xl font-bold">Daily Motivation Video</h2>
-            <p className="text-sm text-muted">A new video every day to keep your mindset strong.</p>
+        <div className="flex items-center justify-between gap-2 mb-6">
+          <div className="flex items-center gap-2">
+            <Video className="w-6 h-6 text-red-500" />
+            <div>
+              <h2 className="text-xl font-bold">Motivation Video</h2>
+              <p className="text-sm text-muted">Tap "Next" if a video doesn't load properly.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={goToPrev}
+              className="p-2 rounded-lg hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
+              title="Previous video"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="text-xs text-muted font-medium tabular-nums w-12 text-center">
+              {videoIndex + 1} / {VIDEOS.length}
+            </span>
+            <button
+              onClick={goToNext}
+              className="p-2 rounded-lg hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
+              title="Next video"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
         
         <div className="aspect-video w-full rounded-xl overflow-hidden bg-background border border-border shadow-inner relative">
-          {videoError ? (
+          {currentVideo && videoFailed ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background text-center px-6">
               <Video className="w-10 h-10 text-muted" />
-              <p className="text-muted text-sm font-medium">This video can't be embedded directly.</p>
-              <a
-                href={dailyVideo.watch}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors"
-              >
-                Watch on YouTube: {dailyVideo.title}
-              </a>
+              <p className="text-muted text-sm font-medium">This video didn't load properly.</p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href={currentVideo.watch}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Watch on YouTube
+                </a>
+                <button
+                  onClick={goToNext}
+                  className="inline-flex items-center gap-1.5 bg-surface border border-border hover:bg-surface-hover text-foreground px-5 py-2 rounded-xl text-sm font-bold transition-colors"
+                >
+                  Skip to Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          ) : (
+          ) : currentVideo && (
             <iframe
-              key={dailyVideo.embed}
+              key={videoIndex}
+              ref={iframeRef}
               width="100%"
               height="100%"
-              src={dailyVideo.embed}
-              title={dailyVideo.title}
-              frameBorder="0"
+              src={currentVideo.embed}
+              title={currentVideo.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
-              onError={() => setVideoError(true)}
             ></iframe>
           )}
         </div>
