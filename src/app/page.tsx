@@ -36,10 +36,10 @@ export default async function LandingPage() {
             <Link href="/blog" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
               Blog
             </Link>
-            <Link href="/login" transitionTypes={['nav-forward']} className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
+            <Link href="/login" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
               Log in
             </Link>
-            <Link href="/register" transitionTypes={['nav-forward']} className="text-sm font-bold bg-primary text-white px-6 py-2.5 rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
+            <Link href="/register" className="text-sm font-bold bg-primary text-white px-6 py-2.5 rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
               Start Free Trial
             </Link>
           </div>
@@ -67,7 +67,7 @@ export default async function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/register" transitionTypes={['nav-forward']} className="w-full sm:w-auto inline-flex items-center justify-center bg-foreground text-background px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl">
+            <Link href="/register" className="w-full sm:w-auto inline-flex items-center justify-center bg-foreground text-background px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl">
               Start Your Recovery
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
@@ -322,7 +322,7 @@ export default async function LandingPage() {
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Trust-first UX</span>
             </div>
             <div className="mt-8">
-              <Link href="/register" transitionTypes={['nav-forward']} className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5">
+              <Link href="/register" className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5">
                 Create Free Account <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -358,8 +358,8 @@ export default async function LandingPage() {
           </div>
           <div className="flex flex-col md:items-end gap-3 text-sm text-muted font-medium">
             <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
-            <Link href="/privacy" transitionTypes={['nav-forward']} className="hover:text-foreground transition-colors">Privacy Policy</Link>
-            <Link href="/terms" transitionTypes={['nav-forward']} className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
             <Link href="mailto:stopgoonsupport@gmail.com" className="hover:text-foreground transition-colors">Contact Us: stopgoonsupport@gmail.com</Link>
           </div>
         </div>
@@ -372,7 +372,7 @@ export default async function LandingPage() {
         >
           Contact Us: stopgoonsupport@gmail.com
         </Link>
-        <Link href="/register" transitionTypes={['nav-forward']} className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-full shadow-xl shadow-primary/35 transition-all">
+        <Link href="/register" className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-full shadow-xl shadow-primary/35 transition-all">
           Start Free Trial <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

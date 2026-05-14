@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ViewTransition } from "react";
 import { Manrope, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
@@ -84,9 +83,7 @@ export default function RootLayout({
         >
           <PWAInit />
           <Analytics />
-          <ViewTransition enter="auto" exit="auto" share="auto">
-            {children}
-          </ViewTransition>
+          {children}
         </ThemeProvider>
       </body>
     </html>

@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
           <p className="text-muted leading-relaxed mb-8">
             We&apos;ve sent a password reset link to <strong>{email}</strong>.
           </p>
-          <Link href="/login" transitionTypes={['nav-back']} className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">
+          <Link href="/login" className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">
             Return to Login
           </Link>
         </div>
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="w-full bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl animate-fade-up-delay relative">
-          <Link href="/login" transitionTypes={['nav-back']} className="absolute top-5 left-5 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground transition-colors">
+          <Link href="/login" className="absolute top-5 left-5 flex items-center gap-2 text-sm font-semibold text-muted hover:text-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Login
           </Link>
 

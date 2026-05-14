@@ -81,7 +81,7 @@ export default function RegisterPage() {
           <p className="text-muted leading-relaxed mb-8">
             We&apos;ve sent a verification link to <strong>{email}</strong>. Please verify your account to continue.
           </p>
-          <Link href="/login" transitionTypes={['nav-forward']} className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">
+          <Link href="/login" className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">
             Return to Login
           </Link>
         </div>
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
         <div className="w-full bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl animate-fade-up-delay">
         <div className="flex flex-col items-center mb-8 gap-3">
-          <Link href="/" transitionTypes={['nav-back']} className="flex flex-col items-center gap-3 group">
+          <Link href="/" className="flex flex-col items-center gap-3 group">
             <div className="bg-primary/10 p-4 rounded-2xl group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-8 h-8 text-primary" />
             </div>
@@ -206,7 +206,7 @@ export default function RegisterPage() {
 
         <div className="mt-4 text-center text-sm text-muted">
           Already have an account?{' '}
-          <Link href="/login" transitionTypes={['nav-forward']} className="font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
+          <Link href="/login" className="font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
             Sign In instead
           </Link>
         </div>

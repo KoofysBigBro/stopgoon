@@ -86,7 +86,7 @@ export default function LoginPage() {
 
         <div className="w-full bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl animate-fade-up-delay">
         <div className="flex flex-col items-center mb-8 gap-3">
-          <Link href="/" transitionTypes={['nav-back']} className="flex flex-col items-center gap-3 group">
+          <Link href="/" className="flex flex-col items-center gap-3 group">
             <div className="bg-primary/10 p-4 rounded-2xl group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-8 h-8 text-primary" />
             </div>
@@ -125,7 +125,7 @@ export default function LoginPage() {
             <label className="text-sm font-semibold text-foreground" htmlFor="password">
               Password
             </label>
-            <Link href="/forgot-password" transitionTypes={['nav-forward']} className="text-sm font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
+            <Link href="/forgot-password" className="text-sm font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
               Forgot password?
             </Link>
           </div>
@@ -169,7 +169,7 @@ export default function LoginPage() {
 
         <div className="mt-4 text-center text-sm text-muted">
           Don&apos;t have an account?{' '}
-          <Link href="/register" transitionTypes={['nav-forward']} className="font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
+          <Link href="/register" className="font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
             Register instead
           </Link>
         </div>
