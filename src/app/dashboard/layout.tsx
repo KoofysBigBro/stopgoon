@@ -54,71 +54,81 @@ export default async function DashboardLayout({
             <span className="text-xl font-bold tracking-tight text-foreground font-heading">StopGoon</span>
           </Link>
 
-          <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-1 pb-2 md:pb-0 custom-scrollbar">
-              <Link href="/dashboard" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground whitespace-nowrap hover:translate-x-1">
-              <LayoutDashboard className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Dashboard</span>
-            </Link>
-              <Link href="/dashboard/journal" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground whitespace-nowrap hover:translate-x-1">
-              <BookHeart className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Journal</span>
-            </Link>
-              <Link href="/dashboard/sos" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all duration-200 font-medium whitespace-nowrap hover:translate-x-1">
-              <LifeBuoy className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">SOS Mode</span>
-            </Link>
-              <Link href="/dashboard/analytics" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground whitespace-nowrap hover:translate-x-1">
-                <Activity className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base">Analytics</span>
+          <div className="relative md:hidden">
+            <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10" />
+            <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-1 pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none [-webkit-overflow-scrolling:touch] scroll-pl-4 md:scroll-pl-0">
+              {[
+                { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '' },
+                { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '' },
+                { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10' },
+                { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '' },
+                { href: '/dashboard/review', icon: CalendarCheck2, label: 'Weekly Review', cls: '' },
+                { href: '/dashboard/accountability', icon: Users, label: 'Partners', cls: 'text-amber-500 hover:bg-amber-500/10' },
+                { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10' },
+                { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
+                { href: '/blog', icon: BookOpen, label: 'Blog', cls: '' },
+              ].map(item => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`snap-start shrink-0 flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
+                >
+                  <item.icon className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-sm md:text-base">{item.label}</span>
+                  {item.dot && <ChatNotificationDot userId={user.id} />}
+                </Link>
+              ))}
+              {isPremium ? (
+                <div className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
+                  <Crown className="w-4 h-4" />
+                  <span className="text-sm">Premium</span>
+                </div>
+              ) : (
+                <Link href="/dashboard/upgrade" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
+                  <Crown className="w-4 h-4" />
+                  <span className="text-sm">Premium</span>
+                </Link>
+              )}
+              <Link href="/dashboard/settings" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
+                <Settings className="w-4 h-4" />
+                <span className="text-sm">Settings</span>
               </Link>
-              <Link href="/dashboard/review" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground whitespace-nowrap hover:translate-x-1">
-                <CalendarCheck2 className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base">Weekly Review</span>
+              <a href="mailto:stopgoonsupport@gmail.com" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
+                <Mail className="w-4 h-4" />
+                <span className="text-sm truncate">stopgoonsupport@gmail.com</span>
+              </a>
+              <form action={handleSignOut} className="snap-start shrink-0 md:hidden flex">
+                <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Sign out</span>
+                </button>
+              </form>
+            </nav>
+          </div>
+          {/* Desktop nav */}
+          <nav className="hidden md:flex flex-col gap-1 pb-0">
+            {[
+              { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '' },
+              { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '' },
+              { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10' },
+              { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '' },
+              { href: '/dashboard/review', icon: CalendarCheck2, label: 'Weekly Review', cls: '' },
+              { href: '/dashboard/accountability', icon: Users, label: 'Partners', cls: 'text-amber-500 hover:bg-amber-500/10' },
+              { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10' },
+              { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
+              { href: '/blog', icon: BookOpen, label: 'Blog', cls: '' },
+            ].map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span className="text-base">{item.label}</span>
+                {item.dot && <ChatNotificationDot userId={user.id} />}
               </Link>
-              <Link href="/dashboard/accountability" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-amber-500/10 text-amber-500 transition-all duration-200 font-medium whitespace-nowrap hover:translate-x-1">
-                <Users className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-sm md:text-base">Partners</span>
-            </Link>
-              <Link href="/dashboard/motivation" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-amber-500/10 text-amber-500 transition-all duration-200 font-medium whitespace-nowrap hover:translate-x-1">
-              <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Motivation</span>
-            </Link>
-              <Link href="/dashboard/chat" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground relative whitespace-nowrap hover:translate-x-1">
-              <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Community</span>
-              <ChatNotificationDot userId={user.id} />
-            </Link>
-              <Link href="/blog" className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground whitespace-nowrap hover:translate-x-1">
-              <BookOpen className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Blog</span>
-            </Link>
-            {/* Mobile-only settings & logout */}
-            {/* Mobile-only upgrade */}
-            {isPremium ? (
-              <div className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
-                <Crown className="w-4 h-4" />
-                <span className="text-sm">Premium</span>
-              </div>
-            ) : (
-              <Link href="/dashboard/upgrade" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
-                <Crown className="w-4 h-4" />
-                <span className="text-sm">Premium</span>
-              </Link>
-            )}
-            <Link href="/dashboard/settings" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-              <Settings className="w-4 h-4" />
-              <span className="text-sm">Settings</span>
-            </Link>
-            <a href="mailto:stopgoonsupport@gmail.com" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm truncate">stopgoonsupport@gmail.com</span>
-            </a>
-            <form action={handleSignOut} className="md:hidden flex">
-              <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm">Sign out</span>
-              </button>
-            </form>
+            ))}
           </nav>
         </div>
 
