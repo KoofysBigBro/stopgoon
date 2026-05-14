@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Crown, Sparkles, Plus, Trash2, Quote, Video, Target } from 'lucide-react'
-import Link from 'next/link'
+import { Sparkles, Plus, Trash2, Quote, Video, Target, Heart } from 'lucide-react'
+import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
 
 // Rotating quotes based on day of the year
 const DAILY_QUOTES = [
@@ -20,12 +20,18 @@ const DAILY_QUOTES = [
 ]
 
 // Rotating YouTube motivational videos (embed URLs)
+// Large pool so we rarely repeat, and params ensure embedding is allowed
 const DAILY_VIDEOS = [
-  "https://www.youtube.com/embed/tbnzAVRZ9Xc", // David Goggins
-  "https://www.youtube.com/embed/mgmVOuLgEQ0", // Discipline
-  "https://www.youtube.com/embed/wnHW6o8WMas", // Mindset
-  "https://www.youtube.com/embed/1q8yF3p4Bvw", // Dopamine Detox
-  "https://www.youtube.com/embed/4bZquqtFxg0"  // Motivation
+  { embed: "https://www.youtube.com/embed/tbnzAVRZ9Xc?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=tbnzAVRZ9Xc", title: "David Goggins – Can't Hurt Me" },
+  { embed: "https://www.youtube.com/embed/D1R-jKKp3NA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=D1R-jKKp3NA", title: "You Have to Want It – Motivation" },
+  { embed: "https://www.youtube.com/embed/pDnOHCpPdNk?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=pDnOHCpPdNk", title: "Discipline Over Motivation" },
+  { embed: "https://www.youtube.com/embed/O-cawByg2aA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=O-cawByg2aA", title: "Dopamine Nation – Take Control" },
+  { embed: "https://www.youtube.com/embed/q06YIWCR2Js?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=q06YIWCR2Js", title: "How to Build Self-Control" },
+  { embed: "https://www.youtube.com/embed/PZ7lDrwYdZc?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=PZ7lDrwYdZc", title: "Stop Wasting Time – Andrew Huberman" },
+  { embed: "https://www.youtube.com/embed/Kgm_p_LjKQk?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=Kgm_p_LjKQk", title: "Atomic Habits in 12 Minutes" },
+  { embed: "https://www.youtube.com/embed/VlAMvlKKVe8?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=VlAMvlKKVe8", title: "Why Most People Never Change" },
+  { embed: "https://www.youtube.com/embed/ZC29SFMb4MA?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=ZC29SFMb4MA", title: "The Cost of Comfort" },
+  { embed: "https://www.youtube.com/embed/IdTMDpizis8?rel=0&modestbranding=1", watch: "https://www.youtube.com/watch?v=IdTMDpizis8", title: "Jocko Willink – Discipline Equals Freedom" },
 ]
 
 export default function MotivationPage() {
@@ -34,12 +40,14 @@ export default function MotivationPage() {
   const [loading, setLoading] = useState(true)
   const [reasons, setReasons] = useState<string[]>([])
   const [newReason, setNewReason] = useState('')
+  const [videoError, setVideoError] = useState(false)
 
-  // Determine daily content
+  // Determine daily content — use a stable numeric seed so it changes each day
   const today = new Date()
-  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24)
-  const dailyQuote = DAILY_QUOTES[dayOfYear % DAILY_QUOTES.length]
-  const dailyVideo = DAILY_VIDEOS[dayOfYear % DAILY_VIDEOS.length]
+  // dayIndex: 0-indexed from Unix epoch in days, so it advances exactly at midnight UTC
+  const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24))
+  const dailyQuote = DAILY_QUOTES[dayIndex % DAILY_QUOTES.length]
+  const dailyVideo = DAILY_VIDEOS[dayIndex % DAILY_VIDEOS.length]
 
   useEffect(() => {
     loadData()
@@ -95,29 +103,25 @@ export default function MotivationPage() {
           <h1 className="text-4xl font-bold text-amber-500 mb-2 flex items-center justify-center gap-3">
             <Sparkles className="w-8 h-8" /> Premium Motivation
           </h1>
-          <p className="text-xl text-muted">Fuel your recovery with daily insights and your personal "Why".</p>
+          <p className="text-xl text-muted">Fuel your recovery with daily insights and your personal &ldquo;Why&rdquo;.</p>
         </header>
 
-        <div className="bg-surface border-2 border-amber-500/20 rounded-3xl p-10 text-center shadow-lg shadow-amber-500/10 relative overflow-hidden h-[500px]">
-          <div className="absolute inset-0 z-20 backdrop-blur-xl bg-background/70 flex flex-col items-center justify-center p-6 text-center">
-            <Crown className="w-16 h-16 text-amber-400 mb-6 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
-            <h2 className="text-3xl font-bold mb-3 text-foreground">Unlock Your Daily Fuel</h2>
-            <p className="text-muted max-w-md mb-8 text-lg">
-              Get access to curated daily motivation videos, powerful quotes, and a private vision board of your personal reasons to stay clean.
-            </p>
-            <Link href="/dashboard/upgrade" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105">
-              Unlock Premium
-            </Link>
-          </div>
-          
-          {/* Blurred Background Preview */}
-          <div className="opacity-40 pointer-events-none filter blur-sm">
-            <div className="flex gap-6 mb-8">
-              <div className="flex-1 bg-background border rounded-2xl p-6 h-40"></div>
-              <div className="flex-1 bg-background border rounded-2xl p-6 h-40"></div>
+        <div className="h-[500px]">
+          <PremiumCardOverlay
+            title="Unlock Your Daily Fuel"
+            description="Get access to curated daily motivation videos, powerful quotes, and a private vision board of your personal reasons to stay clean."
+            feature="Daily Motivation Hub"
+            icon={<Heart className="w-7 h-7 text-white" />}
+            variant="amber"
+          >
+            <div className="p-6">
+              <div className="flex gap-6 mb-8">
+                <div className="flex-1 bg-background border rounded-2xl p-6 h-40"></div>
+                <div className="flex-1 bg-background border rounded-2xl p-6 h-40"></div>
+              </div>
+              <div className="w-full bg-background border rounded-2xl p-6 h-64"></div>
             </div>
-            <div className="w-full bg-background border rounded-2xl p-6 h-64"></div>
-          </div>
+          </PremiumCardOverlay>
         </div>
       </div>
     )
@@ -198,16 +202,33 @@ export default function MotivationPage() {
           </div>
         </div>
         
-        <div className="aspect-video w-full rounded-xl overflow-hidden bg-background border border-border shadow-inner">
-          <iframe
-            width="100%"
-            height="100%"
-            src={dailyVideo}
-            title="Motivational Video"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+        <div className="aspect-video w-full rounded-xl overflow-hidden bg-background border border-border shadow-inner relative">
+          {videoError ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background text-center px-6">
+              <Video className="w-10 h-10 text-muted" />
+              <p className="text-muted text-sm font-medium">This video can't be embedded directly.</p>
+              <a
+                href={dailyVideo.watch}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors"
+              >
+                Watch on YouTube: {dailyVideo.title}
+              </a>
+            </div>
+          ) : (
+            <iframe
+              key={dailyVideo.embed}
+              width="100%"
+              height="100%"
+              src={dailyVideo.embed}
+              title={dailyVideo.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              onError={() => setVideoError(true)}
+            ></iframe>
+          )}
         </div>
       </div>
     </div>

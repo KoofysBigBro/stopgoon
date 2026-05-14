@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 
-import { Sparkles, Loader2, Lock } from 'lucide-react';
-import Link from 'next/link';
+import { Sparkles, Loader2, Brain } from 'lucide-react';
+import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay';
 
 interface AICoachProps {
   isPremium: boolean;
@@ -40,27 +40,36 @@ export default function AICoach({ isPremium }: AICoachProps) {
     }
   };
 
+  if (!isPremium) {
+    return (
+      <PremiumCardOverlay
+        title="AI Recovery Coach"
+        description="Upgrade to Premium to let our AI analyze your journal entries and urge patterns to give you personalized recovery advice."
+        feature="Personalized AI Guidance"
+        icon={<Brain className="w-7 h-7 text-white" />}
+        variant="indigo"
+      >
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-indigo-500/20 p-2 rounded-xl text-indigo-500">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold font-heading text-indigo-500">StopGoon AI Coach</h2>
+              <p className="text-xs text-muted">Powered by your secure recovery data</p>
+            </div>
+          </div>
+          <div className="w-full py-4 bg-indigo-600/50 text-white rounded-xl font-bold text-center">
+            <Sparkles className="w-4 h-4 inline mr-2" />
+            Generate Weekly Analysis
+          </div>
+        </div>
+      </PremiumCardOverlay>
+    );
+  }
+
   return (
     <div className="bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20 rounded-2xl p-6 shadow-sm relative overflow-hidden min-h-[250px] flex flex-col justify-center">
-      
-      {/* Premium Lock Overlay */}
-      {!isPremium && (
-        <div className="absolute inset-0 z-10 backdrop-blur-sm bg-background/50 flex flex-col items-center justify-center p-6 text-center">
-          <div className="bg-indigo-600 w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/30 mb-4">
-            <Lock className="w-6 h-6 text-white" />
-          </div>
-          <h3 className="text-xl font-bold font-heading mb-2">AI Recovery Coach</h3>
-          <p className="text-sm text-muted max-w-sm mb-6">
-            Upgrade to Premium to let our AI analyze your journal entries and urge patterns to give you personalized recovery advice.
-          </p>
-          <Link 
-            href="/dashboard/upgrade"
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-md transition-colors"
-          >
-            Unlock Premium
-          </Link>
-        </div>
-      )}
 
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-indigo-500/20 p-2 rounded-xl text-indigo-500">
@@ -76,7 +85,7 @@ export default function AICoach({ isPremium }: AICoachProps) {
         <button 
           onClick={handleGenerate}
           disabled={!isPremium}
-          className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/20"
+          className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 active:scale-[0.98]"
         >
           <Sparkles className="w-4 h-4" />
           Generate Weekly Analysis

@@ -1,7 +1,7 @@
 'use client'
 
-import { Crown, Flag, AlertCircle, BookOpen, UserPlus, Play } from 'lucide-react'
-import Link from 'next/link'
+import { Flag, AlertCircle, BookOpen, UserPlus, Play, Sparkles } from 'lucide-react'
+import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
 
 interface TimelineEvent {
   id: string
@@ -19,20 +19,14 @@ interface RecoveryTimelineProps {
 export default function RecoveryTimeline({ isPremium, events }: RecoveryTimelineProps) {
   if (!isPremium) {
     return (
-      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm relative overflow-hidden h-[400px]">
-        <div className="absolute inset-0 z-20 backdrop-blur-md bg-background/60 flex flex-col items-center justify-center p-6 text-center">
-          <Crown className="w-8 h-8 text-amber-400 mb-3" />
-          <h3 className="text-xl font-bold mb-1">Advanced Recovery Timeline</h3>
-          <p className="text-sm text-muted max-w-md mb-4">
-            Visualize your entire journey, spot long-term trends, and see exactly how far you've come.
-          </p>
-          <Link href="/dashboard/upgrade" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md">
-            Unlock Premium
-          </Link>
-        </div>
-        
-        {/* Fake blurred timeline */}
-        <div className="opacity-30 pointer-events-none filter blur-[3px]">
+      <PremiumCardOverlay
+        title="Advanced Recovery Timeline"
+        description="Visualize your entire journey, spot long-term trends, and see exactly how far you've come."
+        feature="Full Journey Visualization"
+        icon={<Sparkles className="w-7 h-7 text-white" />}
+        variant="indigo"
+      >
+        <div className="p-6">
           <h3 className="font-bold text-lg mb-6">Your Journey</h3>
           <div className="space-y-6 pl-4 border-l-2 border-indigo-500/20">
             {[1, 2, 3, 4].map(i => (
@@ -45,7 +39,7 @@ export default function RecoveryTimeline({ isPremium, events }: RecoveryTimeline
             ))}
           </div>
         </div>
-      </div>
+      </PremiumCardOverlay>
     )
   }
 

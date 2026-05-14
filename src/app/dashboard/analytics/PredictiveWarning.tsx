@@ -1,7 +1,8 @@
 'use client'
 
-import { AlertTriangle, Lock, ShieldCheck, TrendingDown, Clock, Crown } from 'lucide-react'
+import { AlertTriangle, ShieldCheck, TrendingDown, Clock, Crown } from 'lucide-react'
 import Link from 'next/link'
+import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
 
 interface PredictiveWarningProps {
   isPremium: boolean
@@ -23,20 +24,14 @@ export default function PredictiveWarning({
   
   if (!isPremium) {
     return (
-      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm relative overflow-hidden mb-8">
-        <div className="absolute inset-0 z-20 backdrop-blur-md bg-background/60 flex flex-col items-center justify-center p-6 text-center">
-          <Crown className="w-8 h-8 text-amber-400 mb-3" />
-          <h3 className="text-lg font-bold mb-1">Predictive Relapse Warnings</h3>
-          <p className="text-sm text-muted max-w-md mb-4">
-            Unlock AI-driven pattern recognition to get warned before you relapse based on your historical data.
-          </p>
-          <Link href="/dashboard/upgrade" className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-md">
-            Unlock Premium
-          </Link>
-        </div>
-        
-        {/* Blurred background content */}
-        <div className="opacity-40 pointer-events-none filter blur-sm">
+      <PremiumCardOverlay
+        title="Predictive Relapse Warnings"
+        description="Unlock AI-driven pattern recognition to get warned before you relapse based on your historical data."
+        feature="AI Risk Detection"
+        icon={<Crown className="w-7 h-7 text-white" />}
+        variant="indigo"
+      >
+        <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -48,7 +43,7 @@ export default function PredictiveWarning({
           </div>
           <p className="text-sm">Based on your history, you usually struggle around Day 7. Be extra careful today.</p>
         </div>
-      </div>
+      </PremiumCardOverlay>
     )
   }
 
@@ -77,7 +72,7 @@ export default function PredictiveWarning({
   }
 
   return (
-    <div className={`border rounded-2xl p-6 shadow-sm mb-8 transition-colors ${riskLevel === 'High' ? 'bg-red-500/5 border-red-500/20' : riskLevel === 'Medium' ? 'bg-amber-500/5 border-amber-500/20' : 'bg-surface border-border'}`}>
+    <div className={`border rounded-2xl p-6 shadow-sm mb-8 transition-all ${riskLevel === 'High' ? 'bg-red-500/5 border-red-500/20 animate-glow-pulse' : riskLevel === 'Medium' ? 'bg-amber-500/5 border-amber-500/20 animate-glow-pulse-amber' : 'bg-surface border-border'}`}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3 mb-2">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${riskBg}`}>
@@ -98,7 +93,7 @@ export default function PredictiveWarning({
       
       {riskLevel !== 'Low' && (
         <div className="mt-4 pt-4 border-t border-border/50">
-          <Link href="/dashboard/sos" className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-bold transition-colors ${riskLevel === 'High' ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-600 dark:text-amber-400'}`}>
+          <Link href="/dashboard/sos" className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${riskLevel === 'High' ? 'bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-600 dark:text-amber-400'}`}>
             Go to SOS Mode
           </Link>
         </div>
