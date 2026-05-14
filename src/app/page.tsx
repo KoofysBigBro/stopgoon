@@ -225,7 +225,7 @@ export default async function LandingPage() {
                   <h3 className="font-bold text-sm">Essentials</h3>
                 </div>
                 <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-3xl font-bold">$0</span>
+                  <span className="text-3xl font-bold">€0</span>
                   <span className="text-xs text-muted">forever</span>
                 </div>
                 <ul className="space-y-2 mb-5 flex-1">
@@ -248,7 +248,7 @@ export default async function LandingPage() {
                   <h3 className="font-bold text-sm">1 Month</h3>
                 </div>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-2xl font-bold">$5.99</span>
+                  <span className="text-2xl font-bold">€5.99</span>
                   <span className="text-xs text-muted">/month</span>
                 </div>
                 <p className="text-[10px] text-muted mb-4 leading-relaxed">Flexible access to all premium features.</p>
@@ -269,7 +269,7 @@ export default async function LandingPage() {
                   <h3 className="font-bold text-sm text-primary">3 Months</h3>
                 </div>
                 <div className="flex items-baseline gap-1 mb-0.5">
-                  <span className="text-2xl font-bold">$14.99</span>
+                  <span className="text-2xl font-bold">€14.99</span>
                   <span className="text-xs text-muted">/3 months</span>
                 </div>
                 <p className="text-[10px] text-emerald-500 font-semibold mb-3">Save 17% vs monthly</p>
@@ -291,7 +291,7 @@ export default async function LandingPage() {
                   <h3 className="font-bold text-sm">1 Year</h3>
                 </div>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-2xl font-bold">$49.99</span>
+                  <span className="text-2xl font-bold">€49.99</span>
                   <span className="text-xs text-muted">/year</span>
                 </div>
                 <p className="text-[10px] text-muted mb-4 leading-relaxed flex-1">Lowest monthly cost for long-term support.</p>

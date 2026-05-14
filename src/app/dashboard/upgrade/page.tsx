@@ -206,7 +206,7 @@ function PlanCard({
 
           <div className="mt-3 flex items-end gap-1">
             <span className={`text-3xl font-bold tracking-tight ${active ? '' : 'text-foreground'}`}>
-              ${plan.price.toFixed(2)}
+              €{plan.price.toFixed(2)}
             </span>
             <span className={`text-xs mb-1 ${active ? 'text-white/70' : 'text-muted'}`}>{plan.cadence}</span>
           </div>
@@ -338,7 +338,7 @@ export default function UpgradePage() {
             <div className="my-4 rounded-xl bg-gradient-to-br from-primary/10 to-indigo-500/10 border border-primary/20 p-4">
               <p className="text-[10px] text-muted uppercase tracking-wider font-bold mb-1">You pay</p>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-bold">${selectedPlanFull.price.toFixed(2)}</span>
+                <span className="text-3xl font-bold">€{selectedPlanFull.price.toFixed(2)}</span>
                 <span className="text-sm text-muted mb-0.5">{selectedPlanFull.cadence}</span>
               </div>
               {selectedPlanFull.savings && (
