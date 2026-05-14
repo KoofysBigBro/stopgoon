@@ -51,26 +51,32 @@ export default function ChatNotificationDot({ userId }: { userId: string }) {
     checkUnread();
 
     // Listen for new messages in real time
-    const channel = supabase
-      .channel('unread-notif')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_messages',
-          filter: 'room_id=eq.global',
-        },
-        (payload) => {
-          if (payload.new && (payload.new as any).user_id !== userId && !isOnChatPage) {
-            setHasUnread(true);
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    try {
+      channel = supabase
+        .channel('unread-notif')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'chat_messages',
+            filter: 'room_id=eq.global',
+          },
+          (payload) => {
+            if (payload.new && (payload.new as any).user_id !== userId && !isOnChatPage) {
+              setHasUnread(true);
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    } catch (e) {
+      console.warn('Failed to subscribe to realtime notifications', e);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      try { if (channel) supabase.removeChannel(channel); } catch {}
     };
   }, [userId, isOnChatPage]);
 

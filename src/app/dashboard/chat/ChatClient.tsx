@@ -164,10 +164,18 @@ export default function ChatClient({
         table: 'chat_messages',
       }, (payload) => {
         setMessages((prev) => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } as ChatMessage : m));
-      })
-      .subscribe();
+      });
 
-    return () => { supabase.removeChannel(channel); };
+    let sub: ReturnType<typeof channel.subscribe> | null = null;
+    try {
+      sub = channel.subscribe();
+    } catch (e) {
+      console.warn('Failed to subscribe to chat realtime', e);
+    }
+
+    return () => {
+      try { if (sub) supabase.removeChannel(channel); } catch {}
+    };
   }, [activeRoom]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
