@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Users, MessageCircle, Sparkles, CalendarCheck2, BookOpen } from 'lucide-react'
+import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Users, MessageCircle, Sparkles, CalendarCheck2, BookOpen, Crown } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
@@ -92,6 +92,10 @@ export default async function DashboardLayout({
               <span className="text-sm md:text-base">Blog</span>
             </Link>
             {/* Mobile-only settings & logout */}
+            <Link href="/dashboard/upgrade" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm">Premium</span>
+            </Link>
             <Link href="/dashboard/settings" className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
               <Settings className="w-4 h-4" />
               <span className="text-sm">Settings</span>
@@ -106,6 +110,13 @@ export default async function DashboardLayout({
         </div>
 
         <div className="hidden md:block p-6 border-t border-border mt-auto">
+          <Link
+            href="/dashboard/upgrade"
+            className="flex items-center gap-3 w-full px-4 py-3 mb-3 rounded-xl bg-gradient-to-r from-primary/20 via-indigo-500/20 to-primary/20 border border-primary/30 hover:border-primary/60 transition-all font-bold text-sm text-primary hover:shadow-lg hover:shadow-primary/10"
+          >
+            <Crown className="w-5 h-5" />
+            Upgrade to Premium
+          </Link>
           <div className="mb-4 truncate text-sm text-muted font-medium">
             {displayName}
           </div>
