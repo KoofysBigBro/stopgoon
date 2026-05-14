@@ -5,9 +5,18 @@ import { redirect } from 'next/navigation'
 import { getVariant } from '@/utils/experiments'
 
 export default async function LandingPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const heroVariant = await getVariant('home_hero', ['focus', 'freedom'] as const, 'focus')
+  let user = null
+  let heroVariant: 'focus' | 'freedom' = 'focus'
+
+  try {
+    const supabase = await createClient()
+    const { data: { user: u } } = await supabase.auth.getUser()
+    user = u
+    const variant = await getVariant('home_hero', ['focus', 'freedom'] as const, 'focus')
+    if (variant === 'focus' || variant === 'freedom') heroVariant = variant
+  } catch {
+    // Supabase unavailable — show public landing page
+  }
 
   if (user) {
     redirect('/dashboard')
