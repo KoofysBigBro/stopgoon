@@ -151,7 +151,7 @@ function PlanCard({
         ref={cardRef}
         onClick={onSelect}
         className={`
-          relative cursor-pointer rounded-2xl border-2 p-6 transition-all duration-300 select-none
+          relative cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 select-none
           ${active
             ? `${plan.borderColor} bg-gradient-to-b ${plan.color.split(' ')[0]}/10 to-background shadow-xl ${plan.shadowColor}`
             : 'border-border/60 bg-surface/50 hover:border-border hover:shadow-md hover:-translate-y-0.5'
@@ -165,7 +165,7 @@ function PlanCard({
         {/* Popular badge */}
         {plan.popular && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-            <div className="inline-flex items-center gap-1 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/30 animate-float-drift">
+            <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/30 animate-float-drift whitespace-nowrap">
               <Star className="w-3 h-3 fill-white" />
               Most Popular
             </div>
@@ -185,51 +185,51 @@ function PlanCard({
         )}
 
         <div className="relative z-10">
-          <div className="flex items-start justify-between gap-3 mb-1">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
                 {plan.badgeLabel && (
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-500'}`}>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${active ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-500'}`}>
                     {plan.badgeLabel}
                   </span>
                 )}
-                <span className="text-xs uppercase tracking-wider text-muted font-bold">{plan.badge}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted font-bold truncate">{plan.badge}</span>
               </div>
-              <h3 className={`text-xl font-heading font-bold mt-1 ${active ? '' : 'text-foreground'}`}>{plan.name}</h3>
+              <h3 className={`text-lg font-heading font-bold truncate ${active ? '' : 'text-foreground'}`}>{plan.name}</h3>
             </div>
             {!plan.popular && (
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${active ? 'border-primary bg-primary' : 'border-border'}`}>
-                {active && <div className="w-2 h-2 rounded-full bg-white" />}
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-2 transition-all ${active ? 'border-primary bg-primary' : 'border-border'}`}>
+                {active && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
               </div>
             )}
           </div>
 
-          <div className="mt-4 flex items-end gap-1">
-            <span className={`text-4xl font-bold tracking-tight ${active ? '' : 'text-foreground'}`}>
+          <div className="mt-3 flex items-end gap-1">
+            <span className={`text-3xl font-bold tracking-tight ${active ? '' : 'text-foreground'}`}>
               ${plan.price.toFixed(2)}
             </span>
-            <span className={`text-sm mb-1 ${active ? 'text-white/70' : 'text-muted'}`}>{plan.cadence}</span>
+            <span className={`text-xs mb-1 ${active ? 'text-white/70' : 'text-muted'}`}>{plan.cadence}</span>
           </div>
           {plan.savings && (
-            <p className={`text-xs mt-1 font-medium ${active ? 'text-emerald-300' : 'text-emerald-500'}`}>
+            <p className={`text-[10px] mt-0.5 font-medium ${active ? 'text-emerald-300' : 'text-emerald-500'}`}>
               {plan.savings}
             </p>
           )}
-          <p className={`text-sm mt-3 leading-relaxed ${active ? 'text-white/80' : 'text-muted'}`}>
+          <p className={`text-xs mt-2 leading-relaxed line-clamp-2 ${active ? 'text-white/80' : 'text-muted'}`}>
             {plan.description}
           </p>
 
           {/* Quick feature highlight */}
-          <div className={`mt-4 pt-4 border-t ${active ? 'border-white/20' : 'border-border'} space-y-1.5`}>
+          <div className={`mt-3 pt-3 border-t ${active ? 'border-white/20' : 'border-border'} space-y-1`}>
             {[
               'AI trigger analysis',
               'Predictive warnings',
               'Custom SOS flows',
               'Advanced analytics',
             ].map((f, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-white/70' : 'text-primary'}`} />
-                <span className={active ? 'text-white/70' : 'text-muted'}>{f}</span>
+              <div key={i} className="flex items-center gap-1.5 text-[11px]">
+                <CheckCircle2 className={`w-3 h-3 shrink-0 ${active ? 'text-white/70' : 'text-primary'}`} />
+                <span className={`truncate ${active ? 'text-white/70' : 'text-muted'}`}>{f}</span>
               </div>
             ))}
           </div>
@@ -315,42 +315,42 @@ export default function UpgradePage() {
         </div>
 
         {/* Selected Plan Summary */}
-        <div className={`animate-stagger-4 rounded-2xl border-2 ${selectedPlanFull.borderColor} bg-gradient-to-b from-background to-primary/5 p-6 flex flex-col shadow-xl relative overflow-hidden`}>
+        <div className={`animate-stagger-4 rounded-2xl border-2 ${selectedPlanFull.borderColor} bg-gradient-to-b from-background to-primary/5 p-5 flex flex-col shadow-xl relative overflow-hidden`}>
           <div className="absolute inset-0 pointer-events-none">
             <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-br ${selectedPlanFull.color} opacity-10 blur-[50px] animate-orbit-drift`} />
           </div>
 
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-1.5 text-primary text-sm font-bold mb-3">
-              <Crown className="w-4 h-4" />
+            <div className="inline-flex items-center gap-1.5 text-primary text-xs font-bold mb-2">
+              <Crown className="w-3.5 h-3.5" />
               Selected Plan
             </div>
-            <h3 className="text-2xl font-bold font-heading">{selectedPlanFull.name}</h3>
-            <p className="text-muted text-sm mt-1">{selectedPlanFull.description}</p>
+            <h3 className="text-xl font-bold font-heading truncate">{selectedPlanFull.name}</h3>
+            <p className="text-muted text-xs mt-0.5 leading-relaxed">{selectedPlanFull.description}</p>
 
             {selectedPlanFull.popular && (
-              <div className="mt-3 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-500 text-xs font-bold">
-                <Star className="w-3 h-3 fill-indigo-500" />
-                Recommended — Best balance of value & commitment
+              <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-500 text-[10px] font-bold">
+                <Star className="w-2.5 h-2.5 fill-indigo-500" />
+                Recommended — Best balance
               </div>
             )}
 
-            <div className="my-6 rounded-xl bg-gradient-to-br from-primary/10 to-indigo-500/10 border border-primary/20 p-5">
-              <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">You pay</p>
+            <div className="my-4 rounded-xl bg-gradient-to-br from-primary/10 to-indigo-500/10 border border-primary/20 p-4">
+              <p className="text-[10px] text-muted uppercase tracking-wider font-bold mb-1">You pay</p>
               <div className="flex items-end gap-2">
-                <span className="text-4xl font-bold">${selectedPlanFull.price.toFixed(2)}</span>
-                <span className="text-base text-muted mb-1">{selectedPlanFull.cadence}</span>
+                <span className="text-3xl font-bold">${selectedPlanFull.price.toFixed(2)}</span>
+                <span className="text-sm text-muted mb-0.5">{selectedPlanFull.cadence}</span>
               </div>
               {selectedPlanFull.savings && (
-                <p className="text-xs font-bold text-emerald-500 mt-1 flex items-center gap-1">
-                  <Zap className="w-3 h-3" />
+                <p className="text-[10px] font-bold text-emerald-500 mt-1 flex items-center gap-1">
+                  <Zap className="w-2.5 h-2.5" />
                   Save 30% vs monthly
                 </p>
               )}
             </div>
 
-            <div className="space-y-2.5 mb-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted mb-3">What&apos;s included</p>
+            <div className="space-y-2 mb-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted mb-2">What&apos;s included</p>
               <FeatureItem text="AI-powered trigger and risk analysis" premium />
               <FeatureItem text="Predictive relapse warnings" premium />
               <FeatureItem text="Custom SOS and guided reset flows" premium />
@@ -362,50 +362,49 @@ export default function UpgradePage() {
             <button
               onClick={handleSubscribe}
               disabled={isLoading}
-              className="relative w-full py-3.5 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-primary via-indigo-600 to-primary bg-[length:200%_auto] animate-shimmer shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden group"
+              className="relative w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-primary via-indigo-600 to-primary bg-[length:200%_auto] animate-shimmer shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden group"
             >
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              <span className="relative z-10 flex items-center justify-center gap-1.5 truncate">
                 {isLoading ? (
                   'Connecting...'
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
-                    Continue with {selectedPlanFull.name}
-                    <ArrowRight className="w-4 h-4" />
+                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Continue with {selectedPlanFull.shortName}</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </>
                 )}
               </span>
             </button>
 
-            <p className="text-[10px] text-center text-muted mt-3">
-              Secure checkout via Lemon Squeezy • 14-day money-back guarantee
+            <p className="text-[9px] text-center text-muted mt-2">
+              Secure checkout via Lemon Squeezy &bull; 14-day money-back guarantee
             </p>
           </div>
         </div>
       </div>
 
       {/* Feature Grid */}
-      <div className="max-w-5xl mx-auto mt-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold">
+      <div className="max-w-5xl mx-auto mt-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold">
             Everything You Get With{' '}
             <span className="premium-glow-text">Premium</span>
           </h2>
-          <p className="text-muted mt-2 text-lg">Six powerful features designed to accelerate your recovery.</p>
+          <p className="text-muted mt-1 text-sm md:text-base">Six powerful features designed to accelerate your recovery.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-3 gap-3">
           {premiumFeatures.map((feat, i) => (
             <div
               key={feat.title}
-              className={`animate-stagger-${i + 1} group relative rounded-2xl border border-border/60 bg-surface/50 p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1`}
+              className={`animate-stagger-${i + 1} group relative rounded-xl border border-border/60 bg-surface/50 p-4 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-0.5`}
             >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-indigo-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <feat.icon className="w-5 h-5 text-primary" />
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-indigo-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <feat.icon className="w-4 h-4 text-primary" />
                 </div>
-                <h3 className="font-bold text-base mb-1">{feat.title}</h3>
-                <p className="text-sm text-muted leading-relaxed">{feat.desc}</p>
+                <h3 className="font-bold text-sm mb-0.5">{feat.title}</h3>
+                <p className="text-xs text-muted leading-relaxed">{feat.desc}</p>
               </div>
             </div>
           ))}
@@ -413,27 +412,27 @@ export default function UpgradePage() {
       </div>
 
       {/* Testimonials */}
-      <div className="max-w-5xl mx-auto mt-16">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-heading font-bold">
+      <div className="max-w-5xl mx-auto mt-12">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold">
             Trusted by the <span className="premium-glow-text">Community</span>
           </h2>
-          <p className="text-muted mt-1">Real results from real members.</p>
+          <p className="text-muted mt-0.5 text-xs md:text-sm">Real results from real members.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-3 gap-3">
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className={`animate-stagger-${i + 1} rounded-2xl border border-border/60 bg-gradient-to-b from-surface/80 to-background p-6`}
+              className={`animate-stagger-${i + 1} rounded-xl border border-border/60 bg-gradient-to-b from-surface/80 to-background p-4`}
             >
-              <Quote className="w-6 h-6 text-primary/30 mb-3" />
-              <p className="text-sm text-foreground leading-relaxed mb-4 italic">
+              <Quote className="w-4 h-4 text-primary/30 mb-2" />
+              <p className="text-xs text-foreground leading-relaxed mb-3 italic line-clamp-3">
                 &ldquo;{t.quote}&rdquo;
               </p>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-bold">{t.name}</span>
-                <span className="text-xs font-bold text-primary flex items-center gap-1">
-                  <Zap className="w-3 h-3" /> {t.streak}
+                <span className="text-xs font-bold">{t.name}</span>
+                <span className="text-[10px] font-bold text-primary flex items-center gap-1">
+                  <Zap className="w-2.5 h-2.5" /> {t.streak}
                 </span>
               </div>
             </div>
@@ -442,11 +441,11 @@ export default function UpgradePage() {
       </div>
 
       {/* Why upgrade section */}
-      <div className="max-w-4xl mx-auto mt-16 rounded-2xl border border-border/60 bg-gradient-to-br from-surface/50 to-background p-8">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-heading font-bold">Why Users Upgrade</h2>
+      <div className="max-w-4xl mx-auto mt-16 rounded-2xl border border-border/60 bg-gradient-to-br from-surface/50 to-background p-6 md:p-8">
+        <div className="text-center mb-6">
+          <h2 className="text-xl md:text-2xl font-heading font-bold">Why Users Upgrade</h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4">
           {[
             {
               icon: Clock,
@@ -471,11 +470,11 @@ export default function UpgradePage() {
             },
           ].map((item, i) => (
             <div key={i} className={`animate-stagger-${i + 1} text-center`}>
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-3`}>
-                <item.icon className={`w-6 h-6 ${item.textColor}`} />
+              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-2`}>
+                <item.icon className={`w-5 h-5 ${item.textColor}`} />
               </div>
-              <h3 className="font-bold mb-1">{item.title}</h3>
-              <p className="text-sm text-muted">{item.desc}</p>
+              <h3 className="font-bold text-sm mb-0.5">{item.title}</h3>
+              <p className="text-xs text-muted leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -498,11 +497,11 @@ export default function UpgradePage() {
 
 function FeatureItem({ text, premium = false }: { text: string; premium?: boolean }) {
   return (
-    <div className="flex items-start gap-3 group">
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${premium ? 'bg-primary/15 group-hover:bg-primary/25' : 'bg-muted/10'}`}>
-        <CheckCircle2 className={`w-3.5 h-3.5 ${premium ? 'text-primary' : 'text-muted'}`} />
+    <div className="flex items-start gap-2 group">
+      <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${premium ? 'bg-primary/15 group-hover:bg-primary/25' : 'bg-muted/10'}`}>
+        <CheckCircle2 className={`w-3 h-3 ${premium ? 'text-primary' : 'text-muted'}`} />
       </div>
-      <span className={`text-sm ${premium ? 'text-foreground' : 'text-muted'}`}>{text}</span>
+      <span className={`text-xs leading-relaxed ${premium ? 'text-foreground' : 'text-muted'}`}>{text}</span>
     </div>
   );
 }
