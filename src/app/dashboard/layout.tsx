@@ -91,7 +91,7 @@ export default async function DashboardLayout({
                 <Settings className="w-4 h-4" />
                 <span className="text-sm">Settings</span>
               </Link>
-            <a href="mailto:stopgoonsupport@gmail.com" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=stopgoonsupport@gmail.com" target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
               <Mail className="w-4 h-4" />
               <span className="text-sm">Contact Support</span>
             </a>
@@ -165,10 +165,11 @@ export default async function DashboardLayout({
               <Settings className="w-5 h-5" />
               Settings
             </Link>
-            <a href="mailto:stopgoonsupport@gmail.com" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=stopgoonsupport@gmail.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
               <Mail className="w-5 h-5 shrink-0" />
               <span className="text-sm">Contact Support</span>
             </a>
+            <div className="px-4 text-[10px] text-muted/50 truncate">stopgoonsupport@gmail.com</div>
           </nav>
           <form action={handleSignOut}>
             <button className="flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
