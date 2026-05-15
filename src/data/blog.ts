@@ -8,6 +8,26 @@ import { content as contentCoachingVsWillpower } from './posts/coaching-vs-willp
 import { content as contentMorningRoutineReset } from './posts/morning-routine-reset'
 import { content as contentShameAndRecovery } from './posts/shame-and-recovery'
 import { content as contentSocialMediaBrain } from './posts/social-media-brain'
+import { content as contentStopPornAtNight } from './posts/stop-porn-at-night'
+import { content as contentPornRelapseGuiltShame } from './posts/porn-relapse-guilt-shame'
+import { content as contentDoomscrollingAnxietyCure } from './posts/doomscrolling-anxiety-cure'
+import { content as contentDigitalDopamineDetox } from './posts/digital-dopamine-detox'
+import { content as contentPornWithdrawalSymptoms } from './posts/porn-withdrawal-symptoms'
+import { content as contentQuitPornForever } from './posts/quit-porn-forever'
+import { content as contentSocialMediaDetoxBenefits } from './posts/social-media-detox-benefits'
+import { content as contentHowToStopMasturbating } from './posts/how-to-stop-masturbating'
+import { content as contentPornBrainFogRecovery } from './posts/porn-brain-fog-recovery'
+import { content as contentNighttimeUrgeSurvival } from './posts/nighttime-urge-survival'
+import { content as contentNofapBenefitsByDay } from './posts/nofap-benefits-by-day'
+import { content as contentBreakPhoneAddiction } from './posts/break-phone-addiction'
+import { content as contentPornTherapyAlternatives } from './posts/porn-therapy-alternatives'
+import { content as contentStopScrollingTiktok } from './posts/stop-scrolling-tiktok'
+import { content as contentRelapseRecoveryTips } from './posts/relapse-recovery-tips'
+import { content as contentDopamineFastingBeginners } from './posts/dopamine-fasting-beginners'
+import { content as contentRebuildAfterRelapse } from './posts/rebuild-after-relapse'
+import { content as contentPornEffectsOnBrain } from './posts/porn-effects-on-brain'
+import { content as contentStopThinkingAboutPorn } from './posts/stop-thinking-about-porn'
+import { content as contentMorningRoutineDiscipline } from './posts/morning-routine-discipline'
 
 export interface BlogPost {
   slug: string
@@ -171,6 +191,246 @@ const POSTS: BlogPost[] = [
     tags: ['social media', 'brain', 'attention', 'neuroscience'],
     image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
     content: contentSocialMediaBrain
+  },
+  {
+    slug: 'stop-porn-at-night',
+    title: '🌙 How to Stop Watching Porn at Night: The Complete Guide',
+    excerpt: 'Nighttime is the highest-risk window for relapse. Learn how to build defenses that protect you when your willpower is lowest.',
+    date: 'July 28, 2026',
+    category: 'Recovery Guides',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['porn', 'night', 'relapse', 'prevention'],
+    image: 'https://images.unsplash.com/photo-1511295726362-88a7675d1e39?w=800&q=80',
+    content: contentStopPornAtNight
+  },
+  {
+    slug: 'porn-relapse-guilt-shame',
+    title: '💔 Porn Relapse Guilt and Shame: How to Break the Cycle',
+    excerpt: 'Shame keeps you stuck in the relapse cycle. Learn how to process guilt without spiraling and get back on track faster.',
+    date: 'August 5, 2026',
+    category: 'Mindset',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['shame', 'guilt', 'relapse', 'psychology'],
+    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80',
+    content: contentPornRelapseGuiltShame
+  },
+  {
+    slug: 'doomscrolling-anxiety-cure',
+    title: '🧠 Doomscrolling Anxiety: The Cure That Actually Works',
+    excerpt: 'Doomscrolling triggers your brain threat detection system. Here is how to break the loop and reduce anxiety naturally.',
+    date: 'August 12, 2026',
+    category: 'Science & Health',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['doomscrolling', 'anxiety', 'brain', 'digital'],
+    image: 'https://images.unsplash.com/photo-1474418397713-6b21ed8a3062?w=800&q=80',
+    content: contentDoomscrollingAnxietyCure
+  },
+  {
+    slug: 'digital-dopamine-detox',
+    title: '⚡ Digital Dopamine Detox: The Complete Beginner Guide',
+    excerpt: 'Reset your brain reward system with a smart dopamine detox. Replace high-stimulus digital habits with meaningful alternatives.',
+    date: 'August 20, 2026',
+    category: 'Practical Habits',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['dopamine', 'detox', 'digital', 'habits'],
+    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80',
+    content: contentDigitalDopamineDetox
+  },
+  {
+    slug: 'porn-withdrawal-symptoms',
+    title: '🏥 Porn Withdrawal Symptoms: What to Expect and How to Cope',
+    excerpt: 'Withdrawal is a sign your brain is healing. Learn the symptoms timeline and proven strategies to manage each one.',
+    date: 'August 28, 2026',
+    category: 'Science & Health',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['withdrawal', 'porn', 'symptoms', 'recovery'],
+    image: 'https://images.unsplash.com/photo-1516534775068-ba3e7458af70?w=800&q=80',
+    content: contentPornWithdrawalSymptoms
+  },
+  {
+    slug: 'quit-porn-forever',
+    title: '🎯 How to Quit Porn Forever: The Identity-Based Approach',
+    excerpt: 'Stop trying to quit porn and start becoming someone who doesn\'t watch it. The identity shift makes permanent change possible.',
+    date: 'September 5, 2026',
+    category: 'Mindset',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['porn', 'quit', 'identity', 'permanent'],
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+    content: contentQuitPornForever
+  },
+  {
+    slug: 'social-media-detox-benefits',
+    title: '🌿 Social Media Detox: 10 Benefits You Will Notice in 7 Days',
+    excerpt: 'A week without social media can lower cortisol by 35% and improve sleep. Here is what happens when you step away.',
+    date: 'September 12, 2026',
+    category: 'Practical Habits',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['social media', 'detox', 'benefits', 'mental health'],
+    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80',
+    content: contentSocialMediaDetoxBenefits
+  },
+  {
+    slug: 'how-to-stop-masturbating',
+    title: '🛑 How to Stop Masturbating: Replace, Don\'t Suppress',
+    excerpt: 'Willpower alone won\'t work. Learn the replacement-based approach that addresses the root cause of compulsive behavior.',
+    date: 'September 20, 2026',
+    category: 'Practical Habits',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['masturbation', 'habits', 'replacement', 'discipline'],
+    image: 'https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?w=800&q=80',
+    content: contentHowToStopMasturbating
+  },
+  {
+    slug: 'porn-brain-fog-recovery',
+    title: '🧠 Porn Brain Fog Recovery: Timeline and Healing Strategies',
+    excerpt: 'Brain fog during recovery is caused by dopamine receptor downregulation. Here is how long it lasts and how to speed it up.',
+    date: 'September 28, 2026',
+    category: 'Science & Health',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['brain fog', 'porn', 'recovery', 'focus'],
+    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80',
+    content: contentPornBrainFogRecovery
+  },
+  {
+    slug: 'nighttime-urge-survival',
+    title: '🌙 Nighttime Urge Survival Guide: Defend Your Recovery After Dark',
+    excerpt: 'The 10 PM danger zone is real. Build a nighttime protocol that intercepts urges before they control you.',
+    date: 'October 5, 2026',
+    category: 'Recovery Guides',
+    readingTime: '5 min read',
+    author: 'StopGoon Team',
+    tags: ['night', 'urges', 'survival', 'routine'],
+    image: 'https://images.unsplash.com/photo-1511295726362-88a7675d1e39?w=800&q=80',
+    content: contentNighttimeUrgeSurvival
+  },
+  {
+    slug: 'nofap-benefits-by-day',
+    title: '📈 NoFap Benefits by Day: What to Expect at Each Stage',
+    excerpt: 'A complete timeline of NoFap benefits from day 1 to day 90. Know what to expect and when to expect it.',
+    date: 'October 12, 2026',
+    category: 'Recovery Guides',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['nofap', 'benefits', 'timeline', 'recovery'],
+    image: 'https://images.unsplash.com/photo-1470468969717-61d5d54fd036?w=800&q=80',
+    content: contentNofapBenefitsByDay
+  },
+  {
+    slug: 'break-phone-addiction',
+    title: '📱 How to Break Phone Addiction: A Practical 5-Step Plan',
+    excerpt: 'Your phone is engineered by attention economists. Here is how to take back control without going off the grid.',
+    date: 'October 20, 2026',
+    category: 'Practical Habits',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['phone', 'addiction', 'screentime', 'digital'],
+    image: 'https://images.unsplash.com/photo-1597517697688-7e6a1dd5e8f0?w=800&q=80',
+    content: contentBreakPhoneAddiction
+  },
+  {
+    slug: 'porn-therapy-alternatives',
+    title: '💊 Porn Addiction Therapy Alternatives: Help When You Can\'t Afford a Therapist',
+    excerpt: 'Not everyone has access to a CSAT. Here are evidence-based alternatives including AI coaching and peer support.',
+    date: 'October 28, 2026',
+    category: 'Recovery Guides',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['therapy', 'alternatives', 'coaching', 'support'],
+    image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80',
+    content: contentPornTherapyAlternatives
+  },
+  {
+    slug: 'stop-scrolling-tiktok',
+    title: '📱 How to Stop Scrolling TikTok: Break the Short-Form Loop',
+    excerpt: 'TikTok uses variable reward schedules like slot machines. Here is how to break free from short-form content addiction.',
+    date: 'November 5, 2026',
+    category: 'Practical Habits',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['tiktok', 'scrolling', 'addiction', 'attention'],
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
+    content: contentStopScrollingTiktok
+  },
+  {
+    slug: 'relapse-recovery-tips',
+    title: '🔄 Relapse Recovery Tips: What to Do in the First 24 Hours',
+    excerpt: 'A relapse is not a failure — it\'s data. Follow this proven protocol to bounce back stronger than before.',
+    date: 'November 12, 2026',
+    category: 'Mindset',
+    readingTime: '5 min read',
+    author: 'StopGoon Team',
+    tags: ['relapse', 'recovery', 'tips', 'mindset'],
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+    content: contentRelapseRecoveryTips
+  },
+  {
+    slug: 'dopamine-fasting-beginners',
+    title: '⚡ Dopamine Fasting for Beginners: The 24-Hour Reset Guide',
+    excerpt: 'A complete guide to your first dopamine fast. Reset your reward system and rediscover the pleasure of simple activities.',
+    date: 'November 20, 2026',
+    category: 'Science & Health',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['dopamine', 'fasting', 'reset', 'beginners'],
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+    content: contentDopamineFastingBeginners
+  },
+  {
+    slug: 'rebuild-after-relapse',
+    title: '🏗️ How to Rebuild After a Relapse: Stronger Than Before',
+    excerpt: 'You don\'t start from zero after a relapse. Your brain rewiring doesn\'t disappear overnight. Here is how to rebuild smarter.',
+    date: 'November 28, 2026',
+    category: 'Mindset',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['rebuild', 'relapse', 'recovery', 'progress'],
+    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80',
+    content: contentRebuildAfterRelapse
+  },
+  {
+    slug: 'porn-effects-on-brain',
+    title: '🧠 Porn Addiction Effects on the Brain: The Neuroscience Explained',
+    excerpt: 'Porn changes your dopamine receptors, prefrontal cortex, and reward pathway. Here is the science of what happens — and how to heal.',
+    date: 'December 5, 2026',
+    category: 'Science & Health',
+    readingTime: '9 min read',
+    author: 'StopGoon Team',
+    tags: ['porn', 'brain', 'neuroscience', 'addiction'],
+    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80',
+    content: contentPornEffectsOnBrain
+  },
+  {
+    slug: 'stop-thinking-about-porn',
+    title: '🧠 How to Stop Thinking About Porn: The Redirection Method',
+    excerpt: 'Suppressing thoughts makes them stronger. Learn the science-backed redirection technique that weakens intrusive thoughts.',
+    date: 'December 12, 2026',
+    category: 'Mindset',
+    readingTime: '5 min read',
+    author: 'StopGoon Team',
+    tags: ['thoughts', 'intrusive', 'redirect', 'psychology'],
+    image: 'https://images.unsplash.com/photo-1499710631859-2f0ab7d7e1ef?w=800&q=80',
+    content: contentStopThinkingAboutPorn
+  },
+  {
+    slug: 'morning-routine-discipline',
+    title: '☀️ The Morning Routine for Unbreakable Self Discipline',
+    excerpt: 'Win the morning, win the day. A science-backed 20-minute morning routine that primes your brain for discipline.',
+    date: 'December 20, 2026',
+    category: 'Practical Habits',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['morning', 'routine', 'discipline', 'habits'],
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+    content: contentMorningRoutineDiscipline
   }
 ]
 
