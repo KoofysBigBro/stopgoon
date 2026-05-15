@@ -91,10 +91,10 @@ export default async function DashboardLayout({
                 <Settings className="w-4 h-4" />
                 <span className="text-sm">Settings</span>
               </Link>
-              <a href="mailto:stopgoonsupport@gmail.com" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-                <Mail className="w-4 h-4" />
-                <span className="text-sm truncate">stopgoonsupport@gmail.com</span>
-              </a>
+            <a href="mailto:stopgoonsupport@gmail.com" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
+              <Mail className="w-4 h-4" />
+              <span className="text-sm">Contact Support</span>
+            </a>
               <form action={handleSignOut} className="snap-start shrink-0 md:hidden flex">
                 <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
                   <LogOut className="w-4 h-4" />
@@ -166,8 +166,8 @@ export default async function DashboardLayout({
               Settings
             </Link>
             <a href="mailto:stopgoonsupport@gmail.com" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
-              <Mail className="w-5 h-5" />
-              <span className="truncate">stopgoonsupport@gmail.com</span>
+              <Mail className="w-5 h-5 shrink-0" />
+              <span className="text-sm">Contact Support</span>
             </a>
           </nav>
           <form action={handleSignOut}>
