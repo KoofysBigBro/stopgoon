@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { ShieldCheck, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'StopGoon terms of service — the rules and guidelines for using our platform.',
+}
 
 export default function TermsOfService() {
   return (

@@ -80,24 +80,15 @@ export default function SettingsPage() {
   }, [loadSettings])
 
   useEffect(() => {
-    const sizes: Record<string, string> = { normal: '16px', large: '18px', xlarge: '20px' }
-    document.documentElement.style.fontSize = sizes[fontScale] || '16px'
+    document.documentElement.setAttribute('data-font-scale', fontScale)
   }, [fontScale])
 
   useEffect(() => {
-    if (motion === 'reduced') {
-      document.documentElement.classList.add('reduced-motion')
-    } else {
-      document.documentElement.classList.remove('reduced-motion')
-    }
+    document.documentElement.setAttribute('data-motion', motion)
   }, [motion])
 
   useEffect(() => {
-    if (highContrast) {
-      document.documentElement.classList.add('high-contrast')
-    } else {
-      document.documentElement.classList.remove('high-contrast')
-    }
+    document.documentElement.setAttribute('data-high-contrast', String(highContrast))
   }, [highContrast])
 
   const saveSetting = async (field: string, value: string | boolean) => {

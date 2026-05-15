@@ -1,17 +1,24 @@
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { createClient } from '@/utils/supabase/server';
+import { rateLimit } from '@/utils/rate-limit';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || 'unknown'
+    const { allowed, remaining } = rateLimit(`ai-coach:${ip}`, 20, 60000)
+    if (!allowed) {
+      return new Response('Too Many Requests', { status: 429, headers: { 'Retry-After': '60', 'X-RateLimit-Remaining': '0' } })
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      return new Response('Unauthorized', { status: 401 });
+      return new Response('Unauthorized', { status: 401, headers: { 'Content-Type': 'text/plain' } });
     }
 
     // Check if user is premium
@@ -22,7 +29,7 @@ export async function POST(req: Request) {
       .single();
 
     if (profile?.subscription_tier !== 'premium') {
-      return new Response('Premium Required', { status: 403 });
+      return new Response('Premium Required', { status: 403, headers: { 'Content-Type': 'text/plain' } });
     }
 
     // Fetch user's recent data for the AI to analyze
@@ -64,6 +71,6 @@ export async function POST(req: Request) {
     return Response.json({ text });
   } catch (error: any) {
     console.error('AI Coach Error:', error);
-    return new Response(error.message || 'Internal Server Error', { status: 500 });
+    return new Response('Internal Server Error', { status: 500, headers: { 'Content-Type': 'text/plain' } });
   }
 }

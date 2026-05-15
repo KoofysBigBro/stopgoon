@@ -23,6 +23,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://stopgoon.xyz'),
   title: {
     default: "StopGoon - Overcome Addiction & Build Discipline",
     template: "%s | StopGoon"
@@ -38,6 +39,7 @@ export const metadata: Metadata = {
     title: "StopGoon - Overcome Addiction & Build Discipline",
     description: "A recovery platform that helps you break compulsive habits and build a disciplined life.",
     siteName: "StopGoon",
+    images: [{ url: "/icon.svg", width: 512, height: 512 }],
   },
   twitter: {
     card: "summary_large_image",

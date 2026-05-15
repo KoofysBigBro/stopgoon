@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { ShieldCheck, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'StopGoon privacy policy — how we collect, use, and protect your data.',
+}
 
 export default function PrivacyPolicy() {
   return (

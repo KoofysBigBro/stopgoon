@@ -47,7 +47,7 @@ export default function UpdatePasswordPage() {
       <div className="absolute top-16 -left-20 w-[340px] h-[340px] bg-primary/20 blur-[90px] pointer-events-none rounded-full" />
       <div className="absolute bottom-8 -right-16 w-[280px] h-[280px] bg-accent/15 blur-[80px] pointer-events-none rounded-full" />
 
-      <div className="w-full max-w-[420px] bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl relative z-10 animate-fade-up">
+      <div className="w-full max-w-sm bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl relative z-10 animate-fade-up">
         <div className="flex flex-col items-center mb-8 gap-3">
           <div className="bg-primary/10 p-4 rounded-2xl">
             <ShieldCheck className="w-8 h-8 text-primary" />

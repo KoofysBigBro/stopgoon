@@ -1,6 +1,11 @@
-import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Refund Policy',
+  description: 'StopGoon refund policy — our 7-day money-back guarantee terms.',
+};
 
 export default function RefundPage() {
   return (

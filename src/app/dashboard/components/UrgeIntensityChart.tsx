@@ -53,8 +53,8 @@ export default function UrgeIntensityChart() {
       }
 
       setData(last7Days.map(d => ({ date: d.date, intensity: d.intensity })))
-    } catch {
-      // fallback to empty chart
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load urge data:', e)
     }
   }
   return (

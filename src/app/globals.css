@@ -3,15 +3,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f3f5ef;
+  --background: #f7f8f5;
   --foreground: #122226;
-  --surface: #fcfcf8;
-  --surface-hover: #f0f4ea;
-  --border: #d6dfd1;
+  --surface: #fcfcf9;
+  --surface-hover: #f0f2ed;
+  --border: #dde1d9;
   --primary: #0b8f75;
   --primary-hover: #087b65;
   --accent: #f59e0b;
-  --muted: #4f6765;
+  --muted: #5c7375;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
   --shadow-md: 0 10px 30px -18px rgb(0 0 0 / 0.35);
   --motion-fast: 180ms;
@@ -75,11 +75,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@keyframes slow-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-14px); }
-}
-
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -132,10 +127,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-fade-up-delay {
   animation: fade-up var(--motion-slow) var(--ease-standard) 120ms both;
-}
-
-.animate-float-slow {
-  animation: slow-float 5.5s ease-in-out infinite;
 }
 
 .animate-float-drift {
@@ -208,7 +199,6 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-up-delay,
-  .animate-float-slow,
   .animate-float-drift,
   .animate-glow-pulse,
   .animate-glow-pulse-amber,
@@ -226,23 +216,30 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.reduced-motion,
-.reduced-motion * {
+[data-font-scale="large"] {
+  font-size: 18px;
+}
+[data-font-scale="xlarge"] {
+  font-size: 20px;
+}
+
+[data-motion="reduced"],
+[data-motion="reduced"] * {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
 
-.high-contrast {
+[data-high-contrast="true"] {
   --foreground: #000000;
 }
-.dark.high-contrast {
+.dark[data-high-contrast="true"] {
   --foreground: #ffffff;
 }
-.high-contrast p,
-.high-contrast span,
-.high-contrast label,
-.high-contrast li {
+[data-high-contrast="true"] p,
+[data-high-contrast="true"] span,
+[data-high-contrast="true"] label,
+[data-high-contrast="true"] li {
   color: var(--foreground) !important;
   opacity: 1 !important;
 }

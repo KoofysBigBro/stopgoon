@@ -2,9 +2,16 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { setupLemonSqueezy } from '@/utils/billing';
 import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
+import { rateLimit } from '@/utils/rate-limit';
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const { allowed } = rateLimit(`checkout:${ip}`, 5, 60000)
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too Many Requests' }, { status: 429, headers: { 'Retry-After': '60' } })
+    }
+
     const body = await request.json().catch(() => ({}));
     const requestedPlan = typeof body?.plan === 'string' ? body.plan : 'monthly';
 

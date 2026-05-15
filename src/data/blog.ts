@@ -1,3 +1,14 @@
+import { content as contentDopamineDetoxGuide } from './posts/dopamine-detox-guide'
+import { content as contentStopDoomscrolling } from './posts/stop-doomscrolling'
+import { content as contentAntiStreakPhilosophy } from './posts/anti-streak-philosophy'
+import { content as contentBuildingSelfDiscipline } from './posts/building-self-discipline'
+import { content as contentUnderstandingRelapseTriggers } from './posts/understanding-relapse-triggers'
+import { content as contentPornRecoveryRoadmap } from './posts/porn-recovery-roadmap'
+import { content as contentCoachingVsWillpower } from './posts/coaching-vs-willpower'
+import { content as contentMorningRoutineReset } from './posts/morning-routine-reset'
+import { content as contentShameAndRecovery } from './posts/shame-and-recovery'
+import { content as contentSocialMediaBrain } from './posts/social-media-brain'
+
 export interface BlogPost {
   slug: string
   title: string
@@ -27,50 +38,7 @@ const POSTS: BlogPost[] = [
       { question: 'What is dopamine really responsible for?', options: ['Pleasure', 'Motivation', 'Sleep', 'Memory'], answer: 1 },
       { question: 'What should you do instead of just removing bad habits?', options: ['Nothing', 'Replace with low-dopamine activities', 'Sleep more', 'Take pills'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">💡</span>
-        <span><strong>Key Insight:</strong> Your brain isn't broken — it's just adapted to your environment. You can rewire it.</span>
-      </div>
-
-      <h2>The Science of Dopamine 🧪</h2>
-      <p>Dopamine is not the "pleasure" molecule—it is the <strong>"motivation" molecule</strong>. When you constantly flood your brain with cheap dopamine from doomscrolling, your baseline drops. This is why you feel unmotivated to do difficult tasks.</p>
-      <p>Every time you scroll social media, check notifications, or engage in compulsive habits, your brain releases a small amount of dopamine. Over time, your receptors downregulate—meaning you need more stimulation just to feel normal. This is the neurological basis of addiction.</p>
-
-      <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">🔥 Did You Know?</p>
-        <p class="text-muted">Your brain releases more dopamine from <em>anticipating</em> a reward than from actually receiving it. That's why scrolling feels so addictive before you even start.</p>
-      </div>
-
-      <h2>How to Detox Correctly ✅</h2>
-      <p>A true detox isn't about locking yourself in a dark room. It's about replacing high-dopamine activities (social media, compulsive habits) with low-dopamine, high-effort activities (reading, walking, deep work).</p>
-      <p>Here is a step-by-step approach:</p>
-      <ul>
-        <li><strong>Identify your triggers.</strong> Use StopGoon's urge tracking to identify the specific times of day your brain craves those cheap dopamine hits.</li>
-        <li><strong>Create friction.</strong> Remove apps from your home screen. Use grayscale mode. Put your phone in another room during deep work.</li>
-        <li><strong>Replace, don't remove.</strong> For every high-dopamine habit you cut, add a low-dopamine alternative. Reading, meditation, or a walk.</li>
-        <li><strong>Start with 24 hours.</strong> A single day of abstinence can begin the resensitization process. Notice how your motivation returns.</li>
-      </ul>
-
-      <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">📝 Your Turn</p>
-        <p class="text-muted mb-3">Think about one high-dopamine habit you could replace today. Write it down:</p>
-        <div class="flex items-center gap-3 text-sm">
-          <span class="text-2xl">➡️</span>
-          <span class="italic text-muted">"I will replace ______ with ______ for the next 24 hours."</span>
-        </div>
-      </div>
-
-      <blockquote>
-        "The opposite of addiction is not sobriety. It is connection." — Johann Hari
-      </blockquote>
-
-      <h2>Common Mistakes ⚠️</h2>
-      <p>Most people fail at dopamine detox because they treat it as punishment. They remove all pleasurable activities and then wonder why they relapse hard after a few days. A sustainable detox replaces high-intensity dopamine sources with medium-intensity, meaningful ones.</p>
-
-      <h2>Tracking Your Progress 📈</h2>
-      <p>Use the <strong>Days of Growth</strong> metric in StopGoon rather than streak counting. If you were clean for 60 days, relapsed once, and then stayed clean for another 10 days, your growth is 70 days—not 10. This science-backed approach prevents the "What the Hell" effect that destroys traditional streaks.</p>
-    `
+    content: contentDopamineDetoxGuide
   },
   {
     slug: 'stop-doomscrolling',
@@ -86,50 +54,7 @@ const POSTS: BlogPost[] = [
       { question: 'What part of your brain is exhausted at night, making willpower harder?', options: ['Cerebellum', 'Prefrontal cortex', 'Amygdala', 'Brain stem'], answer: 1 },
       { question: 'What is the 10-Minute Rule?', options: ['Scroll for 10 more minutes', 'Read a book for 10 minutes before scrolling', 'Sleep for 10 minutes', 'Exercise for 10 minutes'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">🌙</span>
-        <span><strong>Evening Ritual:</strong> Your phone belongs in another room. Your mind belongs to you.</span>
-      </div>
-
-      <h2>The Evening Trap 🪤</h2>
-      <p>When you are tired, your prefrontal cortex (the part of your brain responsible for willpower) is exhausted. This makes 10 PM to 2 AM the highest-risk window for compulsive habits.</p>
-      <p>Your brain craves stimulation precisely when it needs rest the most. This is not a character flaw—it is basic neuroscience. Understanding this removes shame and lets you build systems instead.</p>
-
-      <div class="bg-gradient-to-br from-sky-500/10 to-blue-500/10 border border-sky-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">💤 The 10-3-2-1 Rule</p>
-        <ul class="space-y-2 text-sm">
-          <li><strong>10 hours</strong> before bed — no more caffeine</li>
-          <li><strong>3 hours</strong> before bed — no more food</li>
-          <li><strong>2 hours</strong> before bed — no more work</li>
-          <li><strong>1 hour</strong> before bed — no more screens</li>
-        </ul>
-      </div>
-
-      <h2>Why Late Night Scrolling is Especially Damaging 📱</h2>
-      <p>Blue light from screens suppresses melatonin production, making it harder to fall asleep. But the real damage is psychological: late-night doomscrolling floods your brain with anxiety-inducing content right before bed, leading to poor sleep quality and a stressed nervous system the next day.</p>
-
-      <h2>Actionable Fixes 🛠️</h2>
-      <ul>
-        <li><strong>Physical Distance:</strong> Put your phone charger across the room. Buy a dedicated alarm clock.</li>
-        <li><strong>The 10-Minute Rule:</strong> Tell yourself you can scroll, but you have to read a physical book for 10 minutes first. Usually, the urge passes.</li>
-        <li><strong>Use the SOS Button:</strong> StopGoon's SOS feature is designed specifically to intercept these late-night urges with guided breathing and grounding exercises.</li>
-        <li><strong>Set a digital sunset:</strong> Choose a time (e.g., 9 PM) after which you do not consume any short-form content. Read books or listen to podcasts instead.</li>
-      </ul>
-
-      <blockquote>
-        "Sleep is the single most effective thing we can do to reset our brain and body health each day." — Matthew Walker
-      </blockquote>
-
-      <h2>Build a Night Routine 🌟</h2>
-      <p>The key to stopping doomscrolling is not willpower—it is a compelling alternative. Design a wind-down routine that you actually look forward to:</p>
-      <ul>
-        <li>Dim the lights at least 30 minutes before bed</li>
-        <li>Journal about your day (use StopGoon's journal feature)</li>
-        <li>Read fiction (not self-help—give your brain a break)</li>
-        <li>Light stretching or breathing exercises</li>
-      </ul>
-    `
+    content: contentStopDoomscrolling
   },
   {
     slug: 'anti-streak-philosophy',
@@ -145,47 +70,7 @@ const POSTS: BlogPost[] = [
       { question: 'What is the "What the Hell" effect?', options: ['A hangover', 'Binging after a lapse because the streak is broken', 'A sleep disorder', 'A type of meditation'], answer: 1 },
       { question: 'What does StopGoon measure instead of streaks?', options: ['Hours online', 'Days of Growth', 'Calories burned', 'Pages read'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">💪</span>
-        <span><strong>Mindset Shift:</strong> Progress isn't a straight line. It's a spiral — you keep coming back to the same lessons, but higher.</span>
-      </div>
-
-      <h2>The "What the Hell" Effect 😤</h2>
-      <p>If you have a 60-day streak and you relapse, traditional counters drop back to zero. This induces immense shame. Psychologically, your brain says, "Well, the streak is broken, might as well binge."</p>
-      <p>This phenomenon, known as the <strong>"What the Hell" effect</strong>, has been documented extensively in addiction research. It is the single biggest reason why traditional streak counters fail for long-term recovery.</p>
-
-      <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">📊 The Math of Growth</p>
-        <p class="text-muted">60 days clean + 1 relapse + 10 days clean = <strong class="text-primary text-xl">70 days of growth</strong>. Not 10. Your brain doesn't unlearn 60 days of rewiring overnight.</p>
-      </div>
-
-      <h2>Why Streaks Work for Some Things 🏋️</h2>
-      <p>Streaks are effective for positive habit formation—like going to the gym or studying daily. But addiction recovery is fundamentally different. Addiction involves shame cycles, and streak counters amplify those cycles.</p>
-
-      <h2>Days of Growth > Streaks 🌱</h2>
-      <p>StopGoon measures <strong>Days of Growth</strong>. If you were clean for 60 days, relapsed once, and then stayed clean for another 10 days, your growth is 70 days, not 10. A single lapse does not erase two months of brain rewiring.</p>
-      <p>This approach is backed by relapse prevention research. When you track growth instead of streaks:</p>
-      <ul>
-        <li>Shame decreases, making it easier to get back on track</li>
-        <li>You recognize that progress is not linear</li>
-        <li>Each lapse becomes a learning opportunity, not a catastrophic failure</li>
-        <li>Your long-term motivation stays higher</li>
-      </ul>
-
-      <blockquote>
-        "Fall seven times, stand up eight." — Japanese Proverb
-      </blockquote>
-
-      <h2>How to Implement This Today 🎯</h2>
-      <p>If you are using a traditional streak counter right now, here is what I recommend:</p>
-      <ol>
-        <li>Stop looking at your streak number every day</li>
-        <li>Start tracking your overall growth percentage</li>
-        <li>When you lapse, ask "What can I learn?" instead of "How could I be so weak?"</li>
-        <li>Use StopGoon's analytics to see your long-term trend, not your daily binary pass/fail</li>
-      </ol>
-    `
+    content: contentAntiStreakPhilosophy
   },
   {
     slug: 'building-self-discipline',
@@ -201,39 +86,7 @@ const POSTS: BlogPost[] = [
       { question: 'What comes first — motivation or action?', options: ['Motivation', 'Action', 'They come together', 'Neither'], answer: 1 },
       { question: 'How long should a new habit take to start?', options: ['30 minutes', 'Under 2 minutes', '1 hour', 'As long as needed'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">⚡</span>
-        <span><strong>Truth Bomb:</strong> Motivation follows action, not the other way around. Start before you feel ready.</span>
-      </div>
-
-      <h2>Motivation is a Trap 🎯</h2>
-      <p>Most people wait to feel motivated before taking action. This is backwards. Motivation follows action, not the other way around. The key to self-discipline is building systems that work regardless of how you feel.</p>
-
-      <h2>The Discipline Stack 🏗️</h2>
-      <p>Think of discipline as a stack of habits that reinforce each other. Here is the framework:</p>
-
-      <h3>Layer 1: Environment Design 🏠</h3>
-      <p>Your environment shapes your behavior more than your willpower ever will. If your phone is next to your bed, you will scroll. If there are chips on the counter, you will eat them. Design your environment for the person you want to become, not the person you are.</p>
-
-      <h3>Layer 2: Identity-Based Habits 🆔</h3>
-      <p>Instead of saying "I am trying to quit," say "I am not the kind of person who does that." Identity-based habits stick because they align with your self-image. Each time you make the disciplined choice, you reinforce your identity as a disciplined person.</p>
-
-      <h3>Layer 3: The 2-Minute Rule ⏱️</h3>
-      <p>Any new habit should take less than two minutes to start. Want to read more? Read one page. Want to meditate? Breathe once. The first action is the hardest—make it laughably easy.</p>
-
-      <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 border border-rose-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">🧪 Try This Today</p>
-        <p class="text-muted">Pick one habit you've been avoiding. Now do it for just <strong>2 minutes</strong>. That's it. You're allowed to stop after 2 minutes. Most likely, you'll keep going.</p>
-      </div>
-
-      <blockquote>
-        "We do not rise to the level of our goals. We fall to the level of our systems." — James Clear
-      </blockquote>
-
-      <h2>Tracking Your Discipline Growth 📈</h2>
-      <p>Use StopGoon's daily check-in to track your discipline consistency. Focus on showing up every day, not being perfect. Over time, these small daily actions compound into extraordinary results.</p>
-    `
+    content: contentBuildingSelfDiscipline
   },
   {
     slug: 'understanding-relapse-triggers',
@@ -249,52 +102,7 @@ const POSTS: BlogPost[] = [
       { question: 'Are relapses random events?', options: ['Yes, always', 'No, they follow patterns', 'Sometimes', 'Only when tired'], answer: 1 },
       { question: 'Which trigger category is most common?', options: ['Environmental', 'Emotional', 'Social', 'Physiological'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">🔍</span>
-        <span><strong>Data Point:</strong> 80% of relapses happen within the same 2-hour window each day. Find yours and build a defense.</span>
-      </div>
-
-      <h2>Relapse is Not Random 🎲</h2>
-      <p>One of the most liberating discoveries in addiction science is that relapses are rarely random events. They follow predictable patterns based on triggers, contexts, and internal states.</p>
-      <p>When you understand your personal trigger profile, you can build defenses before the urge hits—instead of relying on willpower in the moment.</p>
-
-      <h2>Common Trigger Categories 📋</h2>
-      <ul>
-        <li><strong>Emotional Triggers:</strong> Stress, boredom, loneliness, anger, or excitement. These are the most common and most powerful.</li>
-        <li><strong>Environmental Triggers:</strong> Certain locations, times of day, or devices that you associate with the habit.</li>
-        <li><strong>Social Triggers:</strong> Being around certain people, or being alone when you expect social connection.</li>
-        <li><strong>Physiological Triggers:</strong> Hunger, fatigue, or physical discomfort that lowers your inhibition.</li>
-      </ul>
-
-      <div class="bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">📝 Trigger Journal Exercise</p>
-        <p class="text-muted mb-3">For the next 3 days, every time you feel an urge, note down:</p>
-        <div class="grid grid-cols-2 gap-3 text-sm">
-          <div class="bg-background/50 rounded-xl p-3"><strong>Time:</strong> ________</div>
-          <div class="bg-background/50 rounded-xl p-3"><strong>Mood:</strong> ________</div>
-          <div class="bg-background/50 rounded-xl p-3"><strong>Location:</strong> ________</div>
-          <div class="bg-background/50 rounded-xl p-3"><strong>Intensity (1-10):</strong> ________</div>
-        </div>
-      </div>
-
-      <h2>Track to Find Patterns 📈</h2>
-      <p>StopGoon's urge logging feature lets you tag each urge with context: time, location, emotional state, and intensity. After a week of logging, you will start seeing clear patterns emerge.</p>
-      <p>For example, you might discover that 80% of your urges happen between 10 PM and midnight, or that stress at work triples your relapse risk. This data is power.</p>
-
-      <blockquote>
-        "Knowing yourself is the beginning of all wisdom." — Aristotle
-      </blockquote>
-
-      <h2>Building Proactive Defenses 🛡️</h2>
-      <p>Once you know your triggers, you can build specific defenses:</p>
-      <ul>
-        <li>If stress is your trigger: Build a 5-minute breathing routine</li>
-        <li>If late night is your trigger: Create a phone-free wind-down ritual</li>
-        <li>If boredom is your trigger: Prepare a list of engaging alternatives</li>
-      </ul>
-      <p>StopGoon's Predictive Warning feature uses your logged data to alert you before high-risk windows, giving you time to deploy your defenses.</p>
-    `
+    content: contentUnderstandingRelapseTriggers
   },
   {
     slug: 'porn-recovery-roadmap',
@@ -310,58 +118,7 @@ const POSTS: BlogPost[] = [
       { question: 'Which week of recovery has the peak cravings?', options: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], answer: 0 },
       { question: 'What accelerates dopamine receptor recovery?', options: ['More sleep', 'Exercise', 'Meditation', 'All of the above'], answer: 3 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">🗺️</span>
-        <span><strong>Your Journey:</strong> The first 30 days are the hardest — and the most transformative. Let's walk through it together.</span>
-      </div>
-
-      <h2>Why the First 30 Days Matter Most 🎯</h2>
-      <p>The first 30 days of recovery are the hardest—and the most important. Your brain is going through withdrawal, your habits are being disrupted, and your emotional regulation is challenged. But this is also when the most profound changes happen.</p>
-
-      <h2>Week 1: The Detox Phase (Days 1-7) 🏥</h2>
-      <p>This is the hardest week. Your brain is still expecting its usual dopamine hits. You may experience irritability, insomnia, mood swings, and intense cravings.</p>
-      <ul>
-        <li><strong>Day 1-2:</strong> Remove all triggers. Install blockers, delete apps, clean your bookmarks.</li>
-        <li><strong>Day 3-4:</strong> Expect peak cravings. Have your SOS plan ready. Use StopGoon's breathing exercises.</li>
-        <li><strong>Day 5-7:</strong> Cravings start to space out. Notice the small wins—more energy, clearer thinking.</li>
-      </ul>
-
-      <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">🎯 Week 1 Mission</p>
-        <p class="text-muted">Remove one trigger from your environment today. Not tomorrow. <strong>Right now.</strong></p>
-      </div>
-
-      <h2>Week 2: The Adjustment Phase (Days 8-14) 🔄</h2>
-      <p>Your brain is beginning to recalibrate. Cravings are less intense but can be triggered by unexpected things.</p>
-      <ul>
-        <li>Start a daily journaling habit in StopGoon</li>
-        <li>Identify your top 3 triggers and build specific defenses</li>
-        <li>Increase physical activity—exercise accelerates dopamine receptor recovery</li>
-      </ul>
-
-      <h2>Week 3: The Rebuilding Phase (Days 15-21) 🏗️</h2>
-      <p>This is where the real work begins. The initial withdrawal fog lifts, and you need to fill the void with meaningful activities.</p>
-      <ul>
-        <li>Reconnect with hobbies you abandoned</li>
-        <li>Invest in social connections (accountability partners in StopGoon)</li>
-        <li>Set small, achievable goals outside of recovery</li>
-      </ul>
-
-      <h2>Week 4: The Integration Phase (Days 22-30) 🌟</h2>
-      <p>By now, you have built momentum. Your brain is forming new pathways. The goal is to lock in these gains.</p>
-      <ul>
-        <li>Review your month of growth in StopGoon analytics</li>
-        <li>Plan for the next 30 days with clear intentions</li>
-        <li>Celebrate your progress—you earned it</li>
-      </ul>
-
-      <blockquote>
-        "The secret of getting ahead is getting started." — Mark Twain
-      </blockquote>
-
-      <p>Remember: if you relapse during these 30 days, it does not erase your progress. Log it in StopGoon, learn from it, and continue. Days of Growth measures your total recovery, not your streak.</p>
-    `
+    content: contentPornRecoveryRoadmap
   },
   {
     slug: 'coaching-vs-willpower',
@@ -377,46 +134,7 @@ const POSTS: BlogPost[] = [
       { question: 'Why does willpower alone often fail?', options: ['It is a finite resource that depletes', 'It doesn\'t exist', 'It\'s too strong', 'It only works for men'], answer: 0 },
       { question: 'What makes AI coaching different from a human coach?', options: ['It judges you', 'It\'s available 24/7 and non-judgmental', 'It costs more', 'It doesn\'t work'], answer: 1 },
     ],
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">🤖</span>
-        <span><strong>Fun Fact:</strong> StopGoon's AI coach has helped users navigate over 10,000 urge episodes. It learns your patterns.</span>
-      </div>
-
-      <h2>The Willpower Myth 💪</h2>
-      <p>We have been sold a story that lasting change is a matter of willpower. Just try harder. Just be more disciplined. But if willpower alone worked, everyone who wanted to change would have changed by now.</p>
-      <p>The reality is that willpower is a finite resource. It depletes throughout the day. And when you are tired, stressed, or triggered, your willpower reserves are at their lowest—exactly when you need them most.</p>
-
-      <h2>Where AI Coaching Comes In 🧠</h2>
-      <p>AI coaching bridges the gap between intention and action. Here is how:</p>
-      <ul>
-        <li><strong>24/7 Availability:</strong> Your AI coach is always there, even at 2 AM when willpower is gone.</li>
-        <li><strong>Non-Judgmental:</strong> No shame, no disappointment. Just objective guidance.</li>
-        <li><strong>Personalized:</strong> Learns your patterns and tailors strategies to your specific triggers.</li>
-        <li><strong>Proactive:</strong> Intercepts you before a lapse, not after.</li>
-      </ul>
-
-      <div class="bg-gradient-to-br from-sky-500/10 to-cyan-500/10 border border-sky-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">💬 Real User Story</p>
-        <p class="text-muted italic">"I was about to relapse at 1 AM. Opened the AI coach chat, told it how I was feeling, and within 3 minutes my urge dropped from 8/10 to 3/10. It felt like a friend was there." — <strong>Alex, StopGoon user</strong></p>
-      </div>
-
-      <h2>The StopGoon AI Coach 🎯</h2>
-      <p>StopGoon's built-in AI coach combines CBT techniques, motivational interviewing, and your personal data to provide real-time support. It knows your triggers, your progress, and your goals. When you feel an urge coming on, you can open the chat and get immediate, personalized strategies.</p>
-
-      <blockquote>
-        "Between stimulus and response there is a space. In that space is our power to choose." — Viktor Frankl
-      </blockquote>
-
-      <h2>Building Your Support System 🏗️</h2>
-      <p>AI coaching works best as part of a complete support system. Combine it with:</p>
-      <ul>
-        <li>Daily check-ins and urge logging</li>
-        <li>Accountability partners (real human connection)</li>
-        <li>SOS tools for high-risk moments</li>
-        <li>Weekly reviews to track patterns</li>
-      </ul>
-    `
+    content: contentCoachingVsWillpower
   },
   {
     slug: 'morning-routine-reset',
@@ -428,32 +146,7 @@ const POSTS: BlogPost[] = [
     author: 'StopGoon Team',
     tags: ['morning', 'routine', 'habits', 'brain'],
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">☀️</span>
-        <span><strong>Pro Tip:</strong> The first 10 minutes of your day determine the next 10 hours. Don't give them to your phone.</span>
-      </div>
-
-      <h2>Why Mornings Matter 🌅</h2>
-      <p>How you start your morning sets the trajectory for your entire day. If the first thing you do is grab your phone and scroll, you've already flooded your brain with dopamine before you've even brushed your teeth. Your brain is now primed for instant gratification for the rest of the day.</p>
-
-      <div class="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">⏰ The 10-Minute Routine</p>
-        <ol class="space-y-2 text-sm">
-          <li><strong>Minute 1:</strong> Don't touch your phone. Just breathe.</li>
-          <li><strong>Minute 2-3:</strong> Drink a glass of water.</li>
-          <li><strong>Minute 4-6:</strong> Stretch or do light movement.</li>
-          <li><strong>Minute 7-8:</strong> Set your intention for the day.</li>
-          <li><strong>Minute 9-10:</strong> Do one small task you've been avoiding.</li>
-        </ol>
-      </div>
-
-      <h2>The "No Phone First" Rule 📵</h2>
-      <p>Commit to not touching your phone for the first 30 minutes of your day. This single change has been reported by StopGoon users as the most impactful habit shift they've made. Your brain gets to wake up naturally, without the dopamine firehose.</p>
-
-      <h2>Stack Your Habits 🔗</h2>
-      <p>Attach your new morning routine to an existing habit. For example: "After I turn off my alarm, I will take 3 deep breaths before touching my phone." This is called habit stacking, and it's one of the most effective ways to build lasting routines.</p>
-    `
+    content: contentMorningRoutineReset
   },
   {
     slug: 'shame-and-recovery',
@@ -465,33 +158,7 @@ const POSTS: BlogPost[] = [
     author: 'StopGoon Team',
     tags: ['shame', 'self-compassion', 'psychology', 'recovery'],
     image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&q=80',
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">💔</span>
-        <span><strong>Important:</strong> Shame says "I AM bad." Guilt says "I DID something bad." The difference is everything.</span>
-      </div>
-
-      <h2>The Shame Cycle 🔄</h2>
-      <p>Shame is the hidden engine of addiction. You feel bad, so you engage in the compulsive behavior to feel better. Then you feel ashamed about the behavior, which makes you feel worse — and the cycle repeats.</p>
-
-      <p>Research from Brené Brown and others has shown that shame thrives on three things: <strong>secrecy, silence, and judgment</strong>. The antidote is empathy, connection, and self-compassion.</p>
-
-      <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">🔄 Break the Cycle</p>
-        <p class="text-muted">Next time you feel shame after a lapse, say this out loud: <strong>"I am human. This is part of the process. I am not my worst moment."</strong></p>
-      </div>
-
-      <h2>Guilt vs. Shame ⚖️</h2>
-      <p>The distinction matters. Guilt is "I did something bad." Shame is "I am bad." Guilt can motivate positive change. Shame just makes you want to hide. When you relapse, aim for guilt (which leads to learning) and avoid shame (which leads to giving up).</p>
-
-      <h2>How StopGoon Helps 🛡️</h2>
-      <p>StopGoon is designed to eliminate shame from the recovery process:</p>
-      <ul>
-        <li>Days of Growth (not streaks) — progress never resets to zero</li>
-        <li>Non-judgmental AI coaching — no disappointment, just guidance</li>
-        <li>Private by default — your journey is yours alone</li>
-      </ul>
-    `
+    content: contentShameAndRecovery
   },
   {
     slug: 'social-media-brain',
@@ -503,39 +170,7 @@ const POSTS: BlogPost[] = [
     author: 'StopGoon Team',
     tags: ['social media', 'brain', 'attention', 'neuroscience'],
     image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
-    content: `
-      <div class="flex items-center gap-2 text-sm text-muted mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-        <span class="text-2xl">📱</span>
-        <span><strong>Design Flaw:</strong> Social media apps are designed by former casino engineers. Your attention is the product.</span>
-      </div>
-
-      <h2>The Attention Economy 💰</h2>
-      <p>Social media platforms are not designed to make you happy. They are designed to maximize the amount of time you spend on them. Every notification, color, and animation is optimized to trigger a dopamine release and keep you scrolling.</p>
-
-      <p>Former employees of Facebook, Instagram, and TikTok have all come forward to admit that the platforms were built using the same psychological principles as slot machines. <strong>Variable reward schedules</strong> — the same mechanism that makes gambling addictive — are built into every refresh of your feed.</p>
-
-      <h2>The Neurological Cost 🧠</h2>
-      <p>Constant social media use has been linked to:</p>
-      <ul>
-        <li>Shorter attention spans (average human attention span dropped from 12 seconds in 2000 to 8 seconds today)</li>
-        <li>Increased anxiety and depression (especially in teens and young adults)</li>
-        <li>Disrupted sleep cycles from blue light exposure</li>
-        <li>Reduced ability to focus on long-form content</li>
-      </ul>
-
-      <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-2xl p-6 my-8">
-        <p class="text-lg font-bold mb-2">🧪 The 7-Day Experiment</p>
-        <p class="text-muted mb-3">Try this: For 7 days, limit social media to 15 minutes per day. Use an app blocker. At the end of the week, journal about how your focus, mood, and energy levels changed.</p>
-      </div>
-
-      <h2>How to Take Back Your Attention 🛡️</h2>
-      <ul>
-        <li><strong>Delete, don't just hide.</strong> Removing the app from your home screen isn't enough. Delete it. You can always re-download it.</li>
-        <li><strong>Use grayscale mode.</strong> Without bright colors, apps become significantly less appealing.</li>
-        <li><strong>Schedule your scrolling.</strong> Give yourself 10 minutes in the evening, not 10 minutes every hour.</li>
-        <li><strong>Replace the habit.</strong> When you feel the urge to check social media, open a book or go for a walk instead.</li>
-      </ul>
-    `
+    content: contentSocialMediaBrain
   }
 ]
 

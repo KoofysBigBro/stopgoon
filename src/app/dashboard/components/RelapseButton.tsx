@@ -26,8 +26,8 @@ export default function RelapseButton() {
       setIsOpen(false)
       setNote('')
       router.refresh()
-    } catch {
-      // ignore
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to log relapse:', e)
     }
     setIsSubmitting(false)
   }

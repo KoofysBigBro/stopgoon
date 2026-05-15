@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, ShieldCheck, BarChart3, Heart, BookOpen, Users, Brain, Clock, CheckCircle2, Activity } from 'lucide-react'
+import { ArrowRight, ShieldCheck, BarChart3, Heart, Users, Brain, CheckCircle2, Activity } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking | StopGoon',

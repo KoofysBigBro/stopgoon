@@ -38,98 +38,53 @@ export default async function AnalyticsPage() {
   const timelineEvents: { id: string; type: 'start' | 'relapse' | 'milestone' | 'journal'; date: Date; title: string; description?: string }[] = [];
 
   if (user) {
-    // Fetch user for premium status
-    const { data: profile } = await supabase.from('users').select('subscription_tier').eq('id', user.id).single();
-    isPremium = profile?.subscription_tier === 'premium';
-    // Fetch last relapse
-    const { data: relapses } = await supabase
-      .from('relapses')
-      .select('created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+    const [{ data: profile }, { data: relapses }, { data: checkins }, { data: journals, count: journalCount }, { data: urges }] = await Promise.all([
+      supabase.from('users').select('subscription_tier').eq('id', user.id).single(),
+      supabase.from('relapses').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('daily_checkins').select('created_at, mood').eq('user_id', user.id).order('created_at', { ascending: true }),
+      supabase.from('journal_entries').select('id, created_at, reflection', { count: 'exact' }).eq('user_id', user.id),
+      supabase.from('urge_logs').select('intensity, created_at').eq('user_id', user.id).order('created_at', { ascending: false }),
+    ])
 
+    isPremium = profile?.subscription_tier === 'premium';
     totalSetbacks = relapses?.length || 0
+    totalCheckins = checkins?.length || 0
+    totalJournalEntries = journalCount || 0
+
     const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(user.created_at)
 
-    // Total checkins
-    const { data: checkins } = await supabase
-      .from('daily_checkins')
-      .select('created_at, mood')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: true })
-
-    totalCheckins = checkins?.length || 0
-
-    // Build mood breakdown
     if (checkins) {
-      checkins.forEach(c => {
-        if (c.mood) {
-          moodCounts[c.mood] = (moodCounts[c.mood] || 0) + 1
-        }
-      })
-    }
+      checkins.forEach(c => { if (c.mood) moodCounts[c.mood] = (moodCounts[c.mood] || 0) + 1 })
 
-    // Current streak = count of checkins since last relapse
-    // Using length instead of UTC date grouping to respect the user's local timezone
-    if (checkins) {
       const sinceRelapse = checkins.filter(c => new Date(c.created_at) >= lastRelapseDate)
       currentStreak = sinceRelapse.length
-    }
 
-    // Longest streak calculation
-    if (checkins && checkins.length > 0) {
       const allDates = [...new Set(checkins.map(c => new Date(c.created_at).toISOString().split('T')[0]))].sort()
       let streak = 1
-      let maxStreak = 1
       for (let i = 1; i < allDates.length; i++) {
         const prev = new Date(allDates[i - 1])
         const curr = new Date(allDates[i])
         const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24))
-        if (diffDays === 1) {
-          streak++
-          maxStreak = Math.max(maxStreak, streak)
-        } else {
-          streak = 1
-        }
+        if (diffDays === 1) { streak++; longestStreak = Math.max(longestStreak, streak) }
+        else { streak = 1 }
       }
-      longestStreak = maxStreak
-    }
 
-    // Checkin calendar (last 30 days)
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29)
-    thirtyDaysAgo.setHours(0, 0, 0, 0)
-
-    const calendarMap: Record<string, number> = {}
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(thirtyDaysAgo)
-      d.setDate(d.getDate() + i)
-      calendarMap[d.toISOString().split('T')[0]] = 0
-    }
-    if (checkins) {
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29)
+      thirtyDaysAgo.setHours(0, 0, 0, 0)
+      const calendarMap: Record<string, number> = {}
+      for (let i = 0; i < 30; i++) {
+        const d = new Date(thirtyDaysAgo)
+        d.setDate(d.getDate() + i)
+        calendarMap[d.toISOString().split('T')[0]] = 0
+      }
       checkins.forEach(c => {
         const key = new Date(c.created_at).toISOString().split('T')[0]
-        if (calendarMap[key] !== undefined) {
-          calendarMap[key]++
-        }
+        if (calendarMap[key] !== undefined) calendarMap[key]++
       })
+      checkinCalendar = Object.entries(calendarMap).map(([date, count]) => ({ date, count }))
     }
-    checkinCalendar = Object.entries(calendarMap).map(([date, count]) => ({ date, count }))
 
-    // Total journal entries
-    const { data: journals, count: journalCount } = await supabase
-      .from('journal_entries')
-      .select('id, created_at, reflection', { count: 'exact' })
-      .eq('user_id', user.id)
-    totalJournalEntries = journalCount || 0
-
-    // Urge logs
-    const { data: urges } = await supabase
-      .from('urge_logs')
-      .select('intensity, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-    
     totalUrges = urges?.length || 0
     if (urges && urges.length > 0) {
       const sum = urges.reduce((acc, u) => acc + (u.intensity || 0), 0)

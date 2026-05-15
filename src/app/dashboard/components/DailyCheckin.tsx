@@ -72,8 +72,8 @@ export default function DailyCheckin() {
         streakArray.push({ label: d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0), active: hasCheckin })
       }
       setStreak(streakArray)
-    } catch {
-      // ignore
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load checkins:', e)
     }
     setIsLoading(false)
   }, [supabase])

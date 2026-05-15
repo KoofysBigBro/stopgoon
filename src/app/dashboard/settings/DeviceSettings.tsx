@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Smartphone, Download, Bell, BellOff, Laptop } from 'lucide-react'
+import { Smartphone, Download } from 'lucide-react'
 
 export default function DeviceSettings() {
   const [installPrompt, setInstallPrompt] = useState<any>(null)

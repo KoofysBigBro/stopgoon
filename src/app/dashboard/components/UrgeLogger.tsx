@@ -50,8 +50,8 @@ export default function UrgeLogger() {
         .order('created_at', { ascending: false })
         .limit(5)
       if (data) setRecentLogs(data)
-    } catch {
-      // silently fail — table might not exist yet
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load urge logs:', e)
     }
   }, [supabase])
 
@@ -78,8 +78,8 @@ export default function UrgeLogger() {
       setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
       setShowSuccess(true)
       void loadRecentLogs()
-    } catch {
-      // If table doesn't exist, still show the UI flow
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to quick log urge:', e)
       setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
       setShowSuccess(true)
     }
@@ -107,8 +107,8 @@ export default function UrgeLogger() {
 
       if (error) throw error
       setActiveLogId(data.id)
-    } catch {
-      // graceful fallback
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to detailed log urge:', e)
     }
 
     setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
@@ -123,8 +123,8 @@ export default function UrgeLogger() {
           .from('urge_logs')
           .update({ urge_passed: true })
           .eq('id', activeLogId)
-      } catch {
-        // graceful
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') console.error('Failed to update urge:', e)
       }
     }
     // Reset everything
