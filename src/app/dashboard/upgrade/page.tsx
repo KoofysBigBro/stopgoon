@@ -260,8 +260,7 @@ export default function UpgradePage() {
 
       window.location.href = data.url;
     } catch (err) {
-      console.error(err);
-      alert('Error initiating checkout. Please try again later.');
+      if (process.env.NODE_ENV === 'development') console.error(err);
       setIsLoading(false);
     }
   };

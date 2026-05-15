@@ -69,8 +69,8 @@ export async function POST(req: Request) {
     });
 
     return Response.json({ text });
-  } catch (error: any) {
-    console.error('AI Coach Error:', error);
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') console.error('AI Coach Error:', error);
     return new Response('Internal Server Error', { status: 500, headers: { 'Content-Type': 'text/plain' } });
   }
 }

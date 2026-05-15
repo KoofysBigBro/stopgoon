@@ -61,7 +61,14 @@ export default function CommandPalette() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm p-4 md:p-10" onClick={() => setOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm p-4 md:p-10"
+          onClick={() => setOpen(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setOpen(false) }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Quick actions"
+        >
           <div className="max-w-2xl mx-auto glass-card rounded-2xl p-4 md:p-5" onClick={(event) => event.stopPropagation()}>
             <input
               value={query}

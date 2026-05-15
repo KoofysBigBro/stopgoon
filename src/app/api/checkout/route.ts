@@ -18,12 +18,12 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user && process.env.NODE_ENV !== 'development') {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const email = user?.email || 'offline-dev@example.com';
-    const userId = user?.id || 'offline-dev-user-id';
+    const email = user.email;
+    const userId = user.id;
 
     setupLemonSqueezy();
 
@@ -69,8 +69,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ url: checkoutUrl });
-  } catch (error: any) {
-    console.error('Error creating checkout session:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') console.error('Error creating checkout session:', error);
+    return NextResponse.json({ error: 'Failed to create checkout' }, { status: 500 });
   }
 }

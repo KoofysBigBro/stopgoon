@@ -108,14 +108,14 @@ export default function DailyCheckin() {
       if (!user) return
       const { error } = await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
       if (error) {
-        console.error('Checkin failed:', error)
+        if (process.env.NODE_ENV === 'development') console.error('Checkin failed:', error)
       } else {
         setSaved(mood)
         router.refresh()
         void checkToday()
       }
     } catch (e) {
-      console.error('Exception during checkin:', e)
+      if (process.env.NODE_ENV === 'development') console.error('Exception during checkin:', e)
     }
     setIsSaving(false)
   }

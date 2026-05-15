@@ -33,7 +33,7 @@ export default function RefundPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">3. Requesting a Refund</h2>
-            <p>To request a refund within the 14-day window, please contact support through the application or via our billing provider (Paddle). Please include your account email and order reference number.</p>
+            <p>To request a refund within the 14-day window, please contact support through the application or via our billing provider (Lemon Squeezy). Please include your account email and order reference number.</p>
           </section>
 
           <section>

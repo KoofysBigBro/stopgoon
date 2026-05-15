@@ -6,9 +6,11 @@ import Link from 'next/link'
 
 export default function DataExport({ isPremium }: { isPremium: boolean }) {
   const [isExporting, setIsExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
 
   const handleExport = async () => {
     if (!isPremium) return
+    setExportError(null)
     setIsExporting(true)
     try {
       const res = await fetch('/api/export')
@@ -24,7 +26,7 @@ export default function DataExport({ isPremium }: { isPremium: boolean }) {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (e) {
-      alert('Failed to export data. Please try again.')
+      setExportError('Failed to export data. Please try again.')
     } finally {
       setIsExporting(false)
     }
@@ -65,6 +67,9 @@ export default function DataExport({ isPremium }: { isPremium: boolean }) {
           </div>
         </div>
 
+        {exportError && (
+          <p className="text-sm text-red-500 mb-2 text-center">{exportError}</p>
+        )}
         <button 
           onClick={handleExport}
           disabled={!isPremium || isExporting}

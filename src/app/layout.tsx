@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: 'https://stopgoon.xyz',
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://stopgoon.xyz',
   },
   manifest: "/manifest.json",
   icons: {

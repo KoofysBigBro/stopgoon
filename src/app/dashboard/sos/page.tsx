@@ -213,8 +213,7 @@ export default function SOSPage() {
     }
 
     if (result.error) {
-      console.error('Failed to save routine:', result.error)
-      alert('Error saving routine: ' + result.error.message)
+      if (process.env.NODE_ENV === 'development') console.error('Failed to save routine:', result.error)
       return
     }
 

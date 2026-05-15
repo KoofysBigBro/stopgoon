@@ -70,7 +70,7 @@ export default function ChatClient({
   const [lastSentAt, setLastSentAt] = useState(0);
   const [adminMenuOpen, setAdminMenuOpen] = useState<string | null>(null);
   const [profilePopup, setProfilePopup] = useState<{ profile: UserProfile; stats: UserStats | null; targetId: string } | null>(null);
-  const [userProfiles, setUserProfiles] = useState<Record<string, { avatar_url: string | null; role: string; username: string; subscription_tier?: string }>>({
+  const [userProfiles, setUserProfiles] = useState<Record<string, { avatar_url: string | null; role: string; username: string; subscription_tier?: string | null }>>({
     [userId]: { avatar_url: userAvatarUrl, role: userRole, username: userUsername, subscription_tier: isPremium ? 'premium' : 'free' }
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -120,7 +120,7 @@ export default function ChatClient({
 
       // Fetch live profiles for all unique users in messages
       if (data && data.length > 0) {
-        const uniqueUserIds = [...new Set(data.map((m: any) => m.user_id))];
+        const uniqueUserIds = [...new Set(data.map(m => m.user_id))];
         const missingIds = uniqueUserIds.filter(id => !userProfiles[id]);
         if (missingIds.length > 0) {
           const { data: profiles } = await supabase
@@ -128,8 +128,8 @@ export default function ChatClient({
             .select('id, avatar_url, role, username, subscription_tier')
             .in('id', missingIds);
           if (profiles) {
-            const newProfiles: Record<string, any> = {};
-            profiles.forEach((p: any) => {
+            const newProfiles: Record<string, { avatar_url: string | null; role: string; username: string; subscription_tier?: string | null }> = {};
+            profiles.forEach(p => {
               newProfiles[p.id] = { avatar_url: p.avatar_url, role: p.role || 'user', username: p.username, subscription_tier: p.subscription_tier };
             });
             setUserProfiles(prev => ({ ...prev, ...newProfiles }));
@@ -156,14 +156,14 @@ export default function ChatClient({
         schema: 'public',
         table: 'chat_messages',
       }, (payload) => {
-        setMessages((prev) => prev.filter(m => m.id !== (payload.old as any).id));
+        setMessages((prev) => prev.filter(m => m.id !== (payload.old as ChatMessage).id));
       })
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'chat_messages',
       }, (payload) => {
-        setMessages((prev) => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } as ChatMessage : m));
+        setMessages((prev) => prev.map(m => m.id === (payload.new as ChatMessage).id ? { ...m, ...payload.new as ChatMessage } : m));
       });
 
     let sub: ReturnType<typeof channel.subscribe> | null = null;
@@ -174,7 +174,7 @@ export default function ChatClient({
     }
 
     return () => {
-      try { if (sub) supabase.removeChannel(channel); } catch {}
+      if (sub) supabase.removeChannel(channel)
     };
   }, [activeRoom]);
 
@@ -284,7 +284,7 @@ export default function ChatClient({
     return null;
   };
 
-  const getPremiumBadge = (tier: string | undefined) => {
+  const getPremiumBadge = (tier: string | null | undefined) => {
     if (tier === 'premium' || tier === 'pro') return (
       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-indigo-500 text-white text-[9px] font-bold uppercase tracking-wider shadow-sm">
         <Zap className="w-2.5 h-2.5" />
@@ -449,7 +449,7 @@ export default function ChatClient({
                         title={`View ${displayName}'s profile`}
                       >
                         {avatarUrl ? (
-                          <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                          <img src={avatarUrl} alt={`${displayName}'s avatar`} className="w-full h-full object-cover" />
                         ) : (
                           <span className="flex items-center justify-center w-full h-full text-sm font-bold text-white">
                             {(displayName || '?')[0]?.toUpperCase()}

@@ -74,7 +74,6 @@ export default function JournalPage() {
         .order('created_at', { ascending: false })
       if (data) setEntries(data)
     } catch {
-      // table might not exist
     }
     setIsLoading(false)
   }
@@ -121,7 +120,6 @@ export default function JournalPage() {
       await supabase.from('journal_entries').delete().eq('id', id)
       setEntries(prev => prev.filter(e => e.id !== id))
     } catch {
-      // graceful
     }
     setDeleteConfirm(null)
   }

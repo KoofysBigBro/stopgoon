@@ -116,8 +116,9 @@ export default function SettingsPage() {
       await supabase.auth.signOut()
       router.push('/')
     } catch (error) {
-      console.error(error)
-      alert("Failed to delete account.")
+      if (process.env.NODE_ENV === 'development') console.error(error)
+      setSaveMessage('Failed to delete account.')
+      setTimeout(() => setSaveMessage(null), 3000)
     }
   }
 

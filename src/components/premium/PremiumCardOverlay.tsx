@@ -98,7 +98,7 @@ export default function PremiumCardOverlay({
       )}
 
       {/* Lock overlay */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 md:p-8 text-center bg-background/40 backdrop-blur-md">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 md:p-8 text-center bg-background/40 backdrop-blur-md" role="region" aria-label="Premium feature locked">
         {/* Premium crown badge */}
         <div className={`relative mb-5 ${v.glow}`}>
           <div className={`w-14 h-14 rounded-2xl ${v.badge} flex items-center justify-center shadow-lg ${v.shadow} animate-float-drift`}>

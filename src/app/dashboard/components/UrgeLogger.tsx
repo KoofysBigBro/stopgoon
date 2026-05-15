@@ -213,6 +213,7 @@ export default function UrgeLogger() {
             <input
               type="range" min="1" max="10" value={intensity}
               onChange={(e) => setIntensity(Number(e.target.value))}
+              aria-label="Urge intensity"
               className="w-full accent-primary h-2 bg-border rounded-full appearance-none outline-none"
             />
             <div className="flex justify-between text-xs text-muted mt-2 font-medium">
