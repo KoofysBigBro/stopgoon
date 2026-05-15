@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
       const appUrl = (
         process.env.NEXT_PUBLIC_SITE_URL ||
         (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : undefined) ||
-        (process.env.NODE_ENV === 'production' ? 'https://stopgoon.vercel.app' : window.location.origin)
+        (process.env.NODE_ENV === 'production' ? 'https://stopgoon.xyz' : window.location.origin)
       ).replace(/\/$/, '')
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${appUrl}/auth/callback?next=/update-password`,

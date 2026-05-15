@@ -7,6 +7,33 @@ import ChatNotificationDot from './components/ChatNotificationDot'
 import CrisisShortcut from './components/CrisisShortcut'
 import CommandPalette from './components/CommandPalette'
 
+function NavLink({ href, icon: Icon, label, cls, dot, userId }: { href: string; icon: React.ComponentType<{ className?: string }>; label: string; cls: string; dot: boolean; userId: string }) {
+  return (
+    <Link href={href} className={`flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${cls}`}>
+      <Icon className="w-5 h-5" />
+      <span className="text-base">{label}</span>
+      {dot && <ChatNotificationDot userId={userId} />}
+    </Link>
+  )
+}
+
+function PremiumBadgeMobile({ isPremium }: { isPremium: boolean }) {
+  if (isPremium) {
+    return (
+      <div className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
+        <Crown className="w-4 h-4" />
+        <span className="text-sm">Premium</span>
+      </div>
+    )
+  }
+  return (
+    <Link href="/dashboard/upgrade" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
+      <Crown className="w-4 h-4" />
+      <span className="text-sm">Premium</span>
+    </Link>
+  )
+}
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -53,93 +80,60 @@ export default async function DashboardLayout({
             <span className="text-xl font-bold tracking-tight text-foreground font-heading">StopGoon</span>
           </Link>
 
-          <div className="relative md:hidden">
-            <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent z-10" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10" />
-            <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-1 pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none [-webkit-overflow-scrolling:touch] scroll-pl-4 md:scroll-pl-0">
-              {[
-                { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '', dot: false },
-                { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '', dot: false },
-                { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10', dot: false },
-                { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '', dot: false },
-                { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10', dot: false },
-                { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
-                { href: '/blog', icon: BookOpen, label: 'Blog', cls: '', dot: false },
-              ].map(item => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`snap-start shrink-0 flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
-                >
-                  <item.icon className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-sm md:text-base">{item.label}</span>
-                  {item.dot && <ChatNotificationDot userId={user.id} />}
-                </Link>
-              ))}
-              {isPremium ? (
-                <div className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
-                  <Crown className="w-4 h-4" />
-                  <span className="text-sm">Premium</span>
-                </div>
-              ) : (
-                <Link href="/dashboard/upgrade" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 font-bold text-primary whitespace-nowrap">
-                  <Crown className="w-4 h-4" />
-                  <span className="text-sm">Premium</span>
-                </Link>
-              )}
-              <Link href="/dashboard/settings" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-                <Settings className="w-4 h-4" />
-                <span className="text-sm">Settings</span>
-              </Link>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=stopgoonsupport@gmail.com" target="_blank" rel="noopener noreferrer" className="snap-start shrink-0 md:hidden flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm">Contact Support</span>
-            </a>
-              <form action={handleSignOut} className="snap-start shrink-0 md:hidden flex">
-                <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground whitespace-nowrap">
-                  <LogOut className="w-4 h-4" />
-                  <span className="text-sm">Sign out</span>
-                </button>
-              </form>
-            </nav>
-          </div>
-          {/* Desktop nav */}
-          <nav className="hidden md:flex flex-col gap-1 pb-0">
-            <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Core</p>
-            {[
+          {(() => {
+            const coreNav = [
               { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '', dot: false },
               { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '', dot: false },
               { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10', dot: false },
               { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '', dot: false },
-            ].map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-base">{item.label}</span>
-                {item.dot && <ChatNotificationDot userId={user.id} />}
-              </Link>
-            ))}
-            <div className="my-1 mx-4 border-t border-border/50" />
-            <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Support</p>
-            {[
+            ] as const
+            const supportNav = [
               { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10', dot: false },
               { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
               { href: '/blog', icon: BookOpen, label: 'Blog', cls: '', dot: false },
-            ].map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-base">{item.label}</span>
-                {item.dot && <ChatNotificationDot userId={user.id} />}
-              </Link>
-            ))}
-          </nav>
+            ] as const
+            return (
+              <>
+                {/* Mobile horizontal nav */}
+                <div className="relative md:hidden">
+                  <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent z-10" />
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10" />
+                  <nav className="flex overflow-x-auto gap-2 pb-2 scrollbar-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch] scroll-pl-4">
+                    {[...coreNav, ...supportNav].map(item => (
+                      <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground ${item.cls}`}>
+                        <item.icon className="w-4 h-4" />
+                        <span className="text-sm whitespace-nowrap">{item.label}</span>
+                        {item.dot && <ChatNotificationDot userId={user.id} />}
+                      </Link>
+                    ))}
+                    <PremiumBadgeMobile isPremium={isPremium} />
+                    <Link href="/dashboard/settings" className="snap-start shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover font-medium text-muted hover:text-foreground whitespace-nowrap">
+                      <Settings className="w-4 h-4" />
+                      <span className="text-sm">Settings</span>
+                    </Link>
+                    <form action={handleSignOut} className="snap-start shrink-0 flex">
+                      <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover font-medium text-muted hover:text-foreground whitespace-nowrap">
+                        <LogOut className="w-4 h-4" />
+                        <span className="text-sm">Sign out</span>
+                      </button>
+                    </form>
+                  </nav>
+                </div>
+                {/* Desktop vertical nav */}
+                <nav className="hidden md:flex flex-col gap-1 pb-0">
+                  <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Core</p>
+                  {coreNav.map(item => (
+                    <NavLink key={item.href} href={item.href} icon={item.icon} label={item.label} cls={item.cls} dot={item.dot} userId={user.id} />
+                  ))}
+                  <div className="my-1 mx-4 border-t border-border/50" />
+                  <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Support</p>
+                  {supportNav.map(item => (
+                    <NavLink key={item.href} href={item.href} icon={item.icon} label={item.label} cls={item.cls} dot={item.dot} userId={user.id} />
+                  ))}
+                </nav>
+              </>
+            )
+          })()}
         </div>
 
         <div className="hidden md:block p-6 border-t border-border mt-auto">

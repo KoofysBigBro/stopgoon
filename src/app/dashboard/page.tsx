@@ -58,8 +58,8 @@ export default async function DashboardPage() {
       totalUrges = urgeCount || 0
       totalJournals = journalCount || 0
     }
-  } catch {
-    // Tables might not exist yet
+  } catch (e) {
+    if (process.env.NODE_ENV === 'development') console.error('Dashboard data fetch failed:', e)
   }
 
   // Determine next milestone

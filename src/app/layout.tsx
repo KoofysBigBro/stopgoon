@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://stopgoon.vercel.app",
+    url: "https://stopgoon.xyz",
     title: "StopGoon - Overcome Addiction & Build Discipline",
     description: "A recovery platform that helps you break compulsive habits and build a disciplined life.",
     siteName: "StopGoon",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: 'https://stopgoon.vercel.app',
+    canonical: 'https://stopgoon.xyz',
   },
   manifest: "/manifest.json",
   icons: {
@@ -69,6 +69,7 @@ export default function RootLayout({
       className={`${manrope.variable} ${sora.variable} h-full antialiased`}
     >
       <head>
+        <meta name="google-site-verification" content="CNsTGn3vxiIULNaxFVPxqdmB7UL9e2PvKuO5VHpdt_k" />
         {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && (
           <script
             async
@@ -81,7 +82,7 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={false}
+          enableSystem={true}
           disableTransitionOnChange
         >
           <PWAInit />

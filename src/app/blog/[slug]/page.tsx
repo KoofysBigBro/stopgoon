@@ -7,15 +7,20 @@ import ReactionButtons from '@/components/blog/ReactionButtons'
 import ArticleQuiz from '@/components/blog/ArticleQuiz'
 import BlogImage from '@/components/blog/BlogImage'
 
+function stripEmojiPrefix(title: string): string {
+  return title.replace(/^[^\s]+\s/, '')
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = getBlogPostBySlug(slug)
   if (!post) return { title: 'Article Not Found | StopGoon' }
+  const cleanTitle = stripEmojiPrefix(post.title)
   return {
-    title: `${post.title.replace(/^[^\s]+\s/, '')} | StopGoon Blog`,
+    title: `${cleanTitle} | StopGoon Blog`,
     description: post.excerpt,
     openGraph: {
-      title: post.title,
+      title: cleanTitle,
       description: post.excerpt,
       images: [{ url: post.image, width: 800, height: 400 }],
       type: 'article',
@@ -24,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: cleanTitle,
       description: post.excerpt,
       images: [post.image],
     },
@@ -125,9 +130,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="mt-6 pt-6 border-t border-border/50 flex flex-wrap items-center justify-between gap-4">
             <p className="text-sm text-muted font-medium">Share this article</p>
             <div className="flex gap-2">
-              <ShareButton href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://stopgoon.vercel.app/blog/${article.slug}`)}`} label="X" />
-              <ShareButton href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://stopgoon.vercel.app/blog/${article.slug}`)}`} label="in" />
-              <ShareButton href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(`https://stopgoon.vercel.app/blog/${article.slug}`)}`} label="✉" />
+              <ShareButton href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="X" />
+              <ShareButton href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="in" />
+              <ShareButton href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="✉" />
             </div>
           </div>
 

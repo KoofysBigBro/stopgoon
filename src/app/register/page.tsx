@@ -35,7 +35,7 @@ export default function RegisterPage() {
       const appUrl = (
         process.env.NEXT_PUBLIC_SITE_URL ||
         (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : undefined) ||
-        (process.env.NODE_ENV === 'production' ? 'https://stopgoon.vercel.app' : window.location.origin)
+        (process.env.NODE_ENV === 'production' ? 'https://stopgoon.xyz' : window.location.origin)
       ).replace(/\/$/, '')
       const { data, error } = await supabase.auth.signUp({
         email,

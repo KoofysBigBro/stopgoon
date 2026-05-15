@@ -14,8 +14,8 @@ export default async function LandingPage() {
     user = u
     const variant = await getVariant('home_hero', ['focus', 'freedom'] as const, 'focus')
     if (variant === 'focus' || variant === 'freedom') heroVariant = variant
-  } catch {
-    // Supabase unavailable — show public landing page
+  } catch (e) {
+    if (process.env.NODE_ENV === 'development') console.error('Landing page auth check failed:', e)
   }
 
   if (user) {
@@ -95,33 +95,6 @@ export default async function LandingPage() {
               <h3 className="font-bold text-sm mb-1">SOS Rescue</h3>
               <p className="text-xs text-muted">Breathing exercises and grounding when urges hit.</p>
             </div>
-          </div>
-        </section>
-
-        <section className="px-6 pb-14">
-          <div className="max-w-6xl mx-auto glass-card rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm md:text-base font-semibold text-foreground text-center md:text-left">Users stick with StopGoon because it feels supportive, fast, and private.</p>
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs md:text-sm font-bold text-muted">
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">2-min daily flow</span>
-              <span className="px-3 py-1 rounded-full bg-accent/15 text-foreground">No shame language</span>
-              <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Private by design</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-6 pb-10">
-          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              ['2 min', 'Daily flow'],
-              ['7 days', 'First milestone'],
-              ['Private', 'By design'],
-              ['Zero ads', 'Premium mode']
-            ].map(([k, v]) => (
-              <div key={k} className="glass-card rounded-xl p-4 text-center">
-                <p className="text-xl font-bold text-foreground">{k}</p>
-                <p className="text-xs text-muted font-semibold uppercase tracking-wider">{v}</p>
-              </div>
-            ))}
           </div>
         </section>
 
@@ -383,15 +356,9 @@ export default async function LandingPage() {
         </div>
       </footer>
 
-      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40 space-y-2">
-        <Link
-          href="mailto:stopgoonsupport@gmail.com"
-          className="w-full inline-flex items-center justify-center rounded-full bg-background/95 border border-border px-4 py-2.5 text-xs font-semibold text-muted shadow-lg backdrop-blur"
-        >
-          Contact Us: stopgoonsupport@gmail.com
-        </Link>
+      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40">
         <Link href="/register" className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-full shadow-xl shadow-primary/35 transition-all">
-          Create Free Account <ArrowRight className="w-4 h-4" />
+          Start Your Recovery <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </div>

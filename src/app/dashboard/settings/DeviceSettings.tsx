@@ -113,6 +113,10 @@ export default function DeviceSettings() {
             </p>
           </div>
           <button
+            type="button"
+            role="switch"
+            aria-checked={notificationsEnabled}
+            aria-label="Push notifications"
             onClick={toggleNotifications}
             className={`w-12 h-7 rounded-full transition-colors relative flex-shrink-0 ${
               notificationsEnabled ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'
