@@ -39,7 +39,7 @@ export default function RelapseButton() {
         className="text-xs font-semibold text-muted hover:text-foreground transition-colors flex items-center justify-center gap-1.5 mt-6 mx-auto bg-surface hover:bg-surface-hover px-4 py-2 rounded-full border border-border"
       >
         <RotateCcw className="w-3.5 h-3.5" />
-        Log a Relapse (Reset Count)
+        Log a Setback
       </button>
     )
   }
@@ -48,7 +48,7 @@ export default function RelapseButton() {
     <div className="mt-8 text-left bg-red-500/5 border border-red-500/20 rounded-2xl p-5 max-w-sm mx-auto animate-in fade-in zoom-in-95">
       <div className="flex items-center gap-2 mb-3 text-red-500">
         <AlertTriangle className="w-5 h-5" />
-        <h4 className="font-bold">Log a Relapse</h4>
+        <h4 className="font-bold">Log a Setback</h4>
       </div>
       <p className="text-sm text-muted mb-4">
         Lapses happen. The most important thing is that you're honest about it. What triggered this?

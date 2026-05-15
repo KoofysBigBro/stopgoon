@@ -4,8 +4,6 @@ import { CheckCircle2, ArrowRight } from 'lucide-react'
 export default function AuthSuccessPage() {
   return (
     <div className="flex flex-col w-full min-h-screen items-center justify-center bg-background px-4 py-10 relative overflow-hidden">
-      <div className="absolute top-16 -left-20 w-[340px] h-[340px] bg-primary/20 blur-[90px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-8 -right-16 w-[280px] h-[280px] bg-accent/15 blur-[80px] pointer-events-none rounded-full" />
 
       <div className="w-full max-w-[420px] bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-10 shadow-xl relative z-10 animate-fade-up text-center">
         <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">

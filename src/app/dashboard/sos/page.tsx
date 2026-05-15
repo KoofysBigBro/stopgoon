@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Plus, Trash2, GripVertical, Play, Pause, SkipForward, Timer, Pencil, RotateCcw, CheckCircle2, Sparkles, Shield } from 'lucide-react'
-import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
+import { Plus, Trash2, GripVertical, Play, Pause, SkipForward, Timer, Pencil, RotateCcw, CheckCircle2, Sparkles, Crown } from 'lucide-react'
+import Link from 'next/link'
 
 interface RoutineStep {
   id: string;
@@ -381,160 +381,146 @@ export default function SOSPage() {
       </div>
 
       {/* Custom Routines Section */}
-      <div className="relative min-h-[280px]">
-        {!isPremium ? (
-          <PremiumCardOverlay
-            title="Custom SOS Routines"
-            description="Build personalized emergency routines with breathing exercises, actions, affirmations, and timed steps."
-            feature="Personalized Crisis Plans"
-            icon={<Shield className="w-7 h-7 text-white" />}
-            variant="emerald"
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-accent" />
-                    Custom Routines
-                  </h3>
-                  <p className="text-sm text-muted">Build personalized emergency plans.</p>
-                </div>
-              </div>
-              <div className="text-center py-10 text-muted">
-                <Timer className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                <p className="text-sm">No routines yet. Create one to get started!</p>
-              </div>
-            </div>
-          </PremiumCardOverlay>
+      <div className="glass-card rounded-2xl p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-accent" />
+              Custom Routines
+            </h3>
+            <p className="text-sm text-muted">Build personalized emergency plans for when urges hit.</p>
+          </div>
+          {!isPremium && routines.length >= 1 ? (
+            <Link
+              href="/dashboard/upgrade"
+              className="flex items-center gap-2 bg-gradient-to-r from-primary/20 to-indigo-500/20 border border-primary/30 hover:border-primary/60 text-primary px-4 py-2.5 rounded-xl font-bold text-sm transition-all"
+            >
+              <Crown className="w-4 h-4" /> Unlock More
+            </Link>
+          ) : (
+            <button
+              onClick={() => { setShowBuilder(true); setEditingRoutine(null); setRoutineName(''); setRoutineSteps([]) }}
+              className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors"
+            >
+              <Plus className="w-4 h-4" /> New Routine
+            </button>
+          )}
+        </div>
+
+        {!isPremium && routines.length >= 1 && (
+          <div className="mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            Free tier includes 1 custom routine. Upgrade to Premium for unlimited routines.
+          </div>
+        )}
+
+        {/* Saved Routines List */}
+        {routines.length === 0 && !showBuilder ? (
+          <div className="text-center py-10 text-muted">
+            <Timer className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">No routines yet. Create one to get started!</p>
+          </div>
         ) : (
-          <>
-            <div className="glass-card rounded-2xl p-8 shadow-sm">
-              <div className="flex items-center justify-between mb-6">
+          <div className="grid gap-3 mb-6">
+            {routines.map(routine => (
+              <div key={routine.id} className="flex items-center justify-between bg-background border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
                 <div>
-                  <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-accent" />
-                    Custom Routines
-                  </h3>
-                  <p className="text-sm text-muted">Build personalized emergency plans for when urges hit.</p>
+                  <p className="font-bold">{routine.name}</p>
+                  <p className="text-xs text-muted">{routine.steps.length} steps • {routine.steps.reduce((t, s) => t + s.duration, 0)}s total</p>
                 </div>
-                <button
-                  onClick={() => { setShowBuilder(true); setEditingRoutine(null); setRoutineName(''); setRoutineSteps([]) }}
-                  className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors"
-                >
-                  <Plus className="w-4 h-4" /> New Routine
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => startRoutine(routine)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-1.5">
+                    <Play className="w-3.5 h-3.5" /> Start
+                  </button>
+                  <button onClick={() => editRoutine(routine)} className="text-muted hover:text-foreground p-2 rounded-lg hover:bg-surface-hover transition-colors">
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => deleteRoutine(routine.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Saved Routines List */}
-              {routines.length === 0 && !showBuilder ? (
-                <div className="text-center py-10 text-muted">
-                  <Timer className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">No routines yet. Create one to get started!</p>
-                </div>
-              ) : (
-                <div className="grid gap-3 mb-6">
-                  {routines.map(routine => (
-                    <div key={routine.id} className="flex items-center justify-between bg-background border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
-                      <div>
-                        <p className="font-bold">{routine.name}</p>
-                        <p className="text-xs text-muted">{routine.steps.length} steps • {routine.steps.reduce((t, s) => t + s.duration, 0)}s total</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => startRoutine(routine)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-1.5">
-                          <Play className="w-3.5 h-3.5" /> Start
-                        </button>
-                        <button onClick={() => editRoutine(routine)} className="text-muted hover:text-foreground p-2 rounded-lg hover:bg-surface-hover transition-colors">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => deleteRoutine(routine.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* Routine Builder Modal */}
+        {showBuilder && (
+          <div className="border-t border-border pt-6 mt-4">
+            <h4 className="text-lg font-bold mb-4">{editingRoutine ? 'Edit Routine' : 'New Routine'}</h4>
 
-              {/* Routine Builder Modal */}
-              {showBuilder && (
-                <div className="border-t border-border pt-6 mt-4">
-                  <h4 className="text-lg font-bold mb-4">{editingRoutine ? 'Edit Routine' : 'New Routine'}</h4>
+            <input
+              type="text"
+              placeholder="Routine name (e.g. 'Night Time Reset')"
+              value={routineName}
+              onChange={e => setRoutineName(e.target.value)}
+              className="w-full bg-background border border-border rounded-xl px-4 py-3 mb-4 text-sm font-medium focus:outline-none focus:border-primary"
+            />
 
+            <p className="text-xs font-bold text-muted uppercase mb-2">Add steps:</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {[
+                { type: 'breathe', label: '🌬️ Breathe', color: 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20' },
+                { type: 'hold', label: '⏸️ Hold', color: 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20' },
+                { type: 'action', label: '💪 Action', color: 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' },
+                { type: 'affirmation', label: '💭 Affirmation', color: 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20' },
+                { type: 'timer', label: '⏱️ Timer', color: 'bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20' },
+              ].map(s => (
+                <button key={s.type} onClick={() => addStep(s.type as RoutineStep['type'])} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${s.color} transition-colors`}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="space-y-2 mb-6">
+              {routineSteps.map((step, i) => (
+                <div key={step.id} className={`flex items-center gap-3 p-3 rounded-xl border ${getStepColor(step.type)}`}>
+                  <GripVertical className="w-4 h-4 opacity-30 flex-shrink-0" />
+                  <span className="text-sm font-bold w-5">{i + 1}.</span>
+                  <span className="text-lg">{getStepIcon(step.type)}</span>
                   <input
                     type="text"
-                    placeholder="Routine name (e.g. 'Night Time Reset')"
-                    value={routineName}
-                    onChange={e => setRoutineName(e.target.value)}
-                    className="w-full bg-background border border-border rounded-xl px-4 py-3 mb-4 text-sm font-medium focus:outline-none focus:border-primary"
+                    value={step.label}
+                    onChange={e => updateStep(step.id, 'label', e.target.value)}
+                    className="flex-1 bg-transparent border-none text-sm font-medium focus:outline-none"
                   />
-
-                  <p className="text-xs font-bold text-muted uppercase mb-2">Add steps:</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {[
-                      { type: 'breathe', label: '🌬️ Breathe', color: 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20' },
-                      { type: 'hold', label: '⏸️ Hold', color: 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20' },
-                      { type: 'action', label: '💪 Action', color: 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' },
-                      { type: 'affirmation', label: '💭 Affirmation', color: 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20' },
-                      { type: 'timer', label: '⏱️ Timer', color: 'bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20' },
-                    ].map(s => (
-                      <button key={s.type} onClick={() => addStep(s.type as RoutineStep['type'])} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${s.color} transition-colors`}>
-                        {s.label}
-                      </button>
-                    ))}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <input
+                      type="number"
+                      value={step.duration}
+                      onChange={e => updateStep(step.id, 'duration', parseInt(e.target.value) || 1)}
+                      min={1}
+                      max={300}
+                      className="w-14 bg-background border border-border rounded-lg px-2 py-1 text-xs text-center font-mono focus:outline-none"
+                    />
+                    <span className="text-xs text-muted">s</span>
                   </div>
-
-                  <div className="space-y-2 mb-6">
-                    {routineSteps.map((step, i) => (
-                      <div key={step.id} className={`flex items-center gap-3 p-3 rounded-xl border ${getStepColor(step.type)}`}>
-                        <GripVertical className="w-4 h-4 opacity-30 flex-shrink-0" />
-                        <span className="text-sm font-bold w-5">{i + 1}.</span>
-                        <span className="text-lg">{getStepIcon(step.type)}</span>
-                        <input
-                          type="text"
-                          value={step.label}
-                          onChange={e => updateStep(step.id, 'label', e.target.value)}
-                          className="flex-1 bg-transparent border-none text-sm font-medium focus:outline-none"
-                        />
-                        <div className="flex items-center gap-1 flex-shrink-0">
-                          <input
-                            type="number"
-                            value={step.duration}
-                            onChange={e => updateStep(step.id, 'duration', parseInt(e.target.value) || 1)}
-                            min={1}
-                            max={300}
-                            className="w-14 bg-background border border-border rounded-lg px-2 py-1 text-xs text-center font-mono focus:outline-none"
-                          />
-                          <span className="text-xs text-muted">s</span>
-                        </div>
-                        <button onClick={() => removeStep(step.id)} className="text-red-500 hover:bg-red-500/10 p-1 rounded-lg transition-colors">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                    {routineSteps.length === 0 && (
-                      <p className="text-center text-muted text-sm py-4">Add steps above to build your routine</p>
-                    )}
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      onClick={saveRoutine}
-                      disabled={!routineName.trim() || routineSteps.length === 0}
-                      className="bg-primary hover:bg-primary-hover disabled:opacity-40 text-white px-6 py-3 rounded-xl font-bold transition-colors"
-                    >
-                      {editingRoutine ? 'Save Changes' : 'Create Routine'}
-                    </button>
-                    <button
-                      onClick={() => { setShowBuilder(false); setEditingRoutine(null) }}
-                      className="bg-surface-hover hover:bg-border text-foreground px-6 py-3 rounded-xl font-bold transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  <button onClick={() => removeStep(step.id)} className="text-red-500 hover:bg-red-500/10 p-1 rounded-lg transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
+              ))}
+              {routineSteps.length === 0 && (
+                <p className="text-center text-muted text-sm py-4">Add steps above to build your routine</p>
               )}
             </div>
-          </>
+
+            <div className="flex gap-3">
+              <button
+                onClick={saveRoutine}
+                disabled={!routineName.trim() || routineSteps.length === 0}
+                className="bg-primary hover:bg-primary-hover disabled:opacity-40 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                {editingRoutine ? 'Save Changes' : 'Create Routine'}
+              </button>
+              <button
+                onClick={() => { setShowBuilder(false); setEditingRoutine(null) }}
+                className="bg-surface-hover hover:bg-border text-foreground px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

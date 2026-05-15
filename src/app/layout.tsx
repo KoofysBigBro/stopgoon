@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     default: "StopGoon - Overcome Addiction & Build Discipline",
     template: "%s | StopGoon"
   },
-  description: "StopGoon is a premium mental wellness platform designed to help you break bad habits, overcome addiction, and build a disciplined, fulfilling life.",
+    description: "StopGoon is a recovery platform that helps you break compulsive habits, track your progress, and build a healthier relationship with yourself.",
   keywords: ["addiction recovery", "nofap", "mental wellness", "stop gooning", "habit tracker", "discipline", "self improvement"],
   authors: [{ name: "StopGoon Team" }],
   creator: "StopGoon",
@@ -36,17 +36,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://stopgoon.vercel.app",
     title: "StopGoon - Overcome Addiction & Build Discipline",
-    description: "A premium mental wellness platform designed to help you break bad habits and build a disciplined life.",
+    description: "A recovery platform that helps you break compulsive habits and build a disciplined life.",
     siteName: "StopGoon",
   },
   twitter: {
     card: "summary_large_image",
     title: "StopGoon - Overcome Addiction & Build Discipline",
-    description: "A premium mental wellness platform designed to help you break bad habits and build a disciplined life.",
+    description: "A recovery platform that helps you break compulsive habits and build a disciplined life.",
   },
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: 'https://stopgoon.vercel.app',
   },
   manifest: "/manifest.json",
   icons: {

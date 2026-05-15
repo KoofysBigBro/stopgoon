@@ -23,7 +23,7 @@ export default async function AnalyticsPage() {
   let totalCheckins = 0
   let totalJournalEntries = 0
   let totalUrges = 0
-  let totalRelapses = 0
+  let totalSetbacks = 0
   let currentStreak = 0
   let longestStreak = 0
   let averageIntensity = 0
@@ -48,7 +48,7 @@ export default async function AnalyticsPage() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
-    totalRelapses = relapses?.length || 0
+    totalSetbacks = relapses?.length || 0
     const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(user.created_at)
 
     // Total checkins
@@ -153,7 +153,7 @@ export default async function AnalyticsPage() {
           id: `relapse-${i}`,
           type: 'relapse',
           date: new Date(r.created_at),
-          title: 'Relapse Logged',
+          title: 'Setback Logged',
           description: 'A bump in the road. Recovery is not linear.'
         });
       });
@@ -221,7 +221,7 @@ export default async function AnalyticsPage() {
       <PredictiveWarning 
         isPremium={isPremium}
         currentStreak={currentStreak}
-        totalRelapses={totalRelapses}
+        totalRelapses={totalSetbacks}
         averageStreak={averageStreak}
         lastUrgeIntensity={lastUrgeIntensity}
         lastUrgeTime={lastUrgeTime}
@@ -267,9 +267,9 @@ export default async function AnalyticsPage() {
             <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-rose-500" />
             </div>
-            <span className="text-sm font-semibold text-muted">Total Relapses</span>
+            <span className="text-sm font-semibold text-muted">Total Setbacks</span>
           </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{totalRelapses}</p>
+          <p className="text-4xl font-bold text-foreground tracking-tight">{totalSetbacks}</p>
           <p className="text-xs text-muted mt-1">logged</p>
         </div>
       </div>

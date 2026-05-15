@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Users, MessageCircle, Sparkles, CalendarCheck2, BookOpen, Crown, Mail } from 'lucide-react'
+import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, MessageCircle, Sparkles, BookOpen, Crown, Mail } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
-import DashboardAdWrapper from '@/components/DashboardAdWrapper'
 import CrisisShortcut from './components/CrisisShortcut'
 import CommandPalette from './components/CommandPalette'
 
@@ -59,15 +58,13 @@ export default async function DashboardLayout({
             <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10" />
             <nav className="flex overflow-x-auto md:flex-col gap-2 md:gap-1 pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none [-webkit-overflow-scrolling:touch] scroll-pl-4 md:scroll-pl-0">
               {[
-                { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '' },
-                { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '' },
-                { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10' },
-                { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '' },
-                { href: '/dashboard/review', icon: CalendarCheck2, label: 'Weekly Review', cls: '' },
-                { href: '/dashboard/accountability', icon: Users, label: 'Partners', cls: 'text-amber-500 hover:bg-amber-500/10' },
-                { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10' },
+                { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '', dot: false },
+                { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '', dot: false },
+                { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10', dot: false },
+                { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '', dot: false },
+                { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10', dot: false },
                 { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
-                { href: '/blog', icon: BookOpen, label: 'Blog', cls: '' },
+                { href: '/blog', icon: BookOpen, label: 'Blog', cls: '', dot: false },
               ].map(item => (
                 <Link
                   key={item.href}
@@ -108,16 +105,29 @@ export default async function DashboardLayout({
           </div>
           {/* Desktop nav */}
           <nav className="hidden md:flex flex-col gap-1 pb-0">
+            <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Core</p>
             {[
-              { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '' },
-              { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '' },
-              { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10' },
-              { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '' },
-              { href: '/dashboard/review', icon: CalendarCheck2, label: 'Weekly Review', cls: '' },
-              { href: '/dashboard/accountability', icon: Users, label: 'Partners', cls: 'text-amber-500 hover:bg-amber-500/10' },
-              { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10' },
+              { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', cls: '', dot: false },
+              { href: '/dashboard/journal', icon: BookHeart, label: 'Journal', cls: '', dot: false },
+              { href: '/dashboard/sos', icon: LifeBuoy, label: 'SOS Mode', cls: 'text-red-500 hover:bg-red-500/10', dot: false },
+              { href: '/dashboard/analytics', icon: Activity, label: 'Analytics', cls: '', dot: false },
+            ].map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground hover:translate-x-1 ${item.cls}`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span className="text-base">{item.label}</span>
+                {item.dot && <ChatNotificationDot userId={user.id} />}
+              </Link>
+            ))}
+            <div className="my-1 mx-4 border-t border-border/50" />
+            <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Support</p>
+            {[
+              { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10', dot: false },
               { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
-              { href: '/blog', icon: BookOpen, label: 'Blog', cls: '' },
+              { href: '/blog', icon: BookOpen, label: 'Blog', cls: '', dot: false },
             ].map(item => (
               <Link
                 key={item.href}
@@ -171,7 +181,6 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
-        <DashboardAdWrapper />
         {children}
       </main>
       <CommandPalette />

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const tokenHash = searchParams.get('token_hash')
   const type = searchParams.get('type')
   // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/dashboard'
+  let next = searchParams.get('next') ?? '/dashboard'
 
   const supabase = await createClient()
 
@@ -16,7 +16,18 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // User is verified and logged in.
+      // Check if user needs onboarding
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .single()
+        if (profile && !profile.onboarding_completed) {
+          next = '/onboarding'
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`)
     }
   }

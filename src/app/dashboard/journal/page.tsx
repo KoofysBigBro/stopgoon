@@ -18,7 +18,7 @@ const MOODS = [
 const ENTRY_TYPES = [
   { value: 'reflection', label: 'Reflection', description: 'Write freely about your day' },
   { value: 'gratitude', label: 'Gratitude', description: 'Name things you appreciate' },
-  { value: 'relapse', label: 'Relapse Reflection', description: 'Understand what happened without judgement' },
+  { value: 'relapse', label: 'Setback Reflection', description: 'Understand what happened without judgement' },
 ]
 
 const DAILY_PROMPTS = [

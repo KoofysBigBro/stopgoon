@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ShieldCheck, Eye, EyeOff, Loader2, ArrowRight, Sparkles, Lock } from 'lucide-react'
+import { ShieldCheck, Eye, EyeOff, Loader2, ArrowRight, Sparkles, Lock, Mail } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -63,10 +63,88 @@ export default function LoginPage() {
     }
   }
 
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
+
+  const handleOAuth = async (provider: 'google' | 'github') => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) setError(error.message)
+    } catch {
+      setError('Could not connect to the provider.')
+    }
+    setIsLoading(false)
+  }
+
+  const handleMagicLink = async () => {
+    if (!email) {
+      setError('Enter your email address first.')
+      return
+    }
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        },
+      })
+      if (error) {
+        setError(error.message)
+        setIsLoading(false)
+        return
+      }
+      setMagicLinkSent(true)
+    } catch {
+      setError('Could not send magic link.')
+    }
+    setIsLoading(false)
+  }
+
+  if (magicLinkSent) {
+    return (
+      <div className="flex flex-col w-full min-h-screen items-center justify-center bg-background px-4">
+        <div className="w-full max-w-[420px] bg-surface/70 backdrop-blur-xl border border-border rounded-3xl p-10 shadow-xl text-center animate-fade-up">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Mail className="w-10 h-10 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold font-heading tracking-tight text-foreground mb-3">Check your email</h1>
+          <p className="text-muted leading-relaxed mb-8">
+            We sent a magic link to <strong>{email}</strong>. Click it to sign in instantly.
+          </p>
+          <button onClick={() => setMagicLinkSent(false)} className="text-sm text-primary hover:text-primary-hover font-semibold">
+            Use a different email
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const GoogleIcon = () => (
+    <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+  )
+
+  const GithubIcon = () => (
+    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden>
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+  )
+
   return (
     <div className="flex flex-col w-full min-h-screen items-center justify-center bg-background px-4 py-10 relative overflow-hidden">
-      <div className="absolute top-16 -left-20 w-[340px] h-[340px] bg-primary/20 blur-[90px] pointer-events-none rounded-full" />
-      <div className="absolute bottom-8 -right-16 w-[280px] h-[280px] bg-accent/15 blur-[80px] pointer-events-none rounded-full" />
+
 
       <div className="w-full max-w-5xl grid md:grid-cols-2 gap-6 items-stretch relative z-10">
         <div className="hidden md:flex flex-col justify-between rounded-3xl glass-card p-8 animate-fade-up">
@@ -102,6 +180,32 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+
+        {/* OAuth Buttons */}
+        <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => handleOAuth('google')}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 bg-background border border-border hover:bg-surface-hover rounded-xl px-4 py-3.5 font-medium text-sm transition-colors disabled:opacity-60"
+          >
+            <GoogleIcon /> Continue with Google
+          </button>
+          <button
+            type="button"
+            onClick={() => handleOAuth('github')}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 bg-background border border-border hover:bg-surface-hover rounded-xl px-4 py-3.5 font-medium text-sm transition-colors disabled:opacity-60"
+          >
+            <GithubIcon /> Continue with GitHub
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs font-medium text-muted">or sign in with email</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-foreground" htmlFor="email">
@@ -155,7 +259,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 mt-2 transition-all font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99]"
         >
           {isLoading ? (
             <>
@@ -167,15 +271,20 @@ export default function LoginPage() {
           )}
         </button>
 
-        <div className="mt-4 text-center text-sm text-muted">
+        <button
+          type="button"
+          onClick={handleMagicLink}
+          disabled={isLoading}
+          className="w-full text-center text-sm font-semibold text-muted hover:text-foreground transition-colors py-2"
+        >
+          Send magic link instead
+        </button>
+
+        <div className="text-center text-sm text-muted">
           Don&apos;t have an account?{' '}
           <Link href="/register" className="font-semibold text-primary hover:text-primary-hover hover:underline transition-colors">
             Register instead
           </Link>
-        </div>
-
-        <div className="mt-5 rounded-xl border border-border bg-background/70 p-3 text-xs text-muted text-center">
-          Trusted by users who want supportive recovery tools, private tracking, and no shame-based nudges.
         </div>
       </form>
         </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
-import { ShieldCheck, ArrowRight, Loader2, CheckCircle2, Moon, Clock, Smartphone, Coffee, Target, Sparkles } from 'lucide-react'
+import { ShieldCheck, ArrowRight, Loader2, CheckCircle2, Moon, Clock, Smartphone, Coffee, Target, Sparkles, Smile, Zap, LifeBuoy } from 'lucide-react'
 
 const TRIGGERS = [
   { id: 'boredom', label: 'Boredom', icon: Clock },
@@ -67,8 +67,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 selection:bg-primary/30 relative overflow-hidden">
-      <div className="absolute top-8 -left-20 w-[320px] h-[320px] bg-primary/20 blur-[90px] pointer-events-none rounded-full" />
-      <div className="absolute -bottom-6 -right-10 w-[280px] h-[280px] bg-accent/15 blur-[80px] pointer-events-none rounded-full" />
+
       
       <div className="w-full max-w-2xl z-10">
         <div className="flex items-center justify-center gap-2 mb-12">
@@ -82,13 +81,14 @@ export default function OnboardingPage() {
           </div>
 
           <div className="mb-6 rounded-xl border border-border bg-background/70 p-3 text-xs text-muted flex items-center justify-between">
-            <span>Estimated setup time: about 60 seconds</span>
-            <span className="font-semibold text-foreground">Step {step} of 2</span>
+            <span>Setup takes about 90 seconds</span>
+            <span className="font-semibold text-foreground">Step {step} of 3</span>
           </div>
 
           <div className="flex gap-2 mb-12">
             <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-800'}`} />
             <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-800'}`} />
+            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 3 ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-800'}`} />
           </div>
 
           {step === 1 && (
@@ -152,11 +152,66 @@ export default function OnboardingPage() {
                   Back
                 </button>
                 <button
-                  onClick={handleFinish}
-                  disabled={selectedTriggers.length === 0 || isLoading}
+                  onClick={() => setStep(3)}
+                  disabled={selectedTriggers.length === 0}
                   className="flex-1 bg-primary hover:bg-primary-hover disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white rounded-xl px-4 py-4 font-bold flex items-center justify-center gap-2 transition-all shadow-md"
                 >
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Complete Setup'}
+                  Continue <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && !showFirstWin && (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+              <h1 className="text-3xl font-bold font-heading mb-4 text-foreground">You&apos;re all set up</h1>
+              <p className="text-muted mb-8 leading-relaxed">
+                Here&apos;s what to do next on your dashboard:
+              </p>
+
+              <div className="space-y-4 mb-10">
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-background border border-border">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Smile className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Check in daily</h3>
+                    <p className="text-xs text-muted">Tap a mood button each day. Takes 10 seconds and builds your progress streak.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-background border border-border">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <Zap className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Log urges when they hit</h3>
+                    <p className="text-xs text-muted">Quick-log or add details. This helps you spot patterns over time.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-background border border-border">
+                  <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                    <LifeBuoy className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Use SOS in a crisis</h3>
+                    <p className="text-xs text-muted">Breathing exercises and custom reset routines when urges feel overwhelming.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-6 py-4 rounded-xl font-bold text-muted hover:text-foreground bg-background border border-border transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleFinish}
+                  disabled={isLoading}
+                  className="flex-1 bg-primary hover:bg-primary-hover disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white rounded-xl px-4 py-4 font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+                >
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Start Your Journey <ArrowRight className="w-5 h-5" /></>}
                 </button>
               </div>
             </div>

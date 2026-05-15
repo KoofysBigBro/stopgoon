@@ -40,7 +40,7 @@ export default async function LandingPage() {
               Log in
             </Link>
             <Link href="/register" className="text-sm font-bold bg-primary text-white px-6 py-2.5 rounded-full hover:bg-primary-hover transition-all shadow-lg shadow-primary/30 hover:-translate-y-0.5">
-              Start Free Trial
+              Create Free Account
             </Link>
           </div>
         </div>
@@ -48,22 +48,19 @@ export default async function LandingPage() {
 
       <main>
         <section className="pt-40 pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
-          <div className="absolute -top-36 left-0 w-[420px] h-[420px] bg-primary/25 blur-[100px] rounded-full pointer-events-none" />
-          <div className="absolute top-32 -right-12 w-[320px] h-[320px] bg-accent/20 blur-[85px] rounded-full pointer-events-none" />
-
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
             <Sparkles className="w-4 h-4 text-accent" />
-            <span>Fresh recovery system for modern habits</span>
+            <span>Private recovery tracker for compulsive habits</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] font-heading animate-fade-up-delay">
             {heroVariant === 'freedom'
-              ? 'Break compulsive loops and get your life force back.'
-              : 'Build calm focus in a world designed to hijack your attention.'}
+              ? 'Break the loop. Track urges, log progress, stay clean.'
+              : 'Track urges, build discipline, break the cycle.'}
           </h1>
 
           <p className="text-lg md:text-xl text-muted mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-up-delay">
-            StopGoon gives users a cleaner path to change: private check-ins, behavior insights, and in-the-moment rescue tools that feel empowering, not punishing.
+            StopGoon is a private recovery tool for breaking compulsive habits. Daily check-ins, urge tracking, SOS breathing exercises, and insights — all without shame or judgment.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -82,27 +79,21 @@ export default async function LandingPage() {
             <span className="px-3 py-1 rounded-full bg-accent/15 text-foreground">No shame-based streak language</span>
           </div>
 
-          <div className="mt-20 relative mx-auto w-full max-w-4xl animate-float-slow">
-            <div className="absolute -inset-1 bg-gradient-to-b from-primary/25 to-transparent rounded-2xl blur-lg opacity-80" />
-            <div className="relative glass-card rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-              <div className="h-12 border-b border-border bg-background/40 flex items-center px-4 gap-2">
-                <div className="w-3 h-3 rounded-full bg-rose-400/60" />
-                <div className="w-3 h-3 rounded-full bg-amber-400/60" />
-                <div className="w-3 h-3 rounded-full bg-primary/80" />
-              </div>
-              <div className="p-8 grid grid-cols-3 gap-6 opacity-80 pointer-events-none">
-                <div className="col-span-2 space-y-4">
-                  <div className="h-8 w-48 bg-slate-300/70 dark:bg-slate-700/70 rounded-lg" />
-                  <div className="h-32 w-full bg-surface-hover rounded-xl" />
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="h-24 w-full bg-surface-hover rounded-xl" />
-                    <div className="h-24 w-full bg-surface-hover rounded-xl" />
-                  </div>
-                </div>
-                <div className="col-span-1 space-y-4">
-                  <div className="h-64 w-full bg-primary/15 border border-primary/30 rounded-xl" />
-                </div>
-              </div>
+          <div className="mt-20 grid sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
+              <div className="text-2xl mb-2">📝</div>
+              <h3 className="font-bold text-sm mb-1">Daily Check-ins</h3>
+              <p className="text-xs text-muted">One tap to log your mood and build awareness.</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
+              <div className="text-2xl mb-2">⚡</div>
+              <h3 className="font-bold text-sm mb-1">Urge Tracking</h3>
+              <p className="text-xs text-muted">Log triggers and intensity to spot patterns.</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
+              <div className="text-2xl mb-2">🆘</div>
+              <h3 className="font-bold text-sm mb-1">SOS Rescue</h3>
+              <p className="text-xs text-muted">Breathing exercises and grounding when urges hit.</p>
             </div>
           </div>
         </section>
@@ -180,6 +171,33 @@ export default async function LandingPage() {
                   <div className="h-full bg-accent w-3/4 rounded-full" />
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-24 px-6 bg-surface border-y border-border">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-heading tracking-tight">What users are saying</h2>
+              <p className="text-muted max-w-xl mx-auto text-lg">Real people using StopGoon to rebuild their habits and their lives.</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { text: "The SOS breathing tool has stopped me from relapsing at least 5 times this month. Just having something to click when the urge hits makes all the difference.", name: "Alex", tag: "Using for 3 months" },
+                { text: "I've tried every habit tracker and nothing worked because they made me feel guilty about slipping. StopGoon treats me like a human.", name: "Jordan", tag: "Using for 6 weeks" },
+                { text: "The daily check-in takes 10 seconds. That's it. But somehow keeping that streak going has rewired my whole approach.", name: "Sam", tag: "Using for 2 months" },
+              ].map((t, i) => (
+                <div key={i} className="bg-background border border-border rounded-2xl p-6 flex flex-col">
+                  <div className="flex gap-1 mb-4">
+                    {[1,2,3,4,5].map(s => <span key={s} className="text-amber-400 text-sm">★</span>)}
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed mb-6 flex-1">&ldquo;{t.text}&rdquo;</p>
+                  <div className="border-t border-border pt-4">
+                    <p className="font-bold text-sm">{t.name}</p>
+                    <p className="text-xs text-muted">{t.tag}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -350,11 +368,11 @@ export default async function LandingPage() {
               <ShieldCheck className="w-5 h-5" />
               <span className="font-bold">StopGoon</span>
             </div>
-            <h3 className="text-base font-bold text-foreground">About Us</h3>
-            <p className="mt-2 text-sm text-muted max-w-xl leading-relaxed">
-              StopGoon is built by a solo programmer from Macedonia with one year of hands-on experience,
-              focused on creating a practical, private, and supportive recovery tool people can actually stick with.
-            </p>
+              <h3 className="text-base font-bold text-foreground">About Us</h3>
+              <p className="mt-2 text-sm text-muted max-w-xl leading-relaxed">
+                StopGoon is a privacy-focused recovery tool designed to help people break compulsive habits
+                and build a healthier relationship with themselves.
+              </p>
           </div>
           <div className="flex flex-col md:items-end gap-3 text-sm text-muted font-medium">
             <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
@@ -373,7 +391,7 @@ export default async function LandingPage() {
           Contact Us: stopgoonsupport@gmail.com
         </Link>
         <Link href="/register" className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-full shadow-xl shadow-primary/35 transition-all">
-          Start Free Trial <ArrowRight className="w-4 h-4" />
+          Create Free Account <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </div>

@@ -52,7 +52,7 @@
 }
 
 body {
-  background: radial-gradient(circle at 20% 20%, rgb(17 205 170 / 0.1), transparent 44%), radial-gradient(circle at 80% 10%, rgb(245 158 11 / 0.12), transparent 38%), var(--background);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -76,21 +76,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes slow-float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-14px);
-  }
-}
-
-@keyframes pulse-soft {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgb(44 199 165 / 0.25);
-  }
-  50% {
-    box-shadow: 0 0 0 16px rgb(44 199 165 / 0);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
 }
 
 @keyframes shimmer {
@@ -119,11 +106,6 @@ h1, h2, h3, h4, h5, h6 {
   66% { transform: translateY(3px) rotate(-0.3deg); }
 }
 
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
-}
-
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -137,28 +119,6 @@ h1, h2, h3, h4, h5, h6 {
   50% { transform: translate(-20px, 30px) scale(0.95); }
   75% { transform: translate(20px, -30px) scale(1.05); }
   100% { transform: translate(0, 0) scale(1); }
-}
-
-@keyframes border-rotate {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes shine-sweep {
-  0% { transform: translateX(-100%) rotate(25deg); }
-  30% { transform: translateX(100%) rotate(25deg); }
-  100% { transform: translateX(100%) rotate(25deg); }
-}
-
-@keyframes count-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.85); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes slide-up-stagger {
@@ -180,10 +140,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-float-drift {
   animation: float-drift 6s ease-in-out infinite;
-}
-
-.animate-pulse-soft {
-  animation: pulse-soft 2.8s ease-out infinite;
 }
 
 .animate-glow-pulse {
@@ -212,31 +168,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: gradient-shift 8s ease infinite;
 }
 
-.animate-shine-sweep {
-  position: relative;
-  overflow: hidden;
-}
-.animate-shine-sweep::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 70%
-  );
-  animation: shine-sweep 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.animate-scale-in {
-  animation: scale-in 0.5s var(--ease-standard) both;
-}
-
 .animate-stagger-1 { animation: slide-up-stagger 0.5s var(--ease-standard) 0.05s both; }
 .animate-stagger-2 { animation: slide-up-stagger 0.5s var(--ease-standard) 0.1s both; }
 .animate-stagger-3 { animation: slide-up-stagger 0.5s var(--ease-standard) 0.15s both; }
@@ -260,30 +191,6 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(12px);
 }
 
-.premium-card-glow {
-  position: relative;
-}
-.premium-card-glow::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    rgb(99 102 241),
-    var(--accent),
-    var(--primary)
-  );
-  background-size: 300% 300%;
-  animation: gradient-shift 6s ease infinite;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
 .premium-glow-text {
   background: linear-gradient(135deg, var(--primary), rgb(99 102 241), var(--accent));
   background-size: 200% auto;
@@ -303,26 +210,22 @@ h1, h2, h3, h4, h5, h6 {
   .animate-fade-up-delay,
   .animate-float-slow,
   .animate-float-drift,
-  .animate-pulse-soft,
   .animate-glow-pulse,
   .animate-glow-pulse-amber,
   .animate-glow-pulse-indigo,
   .animate-orbit-drift,
   .animate-shimmer,
   .animate-gradient-shift,
-  .animate-scale-in,
   .animate-stagger-1,
   .animate-stagger-2,
   .animate-stagger-3,
   .animate-stagger-4,
   .animate-stagger-5,
-  .animate-stagger-6,
-  .premium-card-glow::before {
+  .animate-stagger-6 {
     animation: none !important;
   }
 }
 
-/* Reduced Motion */
 .reduced-motion,
 .reduced-motion * {
   animation-duration: 0.01ms !important;
@@ -330,7 +233,6 @@ h1, h2, h3, h4, h5, h6 {
   transition-duration: 0.01ms !important;
 }
 
-/* High Contrast */
 .high-contrast {
   --foreground: #000000;
 }
