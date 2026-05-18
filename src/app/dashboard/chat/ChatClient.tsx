@@ -515,11 +515,16 @@ export default function ChatClient({
                   <div className="flex-1">
                     <input
                       type="text"
-                      placeholder={activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.username || 'partner'}...`}
+                      placeholder={
+                        !isPremium && activeRoom === 'global'
+                          ? 'Upgrade to Premium to chat globally'
+                          : activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.username || 'partner'}...`
+                      }
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       maxLength={500}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                      disabled={!isPremium && activeRoom === 'global'}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
                     />
                     {sendError && <p className="text-xs text-red-400 mt-1 px-1">{sendError}</p>}
                   </div>
@@ -527,6 +532,10 @@ export default function ChatClient({
                     <div className="flex items-center gap-1.5 text-muted text-sm px-3">
                       <Clock className="w-4 h-4" /> {cooldownSeconds}s
                     </div>
+                  ) : !isPremium && activeRoom === 'global' ? (
+                    <button type="button" onClick={() => window.location.href = '/dashboard/upgrade'} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-3 rounded-xl transition-all font-bold text-xs flex items-center gap-1.5 whitespace-nowrap">
+                      <Crown className="w-4 h-4" /> Unlock Chat
+                    </button>
                   ) : (
                     <button type="submit" disabled={!newMessage.trim() || sending} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white p-3 rounded-xl transition-all">
                       <Send className="w-5 h-5" />

@@ -61,12 +61,21 @@ export default function JournalPage() {
   const [entryType, setEntryType] = useState('reflection')
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [prompt] = useState(() => DAILY_PROMPTS[Math.floor(Math.random() * DAILY_PROMPTS.length)])
+  
+  // Premium limits
+  const [isPremium, setIsPremium] = useState(false)
 
   const supabase = createClient()
 
   const loadEntries = useCallback(async () => {
     setIsLoading(true)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase.from('users').select('subscription_tier').eq('id', user.id).single()
+      setIsPremium(profile?.subscription_tier === 'premium')
+
       const { data } = await supabase
         .from('journal_entries')
         .select('*')
@@ -244,12 +253,31 @@ export default function JournalPage() {
         title="Journal"
         subtitle="A safe space for reflection and honesty."
         actions={
-          <PrimaryButton onClick={() => setIsWriting(true)}>
+          <PrimaryButton 
+            onClick={() => {
+              if (!isPremium && entries.length >= 7) {
+                // If limit reached, could trigger upgrade modal or redirect
+                window.location.href = '/dashboard/upgrade';
+              } else {
+                setIsWriting(true);
+              }
+            }}
+          >
             <Plus className="w-5 h-5" />
             Write Entry
           </PrimaryButton>
         }
       />
+      
+      {!isPremium && entries.length >= 5 && (
+        <div className="mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="w-3.5 h-3.5 shrink-0" />
+            <span>Free tier includes 7 journal entries ({7 - entries.length} remaining).</span>
+          </div>
+          <button onClick={() => window.location.href = '/dashboard/upgrade'} className="font-bold underline">Upgrade for unlimited</button>
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative mb-8">
