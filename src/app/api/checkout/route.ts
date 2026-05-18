@@ -3,23 +3,35 @@ import { createClient } from '@/utils/supabase/server';
 import { setupLemonSqueezy } from '@/utils/billing';
 import { createCheckout } from '@lemonsqueezy/lemonsqueezy.js';
 import { rateLimit } from '@/utils/rate-limit';
+import { getClientIp } from '@/utils/request';
+import { logApiError } from '@/utils/api-error';
+
+const ALLOWED_PLANS = new Set(['monthly', 'quarterly', 'yearly']);
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const ip = getClientIp(request)
     const { allowed } = rateLimit(`checkout:${ip}`, 5, 60000)
     if (!allowed) {
       return NextResponse.json({ error: 'Too Many Requests' }, { status: 429, headers: { 'Retry-After': '60' } })
     }
 
     const body = await request.json().catch(() => ({}));
-    const requestedPlan = typeof body?.plan === 'string' ? body.plan : 'monthly';
+    const requestedPlan = typeof body?.plan === 'string' ? body.plan : '';
+    if (!ALLOWED_PLANS.has(requestedPlan)) {
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+    }
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userLimit = rateLimit(`checkout:user:${user.id}`, 3, 60000);
+    if (!userLimit.allowed) {
+      return NextResponse.json({ error: 'Too Many Requests' }, { status: 429, headers: { 'Retry-After': '60' } });
     }
 
     const email = user.email;
@@ -58,7 +70,7 @@ export async function POST(request: Request) {
     });
 
     if (checkoutResult.error) {
-      console.error("Checkout creation error:", checkoutResult.error);
+      logApiError('/api/checkout', checkoutResult.error, { stage: 'createCheckout', userId, requestedPlan });
       return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
     }
 
@@ -70,7 +82,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: checkoutUrl });
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') console.error('Error creating checkout session:', error);
+    logApiError('/api/checkout', error);
     return NextResponse.json({ error: 'Failed to create checkout' }, { status: 500 });
   }
 }

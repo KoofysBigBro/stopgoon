@@ -1,9 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 import { rateLimit } from '@/utils/rate-limit'
+import { getClientIp } from '@/utils/request'
+import { logApiError } from '@/utils/api-error'
 
 export async function GET(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown'
+  const ip = getClientIp(request)
   const { allowed } = rateLimit(`export:${ip}`, 3, 60000)
   if (!allowed) {
     return NextResponse.json({ error: 'Too Many Requests' }, { status: 429, headers: { 'Retry-After': '60' } })
@@ -14,6 +16,11 @@ export async function GET(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const userLimit = rateLimit(`export:user:${user.id}`, 2, 60000)
+  if (!userLimit.allowed) {
+    return NextResponse.json({ error: 'Too Many Requests' }, { status: 429, headers: { 'Retry-After': '60' } })
   }
 
   // Check if premium
@@ -60,6 +67,7 @@ export async function GET(request: Request) {
       },
     })
   } catch (error) {
+    logApiError('/api/export', error, { userId: user.id })
     return NextResponse.json({ error: 'Failed to export data' }, { status: 500 })
   }
 }

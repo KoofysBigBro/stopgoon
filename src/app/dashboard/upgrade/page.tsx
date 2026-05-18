@@ -4,12 +4,44 @@ import React, { useMemo, useState, useRef, useEffect } from 'react';
 import {
   CheckCircle2, Shield, Sparkles, Star,   Crown, ArrowRight,
   TrendingUp, Brain, Heart, Zap, Activity, Target,
-  ChevronRight, Quote, BarChart3, Clock, Gem
+  ChevronRight, Quote, BarChart3, Clock, Gem, AlertTriangle, CheckCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import SparkleEffect from '@/components/premium/SparkleEffect';
+import SectionCard from '../components/ui/SectionCard';
+import { createClient } from '@/utils/supabase/client';
 
 type PlanId = 'monthly' | 'quarterly' | 'yearly';
+
+type PersonalizedStats = {
+  streakDays: number;
+  recentUrgeAvg: number | null;
+  urgeTrend: 'up' | 'down' | 'flat';
+  consistency: number;
+  riskWindow: string | null;
+};
+
+type FunnelSnapshot = {
+  viewed: number;
+  selected: number;
+  started: number;
+  errored: number;
+  completed: number;
+};
+
+function trackEvent(name: string, data?: Record<string, string | number | boolean>) {
+  if (typeof window === 'undefined') return;
+  const va = (window as Window & { va?: (event: string, payload?: { name: string; data?: Record<string, string | number | boolean> }) => void }).va;
+  if (typeof va === 'function') {
+    va('event', { name, data });
+  }
+
+  void fetch('/api/analytics/upgrade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, data }),
+  }).catch(() => undefined);
+}
 
 const plans = [
   {
@@ -240,17 +272,32 @@ function PlanCard({
 }
 
 export default function UpgradePage() {
+  const supabase = createClient();
   const [selectedPlan, setSelectedPlan] = useState<PlanId>('quarterly');
   const [isLoading, setIsLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [stats, setStats] = useState<PersonalizedStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [funnel, setFunnel] = useState<FunnelSnapshot | null>(null);
+
+  useEffect(() => {
+    trackEvent('upgrade_page_viewed');
+  }, []);
+
+  useEffect(() => {
+    trackEvent('upgrade_plan_selected', { plan: selectedPlan });
+  }, [selectedPlan]);
 
   const handleSubscribe = async () => {
     try {
       setIsLoading(true);
+      setCheckoutError(null);
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan: selectedPlan }),
       });
+      trackEvent('upgrade_checkout_started', { plan: selectedPlan });
 
       const data = await response.json();
 
@@ -261,6 +308,8 @@ export default function UpgradePage() {
       window.location.href = data.url;
     } catch (err) {
       if (process.env.NODE_ENV === 'development') console.error(err);
+      trackEvent('upgrade_checkout_error', { plan: selectedPlan });
+      setCheckoutError('Could not start checkout. Please try again in a few seconds.');
       setIsLoading(false);
     }
   };
@@ -269,6 +318,105 @@ export default function UpgradePage() {
     () => plans.find((p) => p.id === selectedPlan) || plans[1],
     [selectedPlan]
   );
+
+  const urgeTrendText = useMemo(() => {
+    if (loadingStats) return 'Loading your trend...';
+    if (!stats || stats.recentUrgeAvg === null) return 'Not enough urge data yet';
+    return `Last 7 days avg intensity: ${stats.recentUrgeAvg}/10 (${stats.urgeTrend})`;
+  }, [loadingStats, stats]);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setLoadingStats(true);
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData.user;
+
+      if (!user) {
+        setLoadingStats(false);
+        return;
+      }
+
+      const [{ data: relapses }, { data: checkins }, { data: urges }] = await Promise.all([
+        supabase.from('relapses').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1),
+        supabase.from('daily_checkins').select('created_at').eq('user_id', user.id).order('created_at', { ascending: true }),
+        supabase.from('urge_logs').select('intensity, created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+      ]);
+
+      const { data: funnelEvents } = await supabase
+        .from('upgrade_funnel_events')
+        .select('event_name')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(200);
+
+      const lastRelapseDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(user.created_at);
+      const streakDays = (checkins || []).filter((c) => new Date(c.created_at) >= lastRelapseDate).length;
+
+      const today = new Date();
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 6);
+      const uniqueRecentDays = new Set(
+        (checkins || [])
+          .filter((c) => new Date(c.created_at) >= sevenDaysAgo)
+          .map((c) => new Date(c.created_at).toISOString().slice(0, 10))
+      ).size;
+      const consistency = Math.round((uniqueRecentDays / 7) * 100);
+
+      const recentUrges = (urges || []).filter((u) => new Date(u.created_at) >= sevenDaysAgo);
+      const priorStart = new Date(sevenDaysAgo);
+      priorStart.setDate(priorStart.getDate() - 7);
+      const priorUrges = (urges || []).filter((u) => {
+        const time = new Date(u.created_at);
+        return time >= priorStart && time < sevenDaysAgo;
+      });
+
+      const avg = (items: Array<{ intensity: number | null }>) => {
+        if (!items.length) return null;
+        const sum = items.reduce((acc, u) => acc + (u.intensity || 0), 0);
+        return Math.round((sum / items.length) * 10) / 10;
+      };
+
+      const hourBuckets = new Array<number>(24).fill(0);
+      (urges || []).forEach((u) => {
+        const hour = new Date(u.created_at).getHours();
+        hourBuckets[hour] += 1;
+      });
+      const maxCount = Math.max(...hourBuckets);
+      const hotspotHour = maxCount > 1 ? hourBuckets.findIndex((count) => count === maxCount) : -1;
+      const riskWindow = hotspotHour >= 0
+        ? `${String(hotspotHour).padStart(2, '0')}:00 - ${String((hotspotHour + 2) % 24).padStart(2, '0')}:00`
+        : null;
+
+      const recentAvg = avg(recentUrges);
+      const priorAvg = avg(priorUrges);
+      let urgeTrend: 'up' | 'down' | 'flat' = 'flat';
+      if (recentAvg !== null && priorAvg !== null) {
+        if (recentAvg > priorAvg + 0.4) urgeTrend = 'up';
+        else if (recentAvg < priorAvg - 0.4) urgeTrend = 'down';
+      }
+
+      setStats({
+        streakDays,
+        recentUrgeAvg: recentAvg,
+        urgeTrend,
+        consistency,
+        riskWindow,
+      });
+
+      const events = funnelEvents || [];
+      setFunnel({
+        viewed: events.filter((e) => e.event_name === 'upgrade_page_viewed').length,
+        selected: events.filter((e) => e.event_name === 'upgrade_plan_selected').length,
+        started: events.filter((e) => e.event_name === 'upgrade_checkout_started').length,
+        errored: events.filter((e) => e.event_name === 'upgrade_checkout_error').length,
+        completed: events.filter((e) => e.event_name === 'upgrade_checkout_completed').length,
+      });
+
+      setLoadingStats(false);
+    };
+
+    void loadStats();
+  }, [supabase]);
 
   return (
     <div className="max-w-6xl mx-auto pb-24 px-1 md:px-2 relative">
@@ -289,13 +437,80 @@ export default function UpgradePage() {
         </div>
         <div className="space-y-3">
           <h1 className="text-4xl md:text-6xl font-heading font-bold tracking-tight leading-tight">
-            Unlock Your{' '}
-            <span className="premium-glow-text">Full Recovery</span>
+            Upgrade For{' '}
+            <span className="premium-glow-text">Better Outcomes</span>
           </h1>
           <p className="text-lg md:text-xl text-muted max-w-3xl mx-auto leading-relaxed">
-            Core tools stay free forever. Premium unlocks personalized AI guidance,
-            deeper risk prediction, and advanced coaching insights when you&apos;re ready to go further.
+            Free gives you core tracking. Premium gives you earlier intervention, clearer relapse patterns,
+            and personalized coaching when risk is rising.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid md:grid-cols-3 gap-3">
+        <div className="rounded-xl border border-border/60 bg-surface/60 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted mb-2">Risk window clarity</p>
+          <p className="text-sm text-foreground">Identify your highest-risk hours and get warnings before urges peak.</p>
+        </div>
+        <div className="rounded-xl border border-border/60 bg-surface/60 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted mb-2">Intervention speed</p>
+          <p className="text-sm text-foreground">Trigger SOS, coaching, and reset routines faster when a spike starts.</p>
+        </div>
+        <div className="rounded-xl border border-border/60 bg-surface/60 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted mb-2">Weekly momentum</p>
+          <p className="text-sm text-foreground">Turn your raw check-ins into a focused weekly plan you can actually execute.</p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid md:grid-cols-3 gap-3">
+        <div className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-primary/90 mb-1">Your current streak</p>
+          <p className="text-2xl font-bold">{loadingStats ? '...' : `${stats?.streakDays ?? 0} days`}</p>
+        </div>
+        <div className="rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1">7-day consistency</p>
+          <p className="text-2xl font-bold">{loadingStats ? '...' : `${stats?.consistency ?? 0}%`}</p>
+        </div>
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-300 mb-1">Urge trend</p>
+          <p className="text-sm font-semibold">{urgeTrendText}</p>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-rose-500/25 bg-rose-500/10 p-4">
+        <p className="text-xs font-bold uppercase tracking-wider text-rose-200 mb-1">Estimated high-risk window</p>
+        <p className="text-sm text-rose-50/90">
+          {loadingStats
+            ? 'Calculating from your recent urge logs...'
+            : stats?.riskWindow
+              ? `${stats.riskWindow} appears to be your most vulnerable period. Premium helps you intervene earlier.`
+              : 'Log a few urge events to reveal your highest-risk time window.'}
+        </p>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border/60 bg-surface/60 p-4">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted mb-2">Your recent upgrade activity</p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          <div className="rounded-lg border border-border bg-background/70 p-2 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-muted">Viewed</p>
+            <p className="text-lg font-bold">{loadingStats ? '...' : (funnel?.viewed ?? 0)}</p>
+          </div>
+          <div className="rounded-lg border border-border bg-background/70 p-2 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-muted">Plan Picks</p>
+            <p className="text-lg font-bold">{loadingStats ? '...' : (funnel?.selected ?? 0)}</p>
+          </div>
+          <div className="rounded-lg border border-border bg-background/70 p-2 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-muted">Checkout</p>
+            <p className="text-lg font-bold">{loadingStats ? '...' : (funnel?.started ?? 0)}</p>
+          </div>
+          <div className="rounded-lg border border-border bg-background/70 p-2 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-muted">Errors</p>
+            <p className="text-lg font-bold">{loadingStats ? '...' : (funnel?.errored ?? 0)}</p>
+          </div>
+          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2 text-center">
+            <p className="text-[10px] uppercase tracking-wider text-emerald-200">Completed</p>
+            <p className="text-lg font-bold">{loadingStats ? '...' : (funnel?.completed ?? 0)}</p>
+          </div>
         </div>
       </div>
 
@@ -376,9 +591,37 @@ export default function UpgradePage() {
               </span>
             </button>
 
+            {checkoutError ? <p className="mt-2 text-center text-xs text-red-400">{checkoutError}</p> : null}
+
             <p className="text-[9px] text-center text-muted mt-2">
               Secure checkout via Lemon Squeezy &bull; 14-day money-back guarantee
             </p>
+
+            <div className="mt-4 rounded-lg border border-emerald-500/25 bg-emerald-500/10 p-3">
+              <p className="text-[10px] uppercase tracking-wider font-bold text-emerald-300 mb-1">Recommended next step</p>
+              <p className="text-xs text-emerald-100/90">Start with {selectedPlanFull.shortName} and run your first 7-day recovery loop with AI guidance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto mt-10 rounded-2xl border border-border/60 bg-gradient-to-br from-background to-surface/50 p-6">
+        <div className="mb-4">
+          <h2 className="text-xl md:text-2xl font-heading font-bold">What Changes After Upgrading</h2>
+          <p className="text-sm text-muted mt-1">Premium is designed to improve decisions under pressure, not just add dashboards.</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-border bg-background/70 p-4">
+            <div className="inline-flex items-center gap-1 text-amber-400 text-xs font-bold mb-2"><AlertTriangle className="w-3.5 h-3.5" /> BEFORE</div>
+            <p className="text-xs text-muted">You notice patterns after a relapse.</p>
+          </div>
+          <div className="rounded-xl border border-primary/40 bg-primary/10 p-4">
+            <div className="inline-flex items-center gap-1 text-primary text-xs font-bold mb-2"><CheckCheck className="w-3.5 h-3.5" /> AFTER</div>
+            <p className="text-xs text-foreground">You get warnings during risk windows and act earlier with SOS + coaching.</p>
+          </div>
+          <div className="rounded-xl border border-border bg-background/70 p-4">
+            <div className="inline-flex items-center gap-1 text-indigo-400 text-xs font-bold mb-2"><TrendingUp className="w-3.5 h-3.5" /> RESULT</div>
+            <p className="text-xs text-muted">More consistent check-ins, faster recovery after spikes, stronger streak stability.</p>
           </div>
         </div>
       </div>
@@ -416,7 +659,7 @@ export default function UpgradePage() {
           <h2 className="text-2xl md:text-3xl font-heading font-bold">
             Trusted by the <span className="premium-glow-text">Community</span>
           </h2>
-          <p className="text-muted mt-0.5 text-xs md:text-sm">Real results from real members.</p>
+          <p className="text-muted mt-0.5 text-xs md:text-sm">Reported wins from members using premium routines.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-3">
           {testimonials.map((t, i) => (
@@ -440,7 +683,7 @@ export default function UpgradePage() {
       </div>
 
       {/* Why upgrade section */}
-      <div className="max-w-4xl mx-auto mt-16 rounded-2xl border border-border/60 bg-gradient-to-br from-surface/50 to-background p-6 md:p-8">
+      <SectionCard className="max-w-4xl mx-auto mt-16 bg-gradient-to-br from-surface/50 to-background p-6 md:p-8 border-border/60">
         <div className="text-center mb-6">
           <h2 className="text-xl md:text-2xl font-heading font-bold">Why Users Upgrade</h2>
         </div>
@@ -477,7 +720,7 @@ export default function UpgradePage() {
             </div>
           ))}
         </div>
-      </div>
+      </SectionCard>
 
       {/* FAQ / Trust */}
       <div className="max-w-2xl mx-auto text-center space-y-4 pt-12 border-t border-border/60 mt-16">
@@ -489,6 +732,7 @@ export default function UpgradePage() {
         <Link href="/refund" className="text-xs text-primary hover:text-primary-hover underline underline-offset-2 inline-flex items-center gap-1">
           Refund policy <ChevronRight className="w-3 h-3" />
         </Link>
+        <p className="text-[11px] text-muted">Need help before buying? Start with free tools and upgrade anytime from Settings.</p>
       </div>
     </div>
   );

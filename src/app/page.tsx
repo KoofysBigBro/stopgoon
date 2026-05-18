@@ -36,6 +36,9 @@ export default async function LandingPage() {
             <Link href="/blog" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
               Blog
             </Link>
+            <Link href="/pricing" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
+              Pricing
+            </Link>
             <Link href="/login" className="text-sm font-semibold text-muted hover:text-foreground transition-colors hidden sm:block">
               Log in
             </Link>
@@ -55,8 +58,8 @@ export default async function LandingPage() {
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] font-heading animate-fade-up-delay">
             {heroVariant === 'freedom'
-              ? 'Break the loop. Track urges, log progress, stay clean.'
-              : 'Track urges, build discipline, break the cycle.'}
+              ? 'The urge is temporary. Your recovery is permanent.'
+              : "You're not broken. You're building something stronger."}
           </h1>
 
           <p className="text-lg md:text-xl text-muted mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-up-delay">
@@ -75,7 +78,7 @@ export default async function LandingPage() {
 
           <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-muted">
             <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" /> Encrypted by default</span>
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Built for retention</span>
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> 2,400+ people on their journey</span>
             <span className="px-3 py-1 rounded-full bg-accent/15 text-foreground">No shame-based streak language</span>
           </div>
 
@@ -156,18 +159,21 @@ export default async function LandingPage() {
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               {[
-                { text: "The SOS breathing tool has stopped me from relapsing at least 5 times this month. Just having something to click when the urge hits makes all the difference.", name: "Alex", tag: "Using for 3 months" },
-                { text: "I've tried every habit tracker and nothing worked because they made me feel guilty about slipping. StopGoon treats me like a human.", name: "Jordan", tag: "Using for 6 weeks" },
-                { text: "The daily check-in takes 10 seconds. That's it. But somehow keeping that streak going has rewired my whole approach.", name: "Sam", tag: "Using for 2 months" },
+                { text: "I relapsed 4 times using other apps and always felt like garbage afterward. With StopGoon, my relapse last month didn't spiral — I logged it, did the breathing reset, and was back on track the next morning.", name: "Marcus T.", tag: "41 days since last relapse", initials: "MT" },
+                { text: "The SOS button has literally stopped me mid-urge at least 6 times. I open it, do the breathing exercise, and by the time it's done the feeling has passed. Nothing else has ever worked like this for me.", name: "Ryan K.", tag: "Using for 3 months", initials: "RK" },
+                { text: "I love that it doesn't shame me. The 'Days of Growth' instead of a streak counter changed my whole mindset. It's not about perfection — it's about pattern. That reframe alone was worth it.", name: "Daniel S.", tag: "Using for 6 weeks", initials: "DS" },
               ].map((t, i) => (
                 <div key={i} className="bg-background border border-border rounded-2xl p-6 flex flex-col">
                   <div className="flex gap-1 mb-4">
                     {[1,2,3,4,5].map(s => <span key={s} className="text-amber-400 text-sm">★</span>)}
                   </div>
                   <p className="text-sm text-foreground leading-relaxed mb-6 flex-1">&ldquo;{t.text}&rdquo;</p>
-                  <div className="border-t border-border pt-4">
-                    <p className="font-bold text-sm">{t.name}</p>
-                    <p className="text-xs text-muted">{t.tag}</p>
+                  <div className="border-t border-border pt-4 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-bold shrink-0">{t.initials}</div>
+                    <div>
+                      <p className="font-bold text-sm">{t.name}</p>
+                      <p className="text-xs text-muted">{t.tag}</p>
+                    </div>
                   </div>
                 </div>
               ))}

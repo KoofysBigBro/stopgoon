@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import { Users, Copy, Check, UserPlus, ShieldAlert, X, CheckCircle2, Send, MessageSquareShare } from 'lucide-react';
 import { sendInvite, respondToInvite, removePartner } from './actions';
+import PageHeader from '../components/ui/PageHeader';
+import SectionCard from '../components/ui/SectionCard';
+import PrimaryButton from '../components/ui/PrimaryButton';
 
 export default function AccountabilityClient({
   userId,
@@ -91,14 +94,14 @@ export default function AccountabilityClient({
         </div>
       )}
 
-      <div>
-        <h1 className="text-3xl font-bold font-heading mb-2">Accountability</h1>
-        <p className="text-muted">Link accounts with a trusted friend to keep each other on track.</p>
-      </div>
+      <PageHeader
+        title="Accountability"
+        subtitle="Link accounts with a trusted friend to keep each other on track."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Connection Code Card */}
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
             <ShieldAlert className="w-5 h-5 text-indigo-400" />
             Your Connection Code
@@ -116,10 +119,10 @@ export default function AccountabilityClient({
               {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
             </button>
           </div>
-        </div>
+        </SectionCard>
 
         {/* Invite Partner Card */}
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-indigo-400" />
             Add a Partner
@@ -135,19 +138,19 @@ export default function AccountabilityClient({
               onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
               className="bg-background border border-border rounded-xl px-4 py-3 flex-1 font-mono uppercase focus:outline-none focus:border-indigo-500"
             />
-            <button 
+            <PrimaryButton
               type="submit"
               disabled={loading || inviteCode.length < 6}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-bold transition-all"
+              className="px-6 py-3"
             >
               Invite
-            </button>
+            </PrimaryButton>
           </form>
           {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
-        </div>
+        </SectionCard>
       </div>
 
-      <div className="glass-card rounded-2xl p-6 shadow-sm">
+      <SectionCard>
         <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
           <MessageSquareShare className="w-5 h-5 text-primary" />
           Accountability Loop
@@ -168,11 +171,11 @@ export default function AccountabilityClient({
             <Send className="w-4 h-4" /> Send by Email
           </a>
         </div>
-      </div>
+      </SectionCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Active Partners */}
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             Active Partners
@@ -201,10 +204,10 @@ export default function AccountabilityClient({
               })}
             </div>
           )}
-        </div>
+        </SectionCard>
 
         {/* Pending Invites */}
-        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <h2 className="text-lg font-bold mb-4">Pending Invites</h2>
           
           {pendingReceived.length === 0 && pendingSent.length === 0 ? (
@@ -239,7 +242,7 @@ export default function AccountabilityClient({
               ))}
             </div>
           )}
-        </div>
+        </SectionCard>
       </div>
     </div>
   );

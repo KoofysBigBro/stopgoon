@@ -1,6 +1,9 @@
 import { createClient } from '@/utils/supabase/server'
 import dynamicImport from 'next/dynamic'
 import { Flame, Calendar, TrendingUp, BookHeart, Zap, Target } from 'lucide-react'
+import PageHeader from '../components/ui/PageHeader'
+import StatCard from '../components/ui/StatCard'
+import SectionCard from '../components/ui/SectionCard'
 
 const MoodBreakdownChart = dynamicImport(() => import('./MoodBreakdownChart'), {
   loading: () => <div className="h-20 rounded-xl bg-surface-hover animate-pulse" />,
@@ -162,10 +165,10 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="animate-fade-up max-w-5xl mx-auto">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight mb-1">Progress Analytics</h1>
-        <p className="text-muted text-lg">Visualize your journey with cleaner signals and better decisions.</p>
-      </header>
+      <PageHeader
+        title="Progress Analytics"
+        subtitle="Visualize your journey with cleaner signals and better decisions."
+      />
 
       {/* AI Coach */}
       <div className="mb-8">
@@ -184,83 +187,29 @@ export default async function AnalyticsPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Flame className="w-5 h-5 text-primary" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Current Streak</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{currentStreak}</p>
-          <p className="text-xs text-muted mt-1">days</p>
-        </div>
-
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
-              <Target className="w-5 h-5 text-amber-500" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Longest Streak</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{longestStreak}</p>
-          <p className="text-xs text-muted mt-1">days</p>
-        </div>
-
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-emerald-500" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Total Check-ins</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{totalCheckins}</p>
-          <p className="text-xs text-muted mt-1">logged</p>
-        </div>
-
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-rose-500" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Total Setbacks</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{totalSetbacks}</p>
-          <p className="text-xs text-muted mt-1">logged</p>
-        </div>
+        <StatCard icon={<Flame className="w-5 h-5 text-primary" />} label="Current Streak" value={currentStreak} hint="days" />
+        <StatCard icon={<Target className="w-5 h-5 text-amber-500" />} label="Longest Streak" value={longestStreak} hint="days" />
+        <StatCard icon={<Calendar className="w-5 h-5 text-emerald-500" />} label="Total Check-ins" value={totalCheckins} hint="logged" />
+        <StatCard icon={<TrendingUp className="w-5 h-5 text-rose-500" />} label="Total Setbacks" value={totalSetbacks} hint="logged" />
       </div>
 
       {/* Second row stats */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <BookHeart className="w-5 h-5 text-primary" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Journal Entries</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{totalJournalEntries}</p>
-        </div>
+        <StatCard icon={<BookHeart className="w-5 h-5 text-primary" />} label="Journal Entries" value={totalJournalEntries} />
+        <StatCard
+          icon={<Zap className="w-5 h-5 text-orange-500" />}
+          label="Urges Logged"
+          value={totalUrges}
+          hint={averageIntensity > 0 ? `Avg intensity: ${averageIntensity}/10` : undefined}
+        />
 
-        <div className="glass-card rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-              <Zap className="w-5 h-5 text-orange-500" />
-            </div>
-            <span className="text-sm font-semibold text-muted">Urges Logged</span>
-          </div>
-          <p className="text-4xl font-bold text-foreground tracking-tight">{totalUrges}</p>
-          {averageIntensity > 0 && (
-            <p className="text-xs text-muted mt-1">Avg intensity: {averageIntensity}/10</p>
-          )}
-        </div>
-
-        <div className="col-span-2 lg:col-span-1 glass-card rounded-2xl p-6 shadow-sm">
+        <SectionCard className="col-span-2 lg:col-span-1">
           <MoodBreakdownChart moodCounts={moodCounts} totalCheckins={totalCheckins} />
-        </div>
+        </SectionCard>
       </div>
 
       {/* 30-Day Activity Heatmap */}
-      <div className="glass-card rounded-2xl p-8 shadow-sm">
+      <SectionCard className="p-8">
         <h3 className="font-semibold text-lg mb-2 text-foreground">30-Day Check-in Activity</h3>
         <p className="text-sm text-muted mb-6">Your consistency over the past month at a glance.</p>
         <div className="grid grid-cols-10 gap-2">
@@ -287,7 +236,7 @@ export default async function AnalyticsPage() {
           <div className="w-3 h-3 rounded bg-primary" />
           <span>More</span>
         </div>
-      </div>
+      </SectionCard>
 
       {/* Recovery Timeline */}
       <div className="mt-8">

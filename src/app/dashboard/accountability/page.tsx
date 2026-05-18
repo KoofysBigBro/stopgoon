@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import AccountabilityClient from './AccountabilityClient';
+import { randomInt } from 'crypto';
 
 export const metadata = {
   title: 'Accountability | StopGoon',
@@ -18,21 +19,23 @@ export default async function AccountabilityPage() {
   }
 
   // Fetch the current user's premium status and connection code
-  let { data: profile } = await supabase
+  const { data: initialProfile } = await supabase
     .from('users')
     .select('subscription_tier, connection_code')
     .eq('id', user.id)
     .single();
+
+  let profile = initialProfile;
 
   // Auto-heal: Generate a connection code if they don't have one
   if (profile && !profile.connection_code) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let newCode = '';
     for (let i = 0; i < 6; i++) {
-      newCode += chars.charAt(Math.floor(Math.random() * chars.length));
+      newCode += chars.charAt(randomInt(chars.length));
     }
     await supabase.from('users').update({ connection_code: newCode }).eq('id', user.id);
-    profile.connection_code = newCode;
+    profile = { ...profile, connection_code: newCode };
   }
 
   const isPremium = profile?.subscription_tier === 'premium';

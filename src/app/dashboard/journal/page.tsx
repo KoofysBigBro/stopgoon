@@ -1,8 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { BookHeart, Search, Loader2, Check, Trash2, Plus, X, Lightbulb } from 'lucide-react'
+import PageHeader from '../components/ui/PageHeader'
+import PrimaryButton from '../components/ui/PrimaryButton'
+import EmptyState from '../components/ui/EmptyState'
+import SectionCard from '../components/ui/SectionCard'
 
 const MOODS = [
   { value: 'calm', emoji: '😌', label: 'Calm' },
@@ -56,16 +60,11 @@ export default function JournalPage() {
   const [content, setContent] = useState('')
   const [entryType, setEntryType] = useState('reflection')
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
-  const [prompt, setPrompt] = useState('')
+  const [prompt] = useState(() => DAILY_PROMPTS[Math.floor(Math.random() * DAILY_PROMPTS.length)])
 
   const supabase = createClient()
 
-  useEffect(() => {
-    loadEntries()
-    setPrompt(DAILY_PROMPTS[Math.floor(Math.random() * DAILY_PROMPTS.length)])
-  }, [])
-
-  const loadEntries = async () => {
+  const loadEntries = useCallback(async () => {
     setIsLoading(true)
     try {
       const { data } = await supabase
@@ -76,7 +75,13 @@ export default function JournalPage() {
     } catch {
     }
     setIsLoading(false)
-  }
+  }, [supabase])
+
+  useEffect(() => {
+    void (async () => {
+      await loadEntries()
+    })()
+  }, [loadEntries])
 
   const handleSave = async () => {
     if (!content.trim()) return
@@ -220,14 +225,14 @@ export default function JournalPage() {
         </div>
 
         {/* Save */}
-        <button
+        <PrimaryButton
           onClick={handleSave}
           disabled={!content.trim() || isSaving}
-          className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-primary/20"
+          className="w-full py-4"
         >
           {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
           {isSaving ? 'Saving...' : 'Save Journal Entry'}
-        </button>
+        </PrimaryButton>
       </div>
     )
   }
@@ -235,19 +240,16 @@ export default function JournalPage() {
   // List mode
   return (
     <div className="animate-in fade-in duration-300">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-1">Journal</h1>
-          <p className="text-muted text-lg">A safe space for reflection and honesty.</p>
-        </div>
-        <button
-          onClick={() => setIsWriting(true)}
-          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-medium transition-all hover:scale-[1.02] shadow-sm shadow-primary/20"
-        >
-          <Plus className="w-5 h-5" />
-          Write Entry
-        </button>
-      </header>
+      <PageHeader
+        title="Journal"
+        subtitle="A safe space for reflection and honesty."
+        actions={
+          <PrimaryButton onClick={() => setIsWriting(true)}>
+            <Plus className="w-5 h-5" />
+            Write Entry
+          </PrimaryButton>
+        }
+      />
 
       {/* Search */}
       <div className="relative mb-8">
@@ -266,26 +268,18 @@ export default function JournalPage() {
           <Loader2 className="w-8 h-8 animate-spin text-muted" />
         </div>
       ) : filteredEntries.length === 0 ? (
-        <div className="bg-surface border border-dashed border-border rounded-3xl p-16 text-center shadow-sm">
-          <BookHeart className="w-12 h-12 text-muted/50 mx-auto mb-6" />
-          <p className="text-muted text-lg mb-6 max-w-sm mx-auto leading-relaxed">
-            {searchQuery ? "No entries match your search." : "Your journal is empty. Take a moment to reflect on your day."}
-          </p>
-          {!searchQuery && (
-            <button
-              onClick={() => setIsWriting(true)}
-              className="text-primary font-semibold hover:underline text-lg"
-            >
-              Write your first entry
-            </button>
-          )}
-        </div>
+        <EmptyState
+          icon={<BookHeart className="w-12 h-12" />}
+          title={searchQuery ? 'No entries found' : 'Your journal is empty'}
+          description={searchQuery ? 'Try a different keyword or clear your search.' : 'Take a moment to reflect on your day and write your first entry.'}
+          action={!searchQuery ? <button onClick={() => setIsWriting(true)} className="text-primary font-semibold hover:underline">Write your first entry</button> : undefined}
+        />
       ) : (
         <div className="space-y-5">
           {filteredEntries.map(entry => (
-            <div
+            <SectionCard
               key={entry.id}
-              className="bg-surface border border-border rounded-2xl p-8 shadow-sm hover:shadow-md transition-all hover:border-primary/20"
+              className="p-8 hover:shadow-md transition-all hover:border-primary/20"
             >
               <div className="flex justify-between items-start mb-5">
                 <div className="flex items-center gap-4 flex-wrap">
@@ -335,7 +329,7 @@ export default function JournalPage() {
               <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-[15px]">
                 {entry.content.length > 300 ? entry.content.slice(0, 300) + '...' : entry.content}
               </p>
-            </div>
+            </SectionCard>
           ))}
         </div>
       )}

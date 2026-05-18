@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Volume2, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame, UserCheck, Zap } from 'lucide-react';
+import PageHeader from '../components/ui/PageHeader';
 
 interface Partner {
   id: string;
@@ -40,23 +41,19 @@ interface UserStats {
 
 export default function ChatClient({
   userId,
-  userEmail,
   userUsername,
   userAvatarUrl,
   userRole,
   isPremium,
-  isAdmin,
   isMuted,
   isBanned,
   partners,
 }: {
   userId: string;
-  userEmail: string;
   userUsername: string;
   userAvatarUrl: string | null;
   userRole: string;
   isPremium: boolean;
-  isAdmin: boolean;
   isMuted: boolean;
   isBanned: boolean;
   partners: Partner[];
@@ -66,6 +63,7 @@ export default function ChatClient({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
   const [lastSentAt, setLastSentAt] = useState(0);
   const [adminMenuOpen, setAdminMenuOpen] = useState<string | null>(null);
@@ -78,21 +76,6 @@ export default function ChatClient({
 
   const GLOBAL_COOLDOWN_MS = 5000;
   const canModerate = userRole === 'admin' || userRole === 'owner';
-
-  const BAD_WORDS = [
-    'fuck', 'shit', 'bitch', 'cunt', 'nigger', 'nigga', 'faggot', 'dick', 'cock', 'pussy', 
-    'whore', 'slut', 'retard', 'porn', 'rape', 'asshole', 'motherfucker', 'bastard', 'fag', 'dyke'
-  ];
-
-  const filterText = (text: string) => {
-    let filtered = text;
-    BAD_WORDS.forEach(word => {
-      // Replace with asterisks of same length
-      const regex = new RegExp(`\\b${word}\\b`, 'gi');
-      filtered = filtered.replace(regex, match => '*'.repeat(match.length));
-    });
-    return filtered;
-  };
 
   useEffect(() => {
     if (cooldownRemaining <= 0) return;
@@ -181,6 +164,7 @@ export default function ChatClient({
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || sending || isBanned || isMuted) return;
+    setSendError(null);
 
     if (activeRoom === 'global' && !canModerate) {
       const timeSinceLast = Date.now() - lastSentAt;
@@ -190,18 +174,19 @@ export default function ChatClient({
       }
     }
 
-    const filteredContent = filterText(newMessage.trim());
-
     setSending(true);
-    await supabase.from('chat_messages').insert({
-      user_id: userId,
-      content: filteredContent,
-      sender_email: userEmail,
-      sender_username: userUsername,
-      sender_avatar_url: userAvatarUrl,
-      sender_role: userRole,
-      room_id: activeRoom,
+    const response = await fetch('/api/chat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: newMessage.trim(), roomId: activeRoom }),
     });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      setSendError(typeof data?.error === 'string' ? data.error : 'Could not send message. Please try again.');
+      setSending(false);
+      return;
+    }
 
     setNewMessage('');
     if (activeRoom === 'global') {
@@ -356,10 +341,10 @@ export default function ChatClient({
         </div>
       )}
 
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold font-heading mb-1">Community</h1>
-        <p className="text-muted text-sm">Talk with others on the same journey. You are not alone.</p>
-      </div>
+      <PageHeader
+        title="Community"
+        subtitle="Talk with others on the same journey. You are not alone."
+      />
 
       {isBanned ? (
         <div className="flex-1 flex items-center justify-center">
@@ -527,14 +512,17 @@ export default function ChatClient({
                 </div>
               ) : (
                 <>
-                  <input
-                    type="text"
-                    placeholder={activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.username || 'partner'}...`}
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    maxLength={500}
-                    className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder={activeRoom === 'global' ? 'Message the community...' : `Message ${activePartner?.username || 'partner'}...`}
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      maxLength={500}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                    />
+                    {sendError && <p className="text-xs text-red-400 mt-1 px-1">{sendError}</p>}
+                  </div>
                   {cooldownRemaining > 0 && activeRoom === 'global' ? (
                     <div className="flex items-center gap-1.5 text-muted text-sm px-3">
                       <Clock className="w-4 h-4" /> {cooldownSeconds}s

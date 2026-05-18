@@ -1,7 +1,9 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2, Flame, NotebookPen, Zap } from 'lucide-react'
-import type { ReactNode } from 'react'
+import PageHeader from '../components/ui/PageHeader'
+import StatCard from '../components/ui/StatCard'
+import SectionCard from '../components/ui/SectionCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,25 +50,22 @@ export default async function WeeklyReviewPage() {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-up">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Weekly Review</h1>
-        <p className="text-muted mt-1">A calm summary of your last 7 days and your best next move.</p>
-      </header>
+      <PageHeader title="Weekly Review" subtitle="A calm summary of your last 7 days and your best next move." />
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card icon={<Flame className="w-5 h-5 text-primary" />} label="Check-ins" value={`${checkins}/7`} />
-        <Card icon={<Zap className="w-5 h-5 text-accent" />} label="Urges logged" value={`${urges}`} />
-        <Card icon={<NotebookPen className="w-5 h-5 text-emerald-500" />} label="Journal entries" value={`${journals}`} />
-        <Card icon={<CheckCircle2 className="w-5 h-5 text-primary" />} label="Avg urge intensity" value={avgIntensity > 0 ? `${avgIntensity}/10` : 'No data'} />
+        <StatCard icon={<Flame className="w-5 h-5 text-primary" />} label="Check-ins" value={`${checkins}/7`} />
+        <StatCard icon={<Zap className="w-5 h-5 text-accent" />} label="Urges logged" value={`${urges}`} />
+        <StatCard icon={<NotebookPen className="w-5 h-5 text-emerald-500" />} label="Journal entries" value={`${journals}`} />
+        <StatCard icon={<CheckCircle2 className="w-5 h-5 text-primary" />} label="Avg urge intensity" value={avgIntensity > 0 ? `${avgIntensity}/10` : 'No data'} />
       </div>
 
-      <section className="glass-card rounded-2xl p-6 mb-6">
+      <SectionCard className="mb-6">
         <p className="text-xs uppercase tracking-widest text-muted font-bold mb-2">This week insight</p>
         <h2 className="text-xl font-bold mb-2">Consistency score: {consistency}%</h2>
         <p className="text-muted">{consistency >= 70 ? 'Strong consistency. Protect momentum with one daily check-in and a quick review.' : 'Build momentum by anchoring one tiny daily action: check-in + 1 line journal.'}</p>
-      </section>
+      </SectionCard>
 
-      <section className="glass-card rounded-2xl p-6">
+      <SectionCard>
         <p className="text-xs uppercase tracking-widest text-muted font-bold mb-3">Next week plan</p>
         <div className="space-y-2 text-sm">
           <p className="text-foreground">1. Do a daily 2-minute check-in before your highest risk hour.</p>
@@ -81,16 +80,7 @@ export default async function WeeklyReviewPage() {
             Send Partner Ping
           </Link>
         </div>
-      </section>
-    </div>
-  )
-}
-
-function Card({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return (
-    <div className="glass-card rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-2">{icon}<span className="text-xs font-bold uppercase tracking-wider text-muted">{label}</span></div>
-      <p className="text-2xl font-bold">{value}</p>
+      </SectionCard>
     </div>
   )
 }

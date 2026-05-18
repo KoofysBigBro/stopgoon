@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Sparkles, Plus, Trash2, Quote, Video, Target, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
 import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
+import PageHeader from '../components/ui/PageHeader'
+import SectionCard from '../components/ui/SectionCard'
+import PrimaryButton from '../components/ui/PrimaryButton'
 
 const DAILY_QUOTES = [
   "Discipline is choosing between what you want now and what you want most.",
@@ -33,30 +36,17 @@ const VIDEOS = [
 
 export default function MotivationPage() {
   const supabase = createClient()
+  const today = new Date()
+  const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24))
   const [isPremium, setIsPremium] = useState(false)
   const [loading, setLoading] = useState(true)
   const [reasons, setReasons] = useState<string[]>([])
   const [newReason, setNewReason] = useState('')
-  const [videoIndex, setVideoIndex] = useState(-1)
-  const [videoFailed, setVideoFailed] = useState(false)
+  const [videoIndex, setVideoIndex] = useState(() => dayIndex % VIDEOS.length)
 
-  const today = new Date()
-  const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24))
   const dailyQuote = DAILY_QUOTES[dayIndex % DAILY_QUOTES.length]
 
-  useEffect(() => {
-    setVideoIndex(dayIndex % VIDEOS.length)
-  }, [dayIndex])
-
   const currentVideo = videoIndex >= 0 ? VIDEOS[videoIndex] : null
-
-  useEffect(() => {
-    setVideoFailed(false)
-  }, [videoIndex])
-
-  useEffect(() => {
-    loadData()
-  }, [])
 
   const goToPrev = () => {
     setVideoIndex(i => (i - 1 + VIDEOS.length) % VIDEOS.length)
@@ -66,20 +56,34 @@ export default function MotivationPage() {
     setVideoIndex(i => (i + 1) % VIDEOS.length)
   }
 
-  const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+  const loadData = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setLoading(false)
+        return
+      }
 
-    const { data: profile } = await supabase
-      .from('users')
-      .select('subscription_tier, reasons_to_quit')
-      .eq('id', user.id)
-      .single()
+      const { data: profile } = await supabase
+        .from('users')
+        .select('subscription_tier, reasons_to_quit')
+        .eq('id', user.id)
+        .single()
 
-    setIsPremium(profile?.subscription_tier === 'premium')
-    setReasons(profile?.reasons_to_quit || [])
-    setLoading(false)
-  }
+      setIsPremium(profile?.subscription_tier === 'premium')
+      setReasons(profile?.reasons_to_quit || [])
+    } catch (err) {
+      console.error('Error loading motivation data:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [supabase])
+
+  useEffect(() => {
+    void (async () => {
+      await loadData()
+    })()
+  }, [loadData])
 
   const addReason = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -141,13 +145,11 @@ export default function MotivationPage() {
   }
 
   return (
-    <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight mb-1 flex items-center gap-2 text-amber-500">
-          <Sparkles className="w-6 h-6" /> Daily Motivation
-        </h1>
-        <p className="text-muted text-lg">Your daily dose of fuel to keep going.</p>
-      </header>
+      <div className="animate-in fade-in duration-500 max-w-5xl mx-auto">
+      <PageHeader
+        title="Daily Motivation"
+        subtitle="Your daily dose of fuel to keep going."
+      />
 
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         {/* Daily Quote */}
@@ -156,13 +158,13 @@ export default function MotivationPage() {
             <Quote className="w-32 h-32" />
           </div>
           <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-4">Quote of the Day</p>
-          <h2 className="text-2xl font-bold leading-tight relative z-10 italic">
-            "{dailyQuote}"
-          </h2>
+            <h2 className="text-2xl font-bold leading-tight relative z-10 italic">
+              &ldquo;{dailyQuote}&rdquo;
+            </h2>
         </div>
 
         {/* My Reasons */}
-        <div className="lg:col-span-2 bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <SectionCard className="lg:col-span-2">
           <div className="flex items-center gap-2 mb-6">
             <Target className="w-5 h-5 text-emerald-500" />
             <h2 className="text-lg font-bold">My Reasons to Quit</h2>
@@ -176,18 +178,18 @@ export default function MotivationPage() {
               placeholder="Why are you doing this? (e.g. To be a better father)"
               className="flex-1 bg-background border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors"
             />
-            <button
+            <PrimaryButton
               type="submit"
               disabled={!newReason.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-4 py-3 rounded-xl font-bold transition-colors"
+              className="px-4 py-3 rounded-xl"
             >
               <Plus className="w-5 h-5" />
-            </button>
+            </PrimaryButton>
           </form>
 
           <div className="space-y-2 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
             {reasons.length === 0 ? (
-              <p className="text-center text-muted py-6 text-sm">You haven't added any reasons yet. Write down your "Why" above.</p>
+               <p className="text-center text-muted py-6 text-sm">You haven&apos;t added any reasons yet. Write down your &ldquo;Why&rdquo; above.</p>
             ) : (
               reasons.map((reason, i) => (
                 <div key={i} className="flex items-center justify-between bg-background border border-border rounded-lg p-3 group hover:border-indigo-500/30 transition-colors">
@@ -202,17 +204,17 @@ export default function MotivationPage() {
               ))
             )}
           </div>
-        </div>
+        </SectionCard>
       </div>
 
       {/* Daily Video */}
-      <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 shadow-sm">
+      <SectionCard className="p-6 md:p-8">
         <div className="flex items-center justify-between gap-2 mb-6">
           <div className="flex items-center gap-2">
             <Video className="w-6 h-6 text-red-500" />
             <div>
               <h2 className="text-xl font-bold">Motivation Video</h2>
-              <p className="text-sm text-muted">Tap "Next" if a video doesn't load properly.</p>
+               <p className="text-sm text-muted">Tap &ldquo;Next&rdquo; if a video doesn&apos;t load properly.</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -249,7 +251,7 @@ export default function MotivationPage() {
             ></iframe>
           )}
         </div>
-      </div>
+      </SectionCard>
     </div>
   )
 }

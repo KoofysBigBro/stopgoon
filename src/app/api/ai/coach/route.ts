@@ -2,14 +2,16 @@ import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { createClient } from '@/utils/supabase/server';
 import { rateLimit } from '@/utils/rate-limit';
+import { getClientIp } from '@/utils/request';
+import { logApiError } from '@/utils/api-error';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get('x-forwarded-for') || 'unknown'
-    const { allowed, remaining } = rateLimit(`ai-coach:${ip}`, 20, 60000)
+    const ip = getClientIp(req)
+    const { allowed } = rateLimit(`ai-coach:${ip}`, 20, 60000)
     if (!allowed) {
       return new Response('Too Many Requests', { status: 429, headers: { 'Retry-After': '60', 'X-RateLimit-Remaining': '0' } })
     }
@@ -19,6 +21,11 @@ export async function POST(req: Request) {
 
     if (!user) {
       return new Response('Unauthorized', { status: 401, headers: { 'Content-Type': 'text/plain' } });
+    }
+
+    const perUserRate = rateLimit(`ai-coach:user:${user.id}`, 15, 60000);
+    if (!perUserRate.allowed) {
+      return new Response('Too Many Requests', { status: 429, headers: { 'Retry-After': '60', 'X-RateLimit-Remaining': '0' } });
     }
 
     // Check if user is premium
@@ -48,6 +55,9 @@ export async function POST(req: Request) {
       .limit(5);
 
     const { prompt } = await req.json();
+    if (typeof prompt !== 'undefined' && typeof prompt !== 'string') {
+      return new Response('Invalid prompt', { status: 400, headers: { 'Content-Type': 'text/plain' } });
+    }
 
     // Construct the context for the AI
     const systemPrompt = `
@@ -70,7 +80,7 @@ export async function POST(req: Request) {
 
     return Response.json({ text });
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') console.error('AI Coach Error:', error);
+    logApiError('/api/ai/coach', error);
     return new Response('Internal Server Error', { status: 500, headers: { 'Content-Type': 'text/plain' } });
   }
 }

@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Plus, Trash2, GripVertical, Play, Pause, SkipForward, Timer, Pencil, RotateCcw, CheckCircle2, Sparkles, Crown } from 'lucide-react'
 import Link from 'next/link'
+import PageHeader from '../components/ui/PageHeader'
+import SectionCard from '../components/ui/SectionCard'
+import PrimaryButton from '../components/ui/PrimaryButton'
 
 interface RoutineStep {
   id: string;
@@ -263,10 +266,10 @@ export default function SOSPage() {
 
   return (
     <div className="animate-fade-up max-w-4xl mx-auto">
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-bold text-red-600 dark:text-red-500 mb-2">Emergency Mode</h1>
-        <p className="text-xl text-muted">Breathe. This urge is temporary. You are safe.</p>
-      </header>
+      <PageHeader
+        title="Emergency Mode"
+        subtitle="Breathe. This urge is temporary. You are safe."
+      />
 
       {/* Active Routine Player */}
       {activeRoutine && (
@@ -327,7 +330,7 @@ export default function SOSPage() {
 
       {/* Box Breathing - always available */}
       {!activeRoutine && (
-        <div className="glass-card border-2 border-red-500/25 rounded-3xl p-8 md:p-10 text-center shadow-lg shadow-red-500/10 mb-8">
+        <SectionCard className="border-2 border-red-500/25 rounded-3xl p-8 md:p-10 text-center shadow-lg shadow-red-500/10 mb-8">
           <h2 className="text-2xl font-bold mb-2 text-foreground">Box Breathing</h2>
           <p className="text-muted mb-10">Follow the circle to regulate your nervous system.</p>
           
@@ -344,18 +347,18 @@ export default function SOSPage() {
             ></div>
           </div>
           
-          <button 
+          <PrimaryButton
             onClick={handleBreathingToggle}
-            className={`px-8 py-4 rounded-full font-bold text-lg transition-colors ${isBreathing ? 'bg-surface-hover text-foreground hover:bg-border' : 'bg-red-600 hover:bg-red-700 text-white shadow-md'}`}
+            className={`px-8 py-4 rounded-full text-lg ${isBreathing ? 'bg-surface-hover text-foreground hover:bg-border hover:text-foreground' : 'bg-red-600 hover:bg-red-700'}`}
           >
             {isBreathing ? 'Stop Exercise' : 'Start Exercise'}
-          </button>
-        </div>
+          </PrimaryButton>
+        </SectionCard>
       )}
 
       {/* Grounding & Distractions */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <div className="glass-card rounded-2xl p-8 shadow-sm">
+        <SectionCard className="p-8">
           <h3 className="text-xl font-bold mb-4 text-foreground">Grounding Technique (5-4-3-2-1)</h3>
           <p className="mb-4 text-muted">Acknowledge your surroundings:</p>
           <ul className="space-y-3 text-foreground">
@@ -365,9 +368,9 @@ export default function SOSPage() {
             <li className="flex gap-3"><span className="text-xl">👃</span> <strong>2</strong> things you can smell</li>
             <li className="flex gap-3"><span className="text-xl">👅</span> <strong>1</strong> thing you can taste</li>
           </ul>
-        </div>
+        </SectionCard>
 
-        <div className="glass-card rounded-2xl p-8 shadow-sm">
+        <SectionCard className="p-8">
           <h3 className="text-xl font-bold mb-4 text-foreground">Distraction Activities</h3>
           <ul className="space-y-4 text-foreground list-disc pl-5">
             <li>Drink a large glass of cold water</li>
@@ -376,11 +379,11 @@ export default function SOSPage() {
             <li>Text a friend or accountability partner</li>
             <li>Step outside for 5 minutes</li>
           </ul>
-        </div>
+        </SectionCard>
       </div>
 
       {/* Custom Routines Section */}
-      <div className="glass-card rounded-2xl p-8 shadow-sm">
+      <SectionCard className="p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
@@ -397,12 +400,12 @@ export default function SOSPage() {
               <Crown className="w-4 h-4" /> Unlock More
             </Link>
           ) : (
-            <button
+            <PrimaryButton
               onClick={() => { setShowBuilder(true); setEditingRoutine(null); setRoutineName(''); setRoutineSteps([]) }}
-              className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors"
+              className="px-4 py-2.5 text-sm"
             >
               <Plus className="w-4 h-4" /> New Routine
-            </button>
+            </PrimaryButton>
           )}
         </div>
 
@@ -521,7 +524,7 @@ export default function SOSPage() {
             </div>
           </div>
         )}
-      </div>
+      </SectionCard>
     </div>
     )
   }

@@ -14,6 +14,8 @@ import AccountSection from './components/AccountSection'
 import AppearanceSection from './components/AppearanceSection'
 import AccessibilitySection from './components/AccessibilitySection'
 import Toggle from './components/Toggle'
+import PageHeader from '../components/ui/PageHeader'
+import SectionCard from '../components/ui/SectionCard'
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -76,7 +78,9 @@ export default function SettingsPage() {
   }, [setTheme, supabase])
 
   useEffect(() => {
-    void loadSettings()
+    void (async () => {
+      await loadSettings()
+    })()
   }, [loadSettings])
 
   useEffect(() => {
@@ -132,12 +136,10 @@ export default function SettingsPage() {
 
   return (
     <div className="animate-in fade-in duration-300 max-w-3xl">
-      <header className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-1">Settings</h1>
-          <p className="text-slate-500 dark:text-slate-400">Customize your experience.</p>
-        </div>
-        {saveMessage && (
+      <PageHeader
+        title="Settings"
+        subtitle="Customize your experience."
+        actions={saveMessage ? (
           <span className={`text-sm font-medium flex items-center gap-1.5 px-3 py-1.5 rounded-full animate-in fade-in ${
             saveMessage === 'Could not save' || saveMessage === 'Upload failed' || saveMessage === 'Image must be under 2MB'
               ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
@@ -146,8 +148,8 @@ export default function SettingsPage() {
             {saveMessage !== 'Could not save' && saveMessage !== 'Upload failed' && saveMessage !== 'Image must be under 2MB' && <Check className="w-4 h-4" />}
             {saveMessage}
           </span>
-        )}
-      </header>
+        ) : undefined}
+      />
 
       {showUpgradeSuccess && (
         <div className="mb-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-primary/10 p-5 relative overflow-hidden">
@@ -183,7 +185,7 @@ export default function SettingsPage() {
           }}
         />
 
-        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <div className="flex items-center gap-3 mb-5">
             <Bell className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-bold">Retention Nudges</h2>
@@ -203,7 +205,7 @@ export default function SettingsPage() {
             <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-2">Nudge examples</p>
             <p className="text-sm text-foreground">&quot;Two minutes now protects your focus later. Want to check in?&quot;</p>
           </div>
-        </section>
+        </SectionCard>
 
         <AppearanceSection
           fontScale={fontScale}
@@ -219,7 +221,7 @@ export default function SettingsPage() {
           saveSetting={saveSetting}
         />
 
-        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <div className="flex items-center gap-3 mb-5">
             <CreditCard className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-bold">Subscription</h2>
@@ -247,11 +249,11 @@ export default function SettingsPage() {
               </Link>
             )}
           </div>
-        </section>
+        </SectionCard>
 
         <DeviceSettings />
 
-        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <div className="flex items-center gap-3 mb-5">
             <Database className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-bold">Data &amp; Privacy</h2>
@@ -290,9 +292,9 @@ export default function SettingsPage() {
           </div>
 
           <DataExport isPremium={isPremium} />
-        </section>
+        </SectionCard>
 
-        <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <SectionCard>
           <div className="flex items-center gap-3 mb-5">
             <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-bold">Legal Information</h2>
@@ -309,7 +311,7 @@ export default function SettingsPage() {
               Refund Policy
             </Link>
           </div>
-        </section>
+        </SectionCard>
       </div>
     </div>
   )
