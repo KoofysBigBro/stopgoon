@@ -71,6 +71,17 @@ export default function RootLayout({
       className={`${manrope.variable} ${sora.variable} h-full antialiased`}
     >
       <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PZC0PSD6JC"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-PZC0PSD6JC');
+            `,
+          }}
+        />
         <meta name="google-site-verification" content="CNsTGn3vxiIULNaxFVPxqdmB7UL9e2PvKuO5VHpdt_k" />
         {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && (
           <script
