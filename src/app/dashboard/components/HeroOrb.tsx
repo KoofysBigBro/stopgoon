@@ -50,18 +50,18 @@ export default function HeroOrb() {
         className="relative w-full h-full will-change-transform"
       >
         {/* Soft back glow */}
-        <div className="absolute inset-[-30%] rounded-full bg-primary/20 blur-[40px] animate-pulse-slow" />
+        <div className="absolute inset-[-30%] rounded-full bg-primary/30 blur-[50px] animate-pulse-slow" />
 
         {/* The 3D Sphere */}
         <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
           
           {/* Base color and core 3D shading */}
           <div 
-            className="absolute inset-0 rounded-full bg-[#0a1f1c]"
+            className="absolute inset-0 rounded-full bg-[#130b1f]"
             style={{
               boxShadow: `
                 inset -20px -20px 50px rgba(0,0,0,0.9), 
-                inset 10px 10px 30px rgba(0, 212, 170, 0.4),
+                inset 10px 10px 30px rgba(139, 92, 246, 0.4),
                 inset -5px -5px 15px rgba(0,0,0,0.8)
               `
             }}
@@ -72,8 +72,8 @@ export default function HeroOrb() {
             className="absolute inset-0 rounded-full opacity-60 mix-blend-screen"
             style={{
               background: `
-                radial-gradient(circle at 30% 30%, rgba(0, 255, 200, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 70% 60%, rgba(0, 150, 120, 0.3) 0%, transparent 50%)
+                radial-gradient(circle at 30% 30%, rgba(167, 139, 250, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.3) 0%, transparent 50%)
               `,
               animation: 'spin 20s linear infinite'
             }}
@@ -83,7 +83,7 @@ export default function HeroOrb() {
           <div 
             className="absolute inset-[-50%] opacity-30 mix-blend-overlay"
             style={{
-              background: 'conic-gradient(from 0deg, transparent, rgba(0,212,170,0.8), transparent 40%, rgba(0,255,200,0.5) 60%, transparent 80%)',
+              background: 'conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.8), transparent 40%, rgba(167, 139, 250, 0.5) 60%, transparent 80%)',
               animation: 'spin 15s linear infinite reverse'
             }}
           />
@@ -111,7 +111,7 @@ export default function HeroOrb() {
               left: '10%',
               width: '20%',
               height: '40%',
-              background: 'radial-gradient(ellipse, rgba(0,255,200,0.3) 0%, transparent 70%)',
+              background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.3) 0%, transparent 70%)',
               transform: 'rotate(-15deg)'
             }}
           />
@@ -120,7 +120,7 @@ export default function HeroOrb() {
           <div 
             className="absolute inset-0 rounded-full pointer-events-none"
             style={{
-              boxShadow: 'inset -3px -5px 12px rgba(0, 255, 200, 0.3)'
+              boxShadow: 'inset -3px -5px 12px rgba(167, 139, 250, 0.3)'
             }}
           />
 

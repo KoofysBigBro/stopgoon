@@ -85,22 +85,22 @@ export default function SOSPage() {
       const cycle = () => {
         setBreatheText('Inhale')
         setScale(1)
-        setColor('bg-primary')
+        setColor('bg-primary/40 shadow-[0_0_80px_rgba(139,92,246,0.6)]')
 
         timeouts.push(setTimeout(() => {
           setBreatheText('Hold')
-          setColor('bg-emerald-500')
+          setColor('bg-primary/60 shadow-[0_0_100px_rgba(139,92,246,0.8)]')
         }, 4000))
 
         timeouts.push(setTimeout(() => {
           setBreatheText('Exhale')
           setScale(0.5)
-          setColor('bg-primary')
+          setColor('bg-primary/20 shadow-[0_0_40px_rgba(139,92,246,0.3)]')
         }, 8000))
 
         timeouts.push(setTimeout(() => {
           setBreatheText('Hold')
-          setColor('bg-border')
+          setColor('bg-transparent border border-primary/30 shadow-none')
         }, 12000))
       }
 
@@ -255,9 +255,9 @@ export default function SOSPage() {
     switch (type) {
       case 'breathe': return 'bg-sky-500/15 border-sky-500/30 text-sky-400'
       case 'hold': return 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-      case 'action': return 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+      case 'action': return 'bg-accent/15 border-accent/30 text-accent'
       case 'affirmation': return 'bg-primary/15 border-primary/30 text-primary'
-      case 'timer': return 'bg-accent/15 border-accent/30 text-accent'
+      case 'timer': return 'bg-indigo-500/15 border-indigo-500/30 text-indigo-400'
       default: return 'bg-surface border-border'
     }
   }
@@ -278,8 +278,8 @@ export default function SOSPage() {
           
           {routineComplete ? (
             <div className="py-8">
-              <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-              <p className="text-2xl font-bold text-emerald-400 mb-2">Routine Complete!</p>
+              <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
+              <p className="text-2xl font-bold text-primary mb-2">Routine Complete!</p>
               <p className="text-muted mb-6">You did it. The urge doesn&apos;t control you.</p>
               <div className="flex gap-3 justify-center">
                 <button onClick={() => startRoutine(activeRoutine)} className="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold transition-colors flex items-center gap-2">
@@ -328,58 +328,73 @@ export default function SOSPage() {
         </div>
       )}
 
-      {/* Box Breathing - always available */}
+      {/* Box Breathing - modern Apple Watch style */}
       {!activeRoutine && (
-        <SectionCard className="border-2 border-red-500/25 rounded-3xl p-8 md:p-10 text-center shadow-lg shadow-red-500/10 mb-8">
-          <h2 className="text-2xl font-bold mb-2 text-foreground">Box Breathing</h2>
-          <p className="text-muted mb-10">Follow the circle to regulate your nervous system.</p>
-          
-          <div className="relative w-48 h-48 mx-auto mb-12 flex items-center justify-center bg-surface-hover rounded-full overflow-hidden shadow-inner">
-            <div className="relative z-10 text-2xl font-bold text-foreground drop-shadow-md">
-              {breatheText}
+        <div className="glass-card rounded-[2.5rem] p-10 md:p-14 text-center mb-8 relative overflow-hidden border border-border/40">
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold mb-2 tracking-tight text-foreground">Box Breathing</h2>
+            <p className="text-muted mb-16 font-medium">Follow the circle to regulate your nervous system.</p>
+            
+            <div className="relative w-64 h-64 mx-auto mb-16 flex items-center justify-center">
+              
+              {/* Outer guide ring */}
+              <div className="absolute inset-0 rounded-full border border-border/30" />
+              
+              {/* Expanding Breathe Ring */}
+              <div 
+                className={`absolute inset-0 rounded-full flex items-center justify-center mix-blend-screen transition-all duration-[4000ms] ease-in-out ${color}`}
+                style={{ 
+                  transform: `scale(${scale})`, 
+                }}
+              >
+                {/* Inner core glow */}
+                <div className="absolute inset-0 rounded-full bg-primary/20 blur-md" />
+              </div>
+
+              {/* Text Center */}
+              <div className="relative z-20 text-3xl font-bold text-white tracking-widest uppercase drop-shadow-md">
+                {breatheText}
+              </div>
             </div>
-            <div 
-              className={`absolute inset-0 rounded-full ${color} opacity-30`}
-              style={{ 
-                transform: `scale(${scale})`, 
-                transition: isBreathing ? 'transform 4s linear, background-color 4s linear' : 'transform 1s ease-out' 
-              }}
-            ></div>
+            
+            <button
+              onClick={handleBreathingToggle}
+              className={`px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 shadow-lg hover:scale-105 active:scale-95 ${
+                isBreathing 
+                  ? 'bg-surface border border-border text-foreground hover:bg-surface-hover shadow-none' 
+                  : 'bg-primary hover:bg-primary-hover text-white shadow-primary/25'
+              }`}
+            >
+              {isBreathing ? 'Stop Exercise' : 'Start Exercise'}
+            </button>
           </div>
-          
-          <PrimaryButton
-            onClick={handleBreathingToggle}
-            className={`px-8 py-4 rounded-full text-lg ${isBreathing ? 'bg-surface-hover text-foreground hover:bg-border hover:text-foreground' : 'bg-red-600 hover:bg-red-700'}`}
-          >
-            {isBreathing ? 'Stop Exercise' : 'Start Exercise'}
-          </PrimaryButton>
-        </SectionCard>
+        </div>
       )}
 
       {/* Grounding & Distractions */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <SectionCard className="p-8">
-          <h3 className="text-xl font-bold mb-4 text-foreground">Grounding Technique (5-4-3-2-1)</h3>
-          <p className="mb-4 text-muted">Acknowledge your surroundings:</p>
-          <ul className="space-y-3 text-foreground">
-            <li className="flex gap-3"><span className="text-xl">👀</span> <strong>5</strong> things you can see</li>
-            <li className="flex gap-3"><span className="text-xl">🖐️</span> <strong>4</strong> things you can touch</li>
-            <li className="flex gap-3"><span className="text-xl">👂</span> <strong>3</strong> things you can hear</li>
-            <li className="flex gap-3"><span className="text-xl">👃</span> <strong>2</strong> things you can smell</li>
-            <li className="flex gap-3"><span className="text-xl">👅</span> <strong>1</strong> thing you can taste</li>
+        <div className="glass-card rounded-[2rem] p-8 border border-border/40">
+          <h3 className="text-xl font-bold mb-5 tracking-tight text-foreground">Grounding (5-4-3-2-1)</h3>
+          <p className="mb-6 text-sm text-muted font-medium">Acknowledge your surroundings:</p>
+          <ul className="space-y-4 text-sm font-medium">
+            <li className="flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 border border-border/50 text-xl">👀</div> <span><strong className="text-primary mr-1">5</strong> things you can see</span></li>
+            <li className="flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 border border-border/50 text-xl">🖐️</div> <span><strong className="text-primary mr-1">4</strong> things you can touch</span></li>
+            <li className="flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 border border-border/50 text-xl">👂</div> <span><strong className="text-primary mr-1">3</strong> things you can hear</span></li>
+            <li className="flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 border border-border/50 text-xl">👃</div> <span><strong className="text-primary mr-1">2</strong> things you can smell</span></li>
+            <li className="flex items-center gap-4"><div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0 border border-border/50 text-xl">👅</div> <span><strong className="text-primary mr-1">1</strong> thing you can taste</span></li>
           </ul>
-        </SectionCard>
+        </div>
 
-        <SectionCard className="p-8">
-          <h3 className="text-xl font-bold mb-4 text-foreground">Distraction Activities</h3>
-          <ul className="space-y-4 text-foreground list-disc pl-5">
-            <li>Drink a large glass of cold water</li>
-            <li>Do 10 pushups or jumping jacks</li>
-            <li>Splash cold water on your face</li>
-            <li>Text a friend or accountability partner</li>
-            <li>Step outside for 5 minutes</li>
+        <div className="glass-card rounded-[2rem] p-8 border border-border/40">
+          <h3 className="text-xl font-bold mb-5 tracking-tight text-foreground">Distraction Activities</h3>
+          <ul className="space-y-4 text-sm font-medium mt-10">
+            <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-primary/50" /> Drink a large glass of cold water</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-primary/50" /> Do 10 pushups or jumping jacks</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-primary/50" /> Splash cold water on your face</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-primary/50" /> Text a friend or accountability partner</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-primary/50" /> Step outside for 5 minutes</li>
           </ul>
-        </SectionCard>
+        </div>
       </div>
 
       {/* Custom Routines Section */}
@@ -464,9 +479,9 @@ export default function SOSPage() {
               {[
                 { type: 'breathe', label: '🌬️ Breathe', color: 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20' },
                 { type: 'hold', label: '⏸️ Hold', color: 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20' },
-                { type: 'action', label: '💪 Action', color: 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' },
+                { type: 'action', label: '💪 Action', color: 'bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20' },
                 { type: 'affirmation', label: '💭 Affirmation', color: 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20' },
-                { type: 'timer', label: '⏱️ Timer', color: 'bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20' },
+                { type: 'timer', label: '⏱️ Timer', color: 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20' },
               ].map(s => (
                 <button key={s.type} onClick={() => addStep(s.type as RoutineStep['type'])} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${s.color} transition-colors`}>
                   {s.label}
