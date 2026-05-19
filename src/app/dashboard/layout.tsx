@@ -4,8 +4,8 @@ import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Messa
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
-import CrisisShortcut from './components/CrisisShortcut'
-import CommandPalette from './components/CommandPalette'
+
+
 
 function NavLink({ href, icon: Icon, label, cls, dot, userId }: { href: string; icon: React.ComponentType<{ className?: string }>; label: string; cls: string; dot: boolean; userId: string }) {
   return (
@@ -178,8 +178,7 @@ export default async function DashboardLayout({
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
         {children}
       </main>
-      <CommandPalette />
-      <CrisisShortcut />
+      <InstallPrompt />
     </div>
   )
 }
