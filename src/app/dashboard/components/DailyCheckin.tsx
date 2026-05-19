@@ -1,24 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Star, Clock } from 'lucide-react'
-import Link from 'next/link'
+import { Check, Loader2 } from 'lucide-react'
 
 const MOODS = [
-  { value: 'great', label: 'Great', emoji: '😊', color: 'emerald' },
-  { value: 'okay', label: 'Okay', emoji: '😐', color: 'indigo' },
-  { value: 'struggling', label: 'Struggling', emoji: '😔', color: 'amber' },
+  { value: 'great', emoji: '😊', label: 'Great' },
+  { value: 'okay', emoji: '😐', label: 'Okay' },
+  { value: 'struggling', emoji: '😔', label: 'Hard' },
 ]
 
 export default function DailyCheckin() {
   const [saved, setSaved] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [streak, setStreak] = useState<{label: string, active: boolean}[]>([])
-  const [timeLeft, setTimeLeft] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const popoverRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
   const router = useRouter()
 
@@ -49,29 +47,6 @@ export default function DailyCheckin() {
       if (data && data.length > 0) {
         setSaved(data[0].mood)
       }
-
-      const weekAgo = new Date()
-      weekAgo.setDate(weekAgo.getDate() - 6)
-      weekAgo.setHours(0, 0, 0, 0)
-      const fetchStart = new Date(Math.max(weekAgo.getTime(), lastRelapseDate.getTime()))
-
-      const { data: weekCheckins } = await supabase
-        .from('daily_checkins')
-        .select('created_at')
-        .eq('user_id', user.id)
-        .gte('created_at', fetchStart.toISOString())
-
-      const streakArray = []
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date()
-        d.setDate(d.getDate() - i)
-        const hasCheckin = weekCheckins?.some(c => {
-          const cDate = new Date(c.created_at)
-          return cDate.getDate() === d.getDate() && cDate.getMonth() === d.getMonth() && cDate.getFullYear() === d.getFullYear()
-        }) || false
-        streakArray.push({ label: d.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0), active: hasCheckin })
-      }
-      setStreak(streakArray)
     } catch (e) {
       if (process.env.NODE_ENV === 'development') console.error('Failed to load checkins:', e)
     }
@@ -79,27 +54,20 @@ export default function DailyCheckin() {
   }, [supabase])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void checkToday()
   }, [checkToday])
 
+  // Close popover when clicking outside
   useEffect(() => {
-    if (!saved) return
-    const updateTimer = () => {
-      const now = new Date()
-      const tomorrow = new Date(now)
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      tomorrow.setHours(0, 0, 0, 0)
-      const diff = tomorrow.getTime() - now.getTime()
-      
-      const h = Math.floor(diff / (1000 * 60 * 60))
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-      setTimeLeft(`${h}h ${m}m`)
+    if (!isOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
     }
-    updateTimer()
-    const interval = setInterval(updateTimer, 60000)
-    return () => clearInterval(interval)
-  }, [saved])
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [isOpen])
 
   const handleCheckin = async (mood: string) => {
     setIsSaving(true)
@@ -111,8 +79,8 @@ export default function DailyCheckin() {
         if (process.env.NODE_ENV === 'development') console.error('Checkin failed:', error)
       } else {
         setSaved(mood)
+        setIsOpen(false)
         router.refresh()
-        void checkToday()
       }
     } catch (e) {
       if (process.env.NODE_ENV === 'development') console.error('Exception during checkin:', e)
@@ -122,101 +90,53 @@ export default function DailyCheckin() {
 
   if (isLoading) {
     return (
-      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex items-center justify-center h-[160px]">
-        <Loader2 className="w-6 h-6 animate-spin text-muted" />
+      <div className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-6 py-3 rounded-xl font-semibold text-sm">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        <span>Check In</span>
       </div>
     )
   }
 
+  // Already checked in
   if (saved) {
+    const mood = MOODS.find(m => m.value === saved)
     return (
-      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm animate-in fade-in duration-300">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center">
-              <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-foreground">Checked in</h3>
-              <p className="text-muted text-sm flex items-center gap-1.5 mt-0.5">
-                <Clock className="w-3.5 h-3.5" />
-                Resets in {timeLeft}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        {/* 7-Day Visual Streak Tracker */}
-        <div className="bg-background/50 border border-border rounded-xl p-4 mt-6">
-          <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week&apos;s Consistency</p>
-          <div className="flex justify-between items-center">
-            {streak.map((day, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                  day.active 
-                    ? 'bg-amber-100 dark:bg-amber-900/30 shadow-[0_0_15px_rgba(251,191,36,0.3)]' 
-                    : 'bg-surface border border-border opacity-50'
-                }`}>
-                  <Star className={`w-4 h-4 ${day.active ? 'text-amber-500 fill-amber-500' : 'text-muted'}`} />
-                </div>
-                <span className="text-xs font-medium text-muted">{day.label}</span>
-              </div>
+      <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-5 py-3 rounded-xl font-semibold text-sm">
+        <Check className="w-4 h-4" />
+        <span>Checked in {mood?.emoji}</span>
+      </div>
+    )
+  }
+
+  // Compact check-in button + popover
+  return (
+    <div className="relative" ref={popoverRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 bg-primary text-white hover:bg-primary-hover px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 active:translate-y-0"
+      >
+        <Check className="w-4 h-4" />
+        Check In
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 bg-surface border border-border rounded-2xl p-4 shadow-2xl shadow-black/30 z-50 animate-in fade-in slide-in-from-top-2 duration-200 min-w-[220px]">
+          <p className="text-xs text-muted font-medium text-center mb-3">How are you feeling?</p>
+          <div className="flex gap-2">
+            {MOODS.map(mood => (
+              <button
+                key={mood.value}
+                onClick={() => handleCheckin(mood.value)}
+                disabled={isSaving}
+                className="flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all disabled:opacity-50"
+              >
+                <span className="text-2xl">{mood.emoji}</span>
+                <span className="text-[10px] font-semibold text-muted">{mood.label}</span>
+              </button>
             ))}
           </div>
         </div>
-
-        <div className="mt-5 rounded-xl border border-primary/20 bg-primary/5 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Next step</p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/dashboard/journal" className="px-3 py-2 text-xs font-bold rounded-lg bg-background border border-border hover:bg-surface-hover transition-colors">Write one reflection</Link>
-            <Link href="/dashboard/analytics" className="px-3 py-2 text-xs font-bold rounded-lg bg-background border border-border hover:bg-surface-hover transition-colors">Review today&apos;s trend</Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
-      <h3 className="text-xl font-bold mb-2 text-foreground">Daily Check-in</h3>
-      <p className="text-muted text-sm mb-5">How are you feeling today?</p>
-
-      <div className="flex flex-wrap gap-3">
-        {MOODS.map(mood => (
-          <button
-            key={mood.value}
-            onClick={() => handleCheckin(mood.value)}
-            disabled={isSaving}
-            className={`flex-1 py-3.5 px-4 rounded-xl border border-border font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-60 bg-surface text-foreground
-              ${mood.color === 'emerald' ? 'hover:border-emerald-500 hover:bg-emerald-500/5' : ''}
-              ${mood.color === 'indigo' ? 'hover:border-indigo-500 hover:bg-indigo-500/5' : ''}
-              ${mood.color === 'amber' ? 'hover:border-amber-500 hover:bg-amber-500/5' : ''}
-            `}
-          >
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="text-lg">{mood.emoji}</span>}
-            {mood.label}
-          </button>
-        ))}
-      </div>
-
-      {/* 7-Day Visual Streak Tracker (Visible before checkin too) */}
-      <div className="bg-background/50 border border-border rounded-xl p-4 mt-8">
-        <p className="text-xs font-semibold text-muted mb-3 uppercase tracking-wider">This Week&apos;s Consistency</p>
-        <div className="flex justify-between items-center">
-          {streak.map((day, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                day.active 
-                  ? 'bg-amber-100 dark:bg-amber-900/30 shadow-[0_0_15px_rgba(251,191,36,0.3)]' 
-                  : 'bg-surface border border-border opacity-50'
-              }`}>
-                <Star className={`w-4 h-4 ${day.active ? 'text-amber-500 fill-amber-500' : 'text-muted'}`} />
-              </div>
-              <span className="text-xs font-medium text-muted">{day.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

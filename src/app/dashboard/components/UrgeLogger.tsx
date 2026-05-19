@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Zap, ChevronDown, ChevronUp, Check, Wind, Clock, Loader2 } from 'lucide-react'
+import { Zap, ChevronDown, ChevronUp, Check, Wind, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
-const TRIGGERS = ['Boredom', 'Stress', 'Loneliness', 'Late Night', 'Social Media', 'Anxiety', 'Sadness', 'Anger']
-const EMOTIONS = ['Restless', 'Anxious', 'Numb', 'Frustrated', 'Lonely', 'Tired', 'Overwhelmed']
+const TRIGGERS = ['Boredom', 'Stress', 'Loneliness', 'Late Night', 'Social Media', 'Anxiety']
 const COPING = [
   'Take 10 deep breaths',
   'Do 20 pushups',
@@ -18,75 +17,32 @@ const COPING = [
   'Drink a glass of water',
 ]
 
-type UrgeLog = {
-  id: string
-  intensity: number
-  trigger: string | null
-  emotion: string | null
-  notes: string | null
-  urge_passed: boolean
-  created_at: string
-}
-
 export default function UrgeLogger() {
-  const [isExpanded, setIsExpanded] = useState(false)
   const [intensity, setIntensity] = useState(5)
   const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null)
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null)
-  const [notes, setNotes] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
   const [suggestedCoping, setSuggestedCoping] = useState('')
-  const [recentLogs, setRecentLogs] = useState<UrgeLog[]>([])
   const [activeLogId, setActiveLogId] = useState<string | null>(null)
 
   const supabase = createClient()
 
-  const loadRecentLogs = useCallback(async () => {
-    try {
-      const { data } = await supabase
-        .from('urge_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5)
-      if (data) setRecentLogs(data)
-    } catch (e) {
-      if (process.env.NODE_ENV === 'development') console.error('Failed to load urge logs:', e)
-    }
-  }, [supabase])
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void loadRecentLogs()
-  }, [loadRecentLogs])
-
-  const handleQuickLog = async () => {
-    setIsSaving(true)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data, error } = await supabase
-        .from('urge_logs')
-        .insert({ user_id: user.id, intensity, urge_passed: false })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      setActiveLogId(data.id)
-      setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
-      setShowSuccess(true)
-      void loadRecentLogs()
-    } catch (e) {
-      if (process.env.NODE_ENV === 'development') console.error('Failed to quick log urge:', e)
-      setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
-      setShowSuccess(true)
-    }
-    setIsSaving(false)
+  const getIntensityLabel = (val: number) => {
+    if (val <= 3) return 'Mild'
+    if (val <= 6) return 'Moderate'
+    if (val <= 8) return 'Strong'
+    return 'Severe'
   }
 
-  const handleDetailedLog = async () => {
+  const getIntensityColor = (val: number) => {
+    if (val <= 3) return 'text-emerald-400'
+    if (val <= 6) return 'text-amber-400'
+    if (val <= 8) return 'text-orange-400'
+    return 'text-red-400'
+  }
+
+  const handleLog = async () => {
     setIsSaving(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -98,21 +54,21 @@ export default function UrgeLogger() {
           user_id: user.id,
           intensity,
           trigger: selectedTrigger,
-          emotion: selectedEmotion,
-          notes: notes || null,
           urge_passed: false,
         })
         .select()
         .single()
 
       if (error) throw error
-      setActiveLogId(data.id)
-    } catch (e) {
-      if (process.env.NODE_ENV === 'development') console.error('Failed to detailed log urge:', e)
-    }
 
-    setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
-    setShowSuccess(true)
+      setActiveLogId(data.id)
+      setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
+      setShowSuccess(true)
+    } catch (e) {
+      if (process.env.NODE_ENV === 'development') console.error('Failed to log urge:', e)
+      setSuggestedCoping(COPING[Math.floor(Math.random() * COPING.length)])
+      setShowSuccess(true)
+    }
     setIsSaving(false)
   }
 
@@ -127,48 +83,44 @@ export default function UrgeLogger() {
         if (process.env.NODE_ENV === 'development') console.error('Failed to update urge:', e)
       }
     }
-    // Reset everything
     setShowSuccess(false)
-    setIsExpanded(false)
+    setShowDetails(false)
     setIntensity(5)
     setSelectedTrigger(null)
-    setSelectedEmotion(null)
-    setNotes('')
     setActiveLogId(null)
-    void loadRecentLogs()
   }
 
-  // Success / coping state
+  // Success state — minimal and encouraging
   if (showSuccess) {
     return (
-      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm animate-in fade-in duration-500">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-emerald-500" />
+      <div className="rounded-2xl border border-border/40 bg-surface/60 p-6 animate-in fade-in duration-300">
+        <div className="text-center mb-5">
+          <div className="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Check className="w-6 h-6 text-emerald-400" />
           </div>
-          <h3 className="text-2xl font-bold mb-1 text-foreground">Urge Logged</h3>
-          <p className="text-muted text-sm">You acknowledged it. That takes real strength.</p>
+          <p className="font-semibold text-foreground">Urge logged</p>
+          <p className="text-xs text-muted mt-1">You acknowledged it. That takes strength.</p>
         </div>
 
-        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 mb-6 text-center">
-          <p className="text-sm font-semibold text-primary mb-2 uppercase tracking-wider">Try this right now</p>
-          <p className="text-lg text-foreground font-medium">{suggestedCoping}</p>
+        <div className="bg-primary/5 border border-primary/15 rounded-xl p-4 mb-4 text-center">
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-1">Try this now</p>
+          <p className="text-sm text-foreground font-medium">{suggestedCoping}</p>
         </div>
 
         <button
           onClick={handleUrgePassed}
-          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20"
+          className="w-full bg-emerald-500/10 hover:bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2"
         >
-          <Wind className="w-5 h-5" />
+          <Wind className="w-4 h-4" />
           The urge has passed
         </button>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link href="/dashboard/sos" className="text-center bg-background border border-border rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-surface-hover transition-colors">
-            Open SOS reset
+        <div className="flex gap-2 mt-3">
+          <Link href="/dashboard/sos" className="flex-1 text-center bg-surface/60 border border-border/40 rounded-xl px-3 py-2.5 text-xs font-semibold text-muted hover:text-foreground hover:bg-surface transition-colors">
+            Open SOS
           </Link>
-          <Link href="/dashboard/journal" className="text-center bg-background border border-border rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-surface-hover transition-colors">
-            Write 1 line journal
+          <Link href="/dashboard/journal" className="flex-1 text-center bg-surface/60 border border-border/40 rounded-xl px-3 py-2.5 text-xs font-semibold text-muted hover:text-foreground hover:bg-surface transition-colors">
+            Journal
           </Link>
         </div>
       </div>
@@ -176,135 +128,76 @@ export default function UrgeLogger() {
   }
 
   return (
-    <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm transition-all duration-300">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xl font-bold text-foreground">Log an Urge</h3>
-        <Zap className="w-5 h-5 text-amber-500" />
-      </div>
-      <p className="text-muted text-sm mb-6">Acknowledge it without judgement. Let it pass.</p>
-
-      {/* Quick log button */}
-      <button
-        onClick={handleQuickLog}
-        disabled={isSaving}
-        className="w-full bg-foreground text-background py-4 rounded-xl font-semibold hover:opacity-90 transition-all hover:scale-[1.01] active:scale-[0.99] mb-4 flex items-center justify-center gap-2 disabled:opacity-60 shadow-md"
-      >
-        {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5 text-amber-400" />}
-        {isSaving ? 'Saving...' : 'Quick Log Urge'}
-      </button>
-
-      {/* Expand for details */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full text-sm font-medium text-muted hover:text-foreground flex items-center justify-center gap-1.5 py-3 transition-colors rounded-lg hover:bg-surface-hover"
-      >
-        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        {isExpanded ? 'Less detail' : 'Add details'}
-      </button>
-
-      {isExpanded && (
-        <div className="mt-4 space-y-6 animate-in slide-in-from-top-4 duration-300">
-          {/* Intensity */}
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <label className="text-sm font-semibold text-foreground">Intensity</label>
-              <span className="text-sm font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">{intensity}/10</span>
-            </div>
-            <input
-              type="range" min="1" max="10" value={intensity}
-              onChange={(e) => setIntensity(Number(e.target.value))}
-              aria-label="Urge intensity"
-              className="w-full accent-primary h-2 bg-border rounded-full appearance-none outline-none"
-            />
-            <div className="flex justify-between text-xs text-muted mt-2 font-medium">
-              <span>Mild</span><span>Severe</span>
-            </div>
+    <div className="rounded-2xl border border-border/40 bg-surface/60 p-6 transition-all duration-300">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+            <Zap className="w-4 h-4 text-amber-400" />
           </div>
-
-          {/* Trigger */}
-          <div>
-            <label className="text-sm font-semibold block mb-3 text-foreground">What triggered it?</label>
-            <div className="flex flex-wrap gap-2">
-              {TRIGGERS.map(t => (
-                <button
-                  key={t}
-                  onClick={() => setSelectedTrigger(selectedTrigger === t ? null : t)}
-                  className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all border ${
-                    selectedTrigger === t
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                      : 'border-border text-muted hover:border-primary/50 hover:text-foreground bg-surface'
-                  }`}
-                >{t}</button>
-              ))}
-            </div>
-          </div>
-
-          {/* Emotion */}
-          <div>
-            <label className="text-sm font-semibold block mb-3 text-foreground">How are you feeling?</label>
-            <div className="flex flex-wrap gap-2">
-              {EMOTIONS.map(e => (
-                <button
-                  key={e}
-                  onClick={() => setSelectedEmotion(selectedEmotion === e ? null : e)}
-                  className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-all border ${
-                    selectedEmotion === e
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                      : 'border-border text-muted hover:border-primary/50 hover:text-foreground bg-surface'
-                  }`}
-                >{e}</button>
-              ))}
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="text-sm font-semibold block mb-3 text-foreground">Quick note (optional)</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="What was happening when the urge hit?"
-              className="w-full rounded-xl border border-border bg-surface-hover px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-shadow"
-            />
-          </div>
-
-          <button
-            onClick={handleDetailedLog}
-            disabled={isSaving}
-            className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60 shadow-md shadow-primary/20"
-          >
-            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-            {isSaving ? 'Saving...' : 'Log Urge & Let Go'}
-          </button>
+          <h3 className="font-semibold text-sm text-foreground">Log an urge</h3>
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-bold ${getIntensityColor(intensity)}`}>
+            {getIntensityLabel(intensity)}
+          </span>
+          <span className="text-sm font-bold text-foreground tabular-nums">{intensity}/10</span>
+        </div>
+      </div>
 
-      {/* Recent urge history */}
-      {recentLogs.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-4 h-4 text-muted" />
-            <span className="text-sm font-semibold text-muted uppercase tracking-wider">Recent History</span>
-          </div>
-          <div className="space-y-3">
-            {recentLogs.slice(0, 3).map(log => (
-              <div key={log.id} className="flex items-center justify-between text-sm py-3 px-4 rounded-xl bg-surface-hover border border-border/50">
-                <div className="flex items-center gap-3">
-                  <span className="font-bold text-primary">{log.intensity}/10</span>
-                  {log.trigger && <span className="text-foreground font-medium">{log.trigger}</span>}
-                </div>
-                <div className="flex items-center gap-2">
-                  {log.urge_passed && <Check className="w-4 h-4 text-emerald-500" />}
-                  <span className="text-xs text-muted font-medium">
-                    {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              </div>
+      {/* Intensity slider */}
+      <div className="mb-4">
+        <input
+          type="range"
+          min="1"
+          max="10"
+          value={intensity}
+          onChange={(e) => setIntensity(Number(e.target.value))}
+          aria-label="Urge intensity"
+          className="w-full accent-primary h-1.5 bg-border/40 rounded-full appearance-none outline-none cursor-pointer"
+        />
+        <div className="flex justify-between text-[10px] text-muted/60 mt-1.5 font-medium px-0.5">
+          <span>Mild</span>
+          <span>Severe</span>
+        </div>
+      </div>
+
+      {/* Optional details toggle */}
+      <button
+        onClick={() => setShowDetails(!showDetails)}
+        className="w-full text-xs font-medium text-muted/70 hover:text-muted flex items-center justify-center gap-1 py-1.5 mb-4 transition-colors"
+      >
+        {showDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        {showDetails ? 'Hide triggers' : 'Add trigger'}
+      </button>
+
+      {showDetails && (
+        <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-wrap gap-1.5">
+            {TRIGGERS.map(t => (
+              <button
+                key={t}
+                onClick={() => setSelectedTrigger(selectedTrigger === t ? null : t)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                  selectedTrigger === t
+                    ? 'bg-primary/15 text-primary border-primary/30'
+                    : 'border-border/40 text-muted hover:border-border hover:text-foreground'
+                }`}
+              >{t}</button>
             ))}
           </div>
         </div>
       )}
+
+      {/* Log button */}
+      <button
+        onClick={handleLog}
+        disabled={isSaving}
+        className="w-full bg-foreground text-background py-3 rounded-xl font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+      >
+        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+        {isSaving ? 'Logging...' : 'Log'}
+      </button>
     </div>
   )
 }
