@@ -77,10 +77,10 @@ export default async function DashboardLayout({
       <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/20 blur-[100px]" />
       <div className="pointer-events-none absolute bottom-0 -right-24 w-96 h-96 rounded-full bg-accent/15 blur-[100px]" />
       {/* Sidebar / Topbar */}
-      <aside className="w-full md:w-64 bg-surface/90 backdrop-blur-md border-b md:border-b-0 md:border-r border-border flex flex-col sticky top-0 md:h-screen z-50">
-        <div className="p-4 md:p-6 flex flex-col md:block">
-          <Link href="/dashboard" className="flex items-center justify-center mt-6 md:mt-0 mb-8 w-fit group select-none mx-auto md:mx-0">
-            <div className="flex flex-col items-center justify-center leading-[0.8] font-black tracking-tighter transform group-hover:scale-105 transition-transform duration-300">
+      <aside className="hidden md:flex w-64 bg-surface/90 backdrop-blur-md border-r border-border flex-col sticky top-0 h-screen z-40">
+        <div className="p-6">
+          <Link href="/dashboard" className="flex items-center mb-10 w-fit group select-none">
+            <div className="flex flex-col items-start leading-[0.8] font-black tracking-tighter transform group-hover:scale-105 transition-transform duration-300">
               <span className="text-[26px] text-muted-foreground/80 drop-shadow-md">STOP</span>
               <span className="text-[34px] text-primary/90 drop-shadow-[0_2px_15px_rgba(139,92,246,0.3)] -mt-1">GOON</span>
             </div>
@@ -100,38 +100,8 @@ export default async function DashboardLayout({
             ] as const
             return (
               <>
-                {/* Mobile clean sliding icon nav */}
-                <div className="relative md:hidden w-full mt-2 mb-4">
-                  <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent z-10" />
-                  <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent z-10" />
-                  <nav className="flex overflow-x-auto items-center gap-6 px-6 pb-2 pt-1 scrollbar-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
-                    {[...coreNav, ...supportNav].map(item => (
-                      <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex flex-col items-center justify-center gap-1 group relative transition-transform active:scale-95 ${item.cls}`}>
-                        <item.icon className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
-                        {item.dot && <div className="absolute -top-1 -right-1"><ChatNotificationDot userId={user.id} /></div>}
-                      </Link>
-                    ))}
-                    {isPremium ? (
-                       <div className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20">
-                         <Crown className="w-5 h-5 text-primary" />
-                       </div>
-                    ) : (
-                       <Link href="/dashboard/upgrade" className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20 transition-transform active:scale-95">
-                         <Crown className="w-5 h-5 text-primary" />
-                       </Link>
-                    )}
-                    <Link href="/dashboard/settings" className="snap-start shrink-0 flex items-center justify-center group transition-transform active:scale-95">
-                      <Settings className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
-                    </Link>
-                    <form action={handleSignOut} className="snap-start shrink-0 flex">
-                      <button className="flex items-center justify-center group transition-transform active:scale-95">
-                        <LogOut className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
-                      </button>
-                    </form>
-                  </nav>
-                </div>
                 {/* Desktop vertical nav */}
-                <nav className="hidden md:flex flex-col gap-1 pb-0">
+                <nav className="flex flex-col gap-1 pb-0">
                   <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Core</p>
                   {coreNav.map(item => (
                     <NavLink key={item.href} href={item.href} icon={item.icon} label={item.label} cls={item.cls} dot={item.dot} userId={user.id} />
@@ -147,7 +117,7 @@ export default async function DashboardLayout({
           })()}
         </div>
 
-        <div className="hidden md:block p-6 border-t border-border mt-auto">
+        <div className="p-6 border-t border-border mt-auto">
           {!isPremium ? (
             <Link
               href="/dashboard/upgrade"
@@ -185,12 +155,58 @@ export default async function DashboardLayout({
         </div>
       </aside>
 
+      {/* Mobile Fixed Bottom Nav */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl border-t border-border/50">
+        <nav className="flex overflow-x-auto items-center gap-7 px-6 py-4 scrollbar-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
+          {[
+            { href: '/dashboard', icon: LayoutDashboard },
+            { href: '/dashboard/journal', icon: BookHeart },
+            { href: '/dashboard/sos', icon: LifeBuoy, cls: 'text-red-500' },
+            { href: '/dashboard/analytics', icon: Activity },
+            { href: '/dashboard/motivation', icon: Sparkles, cls: 'text-amber-500' },
+            { href: '/dashboard/chat', icon: MessageCircle, dot: true },
+            { href: '/blog', icon: BookOpen },
+          ].map((item, i) => (
+            <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex flex-col items-center justify-center gap-1 group relative transition-transform active:scale-95 ${item.cls || ''}`}>
+              <item.icon className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+              {item.dot && <div className="absolute -top-1 -right-1"><ChatNotificationDot userId={user.id} /></div>}
+            </Link>
+          ))}
+          {isPremium ? (
+             <div className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20">
+               <Crown className="w-5 h-5 text-primary" />
+             </div>
+          ) : (
+             <Link href="/dashboard/upgrade" className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20 transition-transform active:scale-95">
+               <Crown className="w-5 h-5 text-primary" />
+             </Link>
+          )}
+          <Link href="/dashboard/settings" className="snap-start shrink-0 flex items-center justify-center group transition-transform active:scale-95">
+            <Settings className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+          </Link>
+          <form action={handleSignOut} className="snap-start shrink-0 flex">
+            <button className="flex items-center justify-center group transition-transform active:scale-95">
+              <LogOut className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+            </button>
+          </form>
+        </nav>
+      </div>
+
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
-        {/* Top Right Streak Badge */}
-        <div className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-2 px-3 py-1.5 bg-[#141414] border border-[#2a2a2a] rounded-full shadow-lg z-50">
-          <span className="text-orange-500 text-sm drop-shadow-md">🔥</span>
-          <span className="text-sm font-bold text-[#b0b0b0] tracking-wide">{currentStreak}</span>
+      <main className="flex-1 p-6 pb-24 md:p-12 md:pb-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
+        {/* Top Header Mobile / Badges */}
+        <div className="absolute top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto flex items-center justify-between md:justify-end z-50 pointer-events-none">
+          {/* Streak Badge (Top Left Mobile, Top Right Desktop) */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#141414] border border-[#2a2a2a] rounded-full shadow-lg pointer-events-auto">
+            <span className="text-orange-500 text-sm drop-shadow-md">🔥</span>
+            <span className="text-sm font-bold text-[#b0b0b0] tracking-wide">{currentStreak}</span>
+          </div>
+          
+          {/* Mobile Logo (Top Right) */}
+          <Link href="/dashboard" className="md:hidden flex flex-col items-end leading-[0.8] font-black tracking-tighter select-none pointer-events-auto">
+            <span className="text-[18px] text-muted-foreground/80 drop-shadow-md">STOP</span>
+            <span className="text-[24px] text-primary/90 drop-shadow-[0_2px_15px_rgba(139,92,246,0.3)] -mt-1">GOON</span>
+          </Link>
         </div>
         {children}
       </main>
