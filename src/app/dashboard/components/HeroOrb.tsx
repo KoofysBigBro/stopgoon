@@ -19,13 +19,15 @@ export default function HeroOrb() {
       const rect = container.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
-      mouseX = (e.clientX - centerX) / window.innerWidth * 24
-      mouseY = (e.clientY - centerY) / window.innerHeight * 24
+      // subtle movement based on mouse
+      mouseX = ((e.clientX - centerX) / window.innerWidth) * 30
+      mouseY = ((e.clientY - centerY) / window.innerHeight) * 30
     }
 
     const animate = () => {
-      currentX += (mouseX - currentX) * 0.06
-      currentY += (mouseY - currentY) * 0.06
+      // Smooth interpolation
+      currentX += (mouseX - currentX) * 0.05
+      currentY += (mouseY - currentY) * 0.05
       container.style.transform = `translate(${currentX}px, ${currentY}px)`
       animId = requestAnimationFrame(animate)
     }
@@ -40,89 +42,104 @@ export default function HeroOrb() {
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-[180px] h-[180px] md:w-[220px] md:h-[220px] mx-auto will-change-transform"
-      style={{ transition: 'transform 0.1s linear' }}
-    >
-      {/* Outer glow */}
-      <div className="absolute inset-[-40%] rounded-full bg-[radial-gradient(circle,rgba(0,212,170,0.12)_0%,transparent_70%)] animate-[orb-breathe_6s_ease-in-out_infinite]" />
+    <div className="relative w-[160px] h-[160px] md:w-[200px] md:h-[200px] mx-auto mt-4 mb-2 flex items-center justify-center">
+      
+      {/* Container that moves with mouse */}
+      <div 
+        ref={containerRef}
+        className="relative w-full h-full will-change-transform"
+      >
+        {/* Soft back glow */}
+        <div className="absolute inset-[-30%] rounded-full bg-primary/20 blur-[40px] animate-pulse-slow" />
 
-      {/* Main sphere body */}
-      <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_80px_rgba(0,212,170,0.2),0_0_160px_rgba(0,180,140,0.08)]">
-        {/* Base gradient — 3D sphere shading */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `radial-gradient(circle at 38% 32%,
-              rgba(0,232,190,0.7) 0%,
-              rgba(0,180,150,0.5) 20%,
-              rgba(0,120,100,0.4) 40%,
-              rgba(0,60,55,0.7) 65%,
-              rgba(4,20,18,0.95) 100%
-            )`,
-          }}
-        />
+        {/* The 3D Sphere */}
+        <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+          
+          {/* Base color and core 3D shading */}
+          <div 
+            className="absolute inset-0 rounded-full bg-[#0a1f1c]"
+            style={{
+              boxShadow: `
+                inset -20px -20px 50px rgba(0,0,0,0.9), 
+                inset 10px 10px 30px rgba(0, 212, 170, 0.4),
+                inset -5px -5px 15px rgba(0,0,0,0.8)
+              `
+            }}
+          />
 
-        {/* Surface texture layer — animated */}
-        <div
-          className="absolute inset-0 rounded-full opacity-40 mix-blend-overlay animate-[orb-surface_20s_linear_infinite]"
-          style={{
-            background: `
-              radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 60%, rgba(0,212,170,0.2) 0%, transparent 40%),
-              radial-gradient(ellipse at 50% 80%, rgba(0,100,80,0.3) 0%, transparent 50%)
-            `,
-          }}
-        />
+          {/* Liquid/Energy surface texture (animated) */}
+          <div 
+            className="absolute inset-0 rounded-full opacity-60 mix-blend-screen"
+            style={{
+              background: `
+                radial-gradient(circle at 30% 30%, rgba(0, 255, 200, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(0, 150, 120, 0.3) 0%, transparent 50%)
+              `,
+              animation: 'spin 20s linear infinite'
+            }}
+          />
 
-        {/* Atmospheric band */}
-        <div
-          className="absolute inset-0 rounded-full opacity-25 animate-[orb-bands_15s_linear_infinite]"
-          style={{
-            background: `
-              linear-gradient(135deg,
-                transparent 20%,
-                rgba(0,212,170,0.15) 35%,
-                transparent 40%,
-                transparent 55%,
-                rgba(0,180,150,0.1) 65%,
-                transparent 75%
-              )
-            `,
-          }}
-        />
+          {/* Swirling energy overlay */}
+          <div 
+            className="absolute inset-[-50%] opacity-30 mix-blend-overlay"
+            style={{
+              background: 'conic-gradient(from 0deg, transparent, rgba(0,212,170,0.8), transparent 40%, rgba(0,255,200,0.5) 60%, transparent 80%)',
+              animation: 'spin 15s linear infinite reverse'
+            }}
+          />
 
-        {/* Specular highlight */}
-        <div
-          className="absolute rounded-full"
-          style={{
-            top: '12%',
-            left: '22%',
-            width: '35%',
-            height: '25%',
-            background: 'radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, transparent 70%)',
-            filter: 'blur(4px)',
-            transform: 'rotate(-20deg)',
-          }}
-        />
+          {/* Sharp Specular Highlight (The glossy reflection) */}
+          <div 
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              top: '8%',
+              left: '15%',
+              width: '35%',
+              height: '18%',
+              background: 'linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.1))',
+              filter: 'blur(1.5px)',
+              transform: 'rotate(-25deg)',
+              borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%'
+            }}
+          />
+          
+          {/* Secondary softer highlight */}
+          <div 
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              top: '25%',
+              left: '10%',
+              width: '20%',
+              height: '40%',
+              background: 'radial-gradient(ellipse, rgba(0,255,200,0.3) 0%, transparent 70%)',
+              transform: 'rotate(-15deg)'
+            }}
+          />
 
-        {/* Inner shadow for depth */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            boxShadow: 'inset 8px -8px 30px rgba(0,0,0,0.6), inset -4px 4px 20px rgba(0,212,170,0.1)',
-          }}
-        />
+          {/* Inner rim light (bottom right) */}
+          <div 
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{
+              boxShadow: 'inset -3px -5px 12px rgba(0, 255, 200, 0.3)'
+            }}
+          />
+
+        </div>
       </div>
-
-      {/* Rim light */}
-      <div
-        className="absolute inset-0 rounded-full opacity-30"
-        style={{
-          background: 'conic-gradient(from 200deg, transparent 0%, rgba(0,212,170,0.3) 15%, transparent 30%, transparent 100%)',
-        }}
-      />
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite alternate;
+        }
+        @keyframes pulse-slow {
+          0% { opacity: 0.4; transform: scale(0.95); }
+          100% { opacity: 0.7; transform: scale(1.05); }
+        }
+      `}} />
     </div>
   )
 }
