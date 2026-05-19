@@ -79,11 +79,11 @@ export default async function DashboardLayout({
       {/* Sidebar / Topbar */}
       <aside className="w-full md:w-64 bg-surface/90 backdrop-blur-md border-b md:border-b-0 md:border-r border-border flex flex-col sticky top-0 md:h-screen z-50">
         <div className="p-4 md:p-6 flex flex-col md:block">
-          <Link href="/dashboard" className="flex items-center gap-3 mb-4 md:mb-8 text-primary group w-fit transition-transform hover:translate-x-0.5">
-            <div className="bg-primary/10 p-1.5 rounded-xl group-hover:scale-105 transition-transform">
-              <Image src="/icon.svg" alt="StopGoon logo" width={24} height={24} className="rounded-md" priority />
+          <Link href="/dashboard" className="flex items-center justify-center mb-8 w-fit group select-none">
+            <div className="flex flex-col items-center justify-center leading-[0.8] font-black tracking-tighter transform group-hover:scale-105 transition-transform duration-300">
+              <span className="text-[26px] text-muted-foreground/80 drop-shadow-md">STOP</span>
+              <span className="text-[34px] text-primary/90 drop-shadow-[0_2px_15px_rgba(139,92,246,0.3)] -mt-1">GOON</span>
             </div>
-            <span className="text-xl font-bold tracking-tight text-foreground font-heading">StopGoon</span>
           </Link>
 
           {(() => {
@@ -183,9 +183,9 @@ export default async function DashboardLayout({
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
         {/* Top Right Streak Badge */}
-        <div className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-1.5 px-3 py-1.5 bg-surface/50 border border-border/40 backdrop-blur-md rounded-2xl shadow-sm z-50">
-          <span className="text-orange-500 text-lg drop-shadow-md">🔥</span>
-          <span className="text-lg font-black text-foreground/90">{currentStreak}</span>
+        <div className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-2 px-3 py-1.5 bg-[#141414] border border-[#2a2a2a] rounded-full shadow-lg z-50">
+          <span className="text-orange-500 text-sm drop-shadow-md">🔥</span>
+          <span className="text-sm font-bold text-[#b0b0b0] tracking-wide">{currentStreak}</span>
         </div>
         {children}
       </main>
