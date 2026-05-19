@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Zap, Loader2, RefreshCw, Brain } from 'lucide-react'
 import PremiumCardOverlay from '@/components/premium/PremiumCardOverlay'
-import SparkleEffect from '@/components/premium/SparkleEffect'
 
 interface AIInsightCardProps {
   isPremium: boolean
@@ -69,22 +68,21 @@ export default function AIInsightCard({ isPremium }: AIInsightCardProps) {
   }
 
   return (
-    <div className="relative rounded-2xl border border-border/60 shadow-sm bg-gradient-to-br from-surface/80 to-indigo-500/5 overflow-hidden group">
-      <SparkleEffect count={8} color="rgb(99,102,241)" />
-      <div className="p-6 flex items-start gap-4 relative z-10">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300">
-          <Zap className="w-6 h-6 text-indigo-500" />
+    <div className="relative rounded-2xl border border-border/40 bg-surface/60 overflow-hidden group">
+      <div className="p-5 md:p-6 flex items-start gap-4 relative z-10">
+        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl border border-accent/20 bg-accent/10 flex items-center justify-center shrink-0 mt-0.5 transition-transform duration-300">
+          <Brain className="w-5 h-5 text-accent" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1 gap-2">
-            <h4 className="font-bold text-foreground">AI Predictive Insight</h4>
+            <h4 className="font-semibold text-sm text-foreground">AI Predictive Insight</h4>
             <button
               onClick={fetchInsight}
               disabled={loading}
               title="Refresh insight"
-              className="text-muted hover:text-indigo-500 transition-colors disabled:opacity-40 shrink-0"
+              className="text-muted hover:text-accent transition-colors disabled:opacity-40 shrink-0"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
 

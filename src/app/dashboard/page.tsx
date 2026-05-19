@@ -5,6 +5,7 @@ import DailyCheckin from './components/DailyCheckin'
 import UrgeLogger from './components/UrgeLogger'
 import RelapseButton from './components/RelapseButton'
 import AIInsightCard from './components/AIInsightCard'
+import HeroOrb from './components/HeroOrb'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,17 +66,19 @@ export default async function DashboardPage() {
     <div className="max-w-2xl mx-auto animate-fade-up">
       
       {/* Hero — the single most important thing */}
-      <section className="text-center pt-4 pb-10 md:pt-8 md:pb-14 relative">
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 rounded-full bg-primary/12 blur-[100px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-40 h-40 md:w-52 md:h-52 rounded-full bg-primary/8 blur-[60px] pointer-events-none animate-glow-pulse" style={{ animationDuration: '4s' }} />
+      <section className="text-center pt-8 pb-10 md:pt-12 md:pb-14 relative flex flex-col items-center">
         
-        <div className="relative z-10">
-          <p className="text-sm text-muted font-medium mb-10 md:mb-12">{getGreeting()}</p>
+        {/* 3D Premium Centerpiece */}
+        <div className="mb-[-40px] md:mb-[-60px] relative z-0">
+          <HeroOrb />
+        </div>
+
+        <div className="relative z-10 mt-8 md:mt-12 flex flex-col items-center">
+          <p className="text-xs text-muted font-semibold uppercase tracking-widest mb-2 opacity-80">{getGreeting()}</p>
           
-          <div className="mb-8">
-            <p className="text-8xl md:text-9xl font-bold tracking-tighter text-foreground leading-none">{daysOfGrowth}</p>
-            <p className="text-lg text-muted font-medium mt-2 tracking-wide">days</p>
+          <div className="mb-6 flex flex-col items-center">
+            <p className="text-8xl md:text-9xl font-bold tracking-tighter text-foreground leading-none drop-shadow-lg">{daysOfGrowth}</p>
+            <p className="text-sm text-muted font-medium mt-1 tracking-widest uppercase">days</p>
           </div>
 
           {/* Progress bar */}

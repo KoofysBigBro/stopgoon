@@ -21,17 +21,17 @@
 }
 
 .dark {
-  --background: #071318;
-  --foreground: #e9f7f4;
-  --surface: #0f2228;
-  --surface-hover: #173239;
-  --border: #204047;
-  --primary: #2cc7a5;
-  --primary-hover: #48d6b7;
-  --accent: #f6b84a;
-  --muted: #8db3ac;
+  --background: #050507;
+  --foreground: #f8fafc;
+  --surface: #0f1115;
+  --surface-hover: #161a20;
+  --border: #1e242c;
+  --primary: #00d4aa;
+  --primary-hover: #33e5c5;
+  --accent: #8b5cf6;
+  --muted: #8b9bb4;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 8px 16px -4px rgb(0 0 0 / 0.4), 0 4px 8px -4px rgb(0 0 0 / 0.4);
 }
 
 @theme inline {
