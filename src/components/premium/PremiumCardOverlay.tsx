@@ -54,13 +54,13 @@ export default function PremiumCardOverlay({
       
       {/* Background Content (Subtly blurred and dimmed) */}
       {children && (
-        <div className="absolute inset-0 opacity-10 pointer-events-none select-none blur-sm grayscale mix-blend-luminosity">
+        <div className="absolute inset-0 opacity-10 pointer-events-none select-none blur-sm grayscale mix-blend-luminosity overflow-hidden">
           {children}
         </div>
       )}
 
       {/* Premium Overlay Content */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-t from-surface via-surface/95 to-surface/80">
+      <div className="relative z-10 flex flex-col items-center justify-center p-8 text-center h-full min-h-[280px] bg-gradient-to-t from-surface via-surface/95 to-surface/80">
         
         {/* Subtle top glow */}
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 ${v.glow} blur-[60px] opacity-50 rounded-full pointer-events-none`} />
