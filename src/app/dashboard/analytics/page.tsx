@@ -165,10 +165,10 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="animate-fade-up max-w-5xl mx-auto">
-      <PageHeader
-        title="Progress Analytics"
-        subtitle="Visualize your journey with cleaner signals and better decisions."
-      />
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Analytics</h1>
+        <p className="text-sm text-muted font-medium">Your progress data, simplified.</p>
+      </div>
 
       {/* AI Coach */}
       <div className="mb-8">
@@ -185,33 +185,53 @@ export default async function AnalyticsPage() {
         lastUrgeTime={lastUrgeTime}
       />
 
-      {/* Stat Cards */}
+      {/* Stat Cards - Consolidated & Clean */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={<Flame className="w-5 h-5 text-primary" />} label="Current Streak" value={currentStreak} hint="days" />
-        <StatCard icon={<Target className="w-5 h-5 text-amber-500" />} label="Longest Streak" value={longestStreak} hint="days" />
-        <StatCard icon={<Calendar className="w-5 h-5 text-emerald-500" />} label="Total Check-ins" value={totalCheckins} hint="logged" />
-        <StatCard icon={<TrendingUp className="w-5 h-5 text-rose-500" />} label="Total Setbacks" value={totalSetbacks} hint="logged" />
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <Flame className="w-5 h-5 text-primary mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{currentStreak}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Current Streak</p>
+        </div>
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <Target className="w-5 h-5 text-amber-500 mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{longestStreak}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Longest Streak</p>
+        </div>
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <TrendingUp className="w-5 h-5 text-rose-500 mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{totalSetbacks}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Setbacks</p>
+        </div>
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <Calendar className="w-5 h-5 text-emerald-500 mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{totalCheckins}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Check-ins</p>
+        </div>
       </div>
 
       {/* Second row stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <StatCard icon={<BookHeart className="w-5 h-5 text-primary" />} label="Journal Entries" value={totalJournalEntries} />
-        <StatCard
-          icon={<Zap className="w-5 h-5 text-orange-500" />}
-          label="Urges Logged"
-          value={totalUrges}
-          hint={averageIntensity > 0 ? `Avg intensity: ${averageIntensity}/10` : undefined}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <BookHeart className="w-5 h-5 text-primary mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{totalJournalEntries}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Journals</p>
+        </div>
+        <div className="glass-card p-5 rounded-2xl border border-border/40 flex flex-col items-center justify-center text-center">
+          <Zap className="w-5 h-5 text-orange-500 mb-2 opacity-80" />
+          <p className="text-3xl font-bold text-foreground tracking-tight">{totalUrges}</p>
+          <p className="text-[10px] uppercase tracking-widest text-muted font-semibold mt-1">Urges Logged</p>
+        </div>
 
-        <SectionCard className="col-span-2 lg:col-span-1">
+        <div className="glass-card p-5 rounded-2xl border border-border/40 col-span-1 lg:col-span-1 flex items-center justify-center">
           <MoodBreakdownChart moodCounts={moodCounts} totalCheckins={totalCheckins} />
-        </SectionCard>
+        </div>
       </div>
 
       {/* 30-Day Activity Heatmap */}
-      <SectionCard className="p-8">
-        <h3 className="font-semibold text-lg mb-2 text-foreground">30-Day Check-in Activity</h3>
-        <p className="text-sm text-muted mb-6">Your consistency over the past month at a glance.</p>
+      <div className="glass-card p-8 rounded-[2rem] border border-border/40 mb-8">
+        <div className="flex flex-col items-center text-center mb-8">
+          <h3 className="font-bold text-lg tracking-tight text-foreground">30-Day Activity</h3>
+        </div>
         <div className="grid grid-cols-10 gap-2">
           {checkinCalendar.map((day) => {
             const d = new Date(day.date + 'T00:00:00')
@@ -230,13 +250,13 @@ export default async function AnalyticsPage() {
             )
           })}
         </div>
-        <div className="flex items-center gap-3 mt-5 text-xs text-muted">
+        <div className="flex justify-center items-center gap-3 mt-6 text-[10px] font-bold tracking-wider text-muted uppercase">
           <span>Less</span>
-          <div className="w-3 h-3 rounded bg-surface-hover border border-border opacity-50" />
-          <div className="w-3 h-3 rounded bg-primary" />
+          <div className="w-2 h-2 rounded-full bg-surface-hover border border-border opacity-50" />
+          <div className="w-2 h-2 rounded-full bg-primary" />
           <span>More</span>
         </div>
-      </SectionCard>
+      </div>
 
       {/* Recovery Timeline */}
       <div className="mt-8">

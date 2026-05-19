@@ -22,6 +22,7 @@ export default async function DashboardPage() {
   let daysOfGrowth = 0
   let nextMilestone = 7
   let isPremium = false
+  const last7DaysMap: Record<string, boolean> = {}
 
   try {
     const { data: { user } } = await supabase.auth.getUser()
@@ -51,6 +52,24 @@ export default async function DashboardPage() {
       if (checkins) {
         daysOfGrowth = checkins.length
       }
+
+      // Fetch last 7 days for the streak UI
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
+      sevenDaysAgo.setHours(0, 0, 0, 0)
+      
+      const { data: recentCheckins } = await supabase
+        .from('daily_checkins')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .gte('created_at', sevenDaysAgo.toISOString())
+        
+      if (recentCheckins) {
+        recentCheckins.forEach(c => {
+          const dateStr = new Date(c.created_at).toISOString().split('T')[0]
+          last7DaysMap[dateStr] = true
+        })
+      }
     }
   } catch (e) {
     if (process.env.NODE_ENV === 'development') console.error('Dashboard data fetch failed:', e)
@@ -61,6 +80,19 @@ export default async function DashboardPage() {
   nextMilestone = milestones.find(m => m > daysOfGrowth) || 365
 
   const progress = Math.min((daysOfGrowth / nextMilestone) * 100, 100)
+
+  // Generate last 7 days array
+  const last7Days = []
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().split('T')[0]
+    last7Days.push({
+      label: d.toLocaleDateString('en-US', { weekday: 'short' })[0], // M, T, W...
+      checked: !!last7DaysMap[dateStr],
+      isToday: i === 0
+    })
+  }
 
   return (
     <div className="max-w-2xl mx-auto animate-fade-up">
@@ -90,13 +122,20 @@ export default async function DashboardPage() {
               />
             </div>
           </div>
-          <div className="flex flex-col items-center gap-2 mt-2">
-            <p className="text-xs text-muted/70 font-medium">
-              Next milestone · {nextMilestone} days
-            </p>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-hover border border-border/50">
-              <span className="text-orange-500 text-xs">🔥</span>
-              <span className="text-xs font-bold text-muted">{daysOfGrowth} Day Streak</span>
+          <div className="flex flex-col items-center mt-3">
+            <div className="flex items-center gap-2 md:gap-3 px-4 py-2 rounded-2xl bg-surface/30 border border-border/40 backdrop-blur-sm">
+              {last7Days.map((day, i) => (
+                <div key={i} className="flex flex-col items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-muted/70">{day.label}</span>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                    day.checked 
+                      ? 'bg-primary/20 text-primary border border-primary/30 shadow-[0_0_10px_rgba(139,92,246,0.2)]' 
+                      : 'bg-surface-hover/50 border border-border/50 text-transparent'
+                  }`}>
+                    {day.checked && <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

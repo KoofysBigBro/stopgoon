@@ -14,28 +14,28 @@ interface PremiumCardOverlayProps {
 
 const variantStyles = {
   default: {
-    glow: 'bg-primary/20',
-    iconBg: 'bg-primary/10 border-primary/20',
+    glow: 'bg-primary/10',
+    iconBg: 'bg-surface border-border/50',
     iconColor: 'text-primary',
-    button: 'bg-primary hover:bg-primary-hover text-surface shadow-primary/20',
+    button: 'bg-primary/10 border border-primary/20 hover:bg-primary hover:text-white text-primary shadow-lg',
   },
   indigo: {
-    glow: 'bg-accent/20',
-    iconBg: 'bg-accent/10 border-accent/20',
-    iconColor: 'text-accent',
-    button: 'bg-accent hover:opacity-90 text-white shadow-accent/20',
+    glow: 'bg-primary/20',
+    iconBg: 'bg-surface border-primary/30',
+    iconColor: 'text-primary',
+    button: 'bg-primary/10 border border-primary/20 hover:bg-primary hover:text-white text-primary shadow-lg',
   },
   amber: {
-    glow: 'bg-amber-500/20',
-    iconBg: 'bg-amber-500/10 border-amber-500/20',
+    glow: 'bg-amber-500/10',
+    iconBg: 'bg-surface border-amber-500/30',
     iconColor: 'text-amber-500',
-    button: 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20',
+    button: 'bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500 hover:text-black text-amber-500 shadow-lg',
   },
   emerald: {
-    glow: 'bg-emerald-500/20',
-    iconBg: 'bg-emerald-500/10 border-emerald-500/20',
+    glow: 'bg-emerald-500/10',
+    iconBg: 'bg-surface border-emerald-500/30',
     iconColor: 'text-emerald-500',
-    button: 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20',
+    button: 'bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500 hover:text-black text-emerald-500 shadow-lg',
   },
 }
 
@@ -66,10 +66,10 @@ export default function PremiumCardOverlay({
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 ${v.glow} blur-[60px] opacity-50 rounded-full pointer-events-none`} />
 
         {/* Polished Icon Container */}
-        <div className="relative mb-5">
-          <div className={`w-14 h-14 rounded-2xl border ${v.iconBg} flex items-center justify-center shadow-lg backdrop-blur-md relative z-10`}>
+        <div className="relative mb-6">
+          <div className={`w-14 h-14 rounded-2xl border ${v.iconBg} flex items-center justify-center shadow-2xl backdrop-blur-md relative z-10`}>
             {icon ? (
-              <div className={`[&>svg]:w-6 [&>svg]:h-6 [&>svg]:${v.iconColor}`}>
+              <div className={`[&>svg]:w-6 [&>svg]:h-6 ${v.iconColor}`}>
                 {icon}
               </div>
             ) : (
@@ -77,8 +77,8 @@ export default function PremiumCardOverlay({
             )}
           </div>
           {/* Lock Badge */}
-          <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-surface border border-border rounded-full flex items-center justify-center shadow-md z-20">
-            <Lock className="w-3.5 h-3.5 text-muted" />
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-surface border border-border/60 rounded-full flex items-center justify-center shadow-lg z-20">
+            <Lock className="w-3 h-3 text-muted" />
           </div>
         </div>
 
