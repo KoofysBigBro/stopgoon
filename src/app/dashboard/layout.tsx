@@ -178,7 +178,6 @@ export default async function DashboardLayout({
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
         {children}
       </main>
-      <InstallPrompt />
     </div>
   )
 }

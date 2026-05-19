@@ -90,9 +90,15 @@ export default async function DashboardPage() {
               />
             </div>
           </div>
-          <p className="text-xs text-muted/70 font-medium">
-            Next milestone · {nextMilestone} days
-          </p>
+          <div className="flex flex-col items-center gap-2 mt-2">
+            <p className="text-xs text-muted/70 font-medium">
+              Next milestone · {nextMilestone} days
+            </p>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-hover border border-border/50">
+              <span className="text-orange-500 text-xs">🔥</span>
+              <span className="text-xs font-bold text-muted">{daysOfGrowth} Day Streak</span>
+            </div>
+          </div>
 
           {/* Primary + Secondary CTA */}
           <div className="flex items-center justify-center gap-3 mt-10">
