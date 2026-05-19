@@ -100,25 +100,32 @@ export default async function DashboardLayout({
             ] as const
             return (
               <>
-                {/* Mobile wrap nav */}
-                <div className="md:hidden w-full px-2">
-                  <nav className="flex flex-wrap justify-center gap-2 pb-4">
+                {/* Mobile clean sliding icon nav */}
+                <div className="relative md:hidden w-full mt-2 mb-4">
+                  <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent z-10" />
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent z-10" />
+                  <nav className="flex overflow-x-auto items-center gap-6 px-6 pb-2 pt-1 scrollbar-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
                     {[...coreNav, ...supportNav].map(item => (
-                      <Link key={item.href} href={item.href} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all ${item.cls.replace('hover:bg-red-500/10', '').replace('hover:bg-amber-500/10', '')}`}>
-                        <item.icon className="w-3.5 h-3.5" />
-                        <span>{item.label}</span>
-                        {item.dot && <ChatNotificationDot userId={user.id} />}
+                      <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex flex-col items-center justify-center gap-1 group relative transition-transform active:scale-95 ${item.cls}`}>
+                        <item.icon className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+                        {item.dot && <div className="absolute -top-1 -right-1"><ChatNotificationDot userId={user.id} /></div>}
                       </Link>
                     ))}
-                    <PremiumBadgeMobile isPremium={isPremium} />
-                    <Link href="/dashboard/settings" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all">
-                      <Settings className="w-3.5 h-3.5" />
-                      <span>Settings</span>
+                    {isPremium ? (
+                       <div className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20">
+                         <Crown className="w-5 h-5 text-primary" />
+                       </div>
+                    ) : (
+                       <Link href="/dashboard/upgrade" className="snap-start shrink-0 flex items-center justify-center p-1 rounded-full bg-primary/10 border border-primary/20 transition-transform active:scale-95">
+                         <Crown className="w-5 h-5 text-primary" />
+                       </Link>
+                    )}
+                    <Link href="/dashboard/settings" className="snap-start shrink-0 flex items-center justify-center group transition-transform active:scale-95">
+                      <Settings className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
                     </Link>
-                    <form action={handleSignOut} className="flex">
-                      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all">
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Sign out</span>
+                    <form action={handleSignOut} className="snap-start shrink-0 flex">
+                      <button className="flex items-center justify-center group transition-transform active:scale-95">
+                        <LogOut className="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
                       </button>
                     </form>
                   </nav>
