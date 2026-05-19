@@ -79,7 +79,7 @@ export default async function DashboardLayout({
       {/* Sidebar / Topbar */}
       <aside className="w-full md:w-64 bg-surface/90 backdrop-blur-md border-b md:border-b-0 md:border-r border-border flex flex-col sticky top-0 md:h-screen z-50">
         <div className="p-4 md:p-6 flex flex-col md:block">
-          <Link href="/dashboard" className="flex items-center justify-center mb-8 w-fit group select-none">
+          <Link href="/dashboard" className="flex items-center justify-center mt-6 md:mt-0 mb-8 w-fit group select-none mx-auto md:mx-0">
             <div className="flex flex-col items-center justify-center leading-[0.8] font-black tracking-tighter transform group-hover:scale-105 transition-transform duration-300">
               <span className="text-[26px] text-muted-foreground/80 drop-shadow-md">STOP</span>
               <span className="text-[34px] text-primary/90 drop-shadow-[0_2px_15px_rgba(139,92,246,0.3)] -mt-1">GOON</span>
@@ -100,27 +100,25 @@ export default async function DashboardLayout({
             ] as const
             return (
               <>
-                {/* Mobile horizontal nav */}
-                <div className="relative md:hidden">
-                  <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-background to-transparent z-10" />
-                  <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10" />
-                  <nav className="flex overflow-x-auto gap-2 pb-2 scrollbar-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch] scroll-pl-4">
+                {/* Mobile wrap nav */}
+                <div className="md:hidden w-full px-2">
+                  <nav className="flex flex-wrap justify-center gap-2 pb-4">
                     {[...coreNav, ...supportNav].map(item => (
-                      <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover transition-all duration-200 font-medium text-muted hover:text-foreground ${item.cls}`}>
-                        <item.icon className="w-4 h-4" />
-                        <span className="text-sm whitespace-nowrap">{item.label}</span>
+                      <Link key={item.href} href={item.href} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all ${item.cls.replace('hover:bg-red-500/10', '').replace('hover:bg-amber-500/10', '')}`}>
+                        <item.icon className="w-3.5 h-3.5" />
+                        <span>{item.label}</span>
                         {item.dot && <ChatNotificationDot userId={user.id} />}
                       </Link>
                     ))}
                     <PremiumBadgeMobile isPremium={isPremium} />
-                    <Link href="/dashboard/settings" className="snap-start shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover font-medium text-muted hover:text-foreground whitespace-nowrap">
-                      <Settings className="w-4 h-4" />
-                      <span className="text-sm">Settings</span>
+                    <Link href="/dashboard/settings" className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all">
+                      <Settings className="w-3.5 h-3.5" />
+                      <span>Settings</span>
                     </Link>
-                    <form action={handleSignOut} className="snap-start shrink-0 flex">
-                      <button className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-surface-hover font-medium text-muted hover:text-foreground whitespace-nowrap">
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-sm">Sign out</span>
+                    <form action={handleSignOut} className="flex">
+                      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/50 bg-surface-hover/40 text-[11px] font-semibold text-muted hover:text-foreground transition-all">
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign out</span>
                       </button>
                     </form>
                   </nav>
