@@ -66,6 +66,12 @@ export default async function DashboardLayout({
   const displayName = profile?.username || user.email?.split('@')[0] || user.email
   const isPremium = profile?.subscription_tier === 'premium'
 
+  // Calculate current streak for global top-right badge
+  const { data: relapses } = await supabase.from('relapses').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1)
+  const startDate = relapses && relapses.length > 0 ? new Date(relapses[0].created_at) : new Date(user.created_at)
+  const { data: checkins } = await supabase.from('daily_checkins').select('id').eq('user_id', user.id).gte('created_at', startDate.toISOString())
+  const currentStreak = checkins?.length || 0
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground transition-colors duration-300 relative overflow-hidden">
       <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/20 blur-[100px]" />
@@ -176,6 +182,11 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
+        {/* Top Right Streak Badge */}
+        <div className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-1.5 px-3 py-1.5 bg-surface/50 border border-border/40 backdrop-blur-md rounded-2xl shadow-sm z-50">
+          <span className="text-orange-500 text-lg drop-shadow-md">🔥</span>
+          <span className="text-lg font-black text-foreground/90">{currentStreak}</span>
+        </div>
         {children}
       </main>
     </div>
