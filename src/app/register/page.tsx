@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import GoogleIcon from '@/components/GoogleIcon'
 import GithubIcon from '@/components/GithubIcon'
-import { ShieldCheck, Eye, EyeOff, Loader2, CheckCircle2, ArrowRight, Sparkles, HeartHandshake } from 'lucide-react'
+import { ShieldCheck, Eye, EyeOff, Loader2, CheckCircle2, ArrowRight, Sparkles, HeartHandshake, Smartphone, PlayCircle, Search, Users, Globe } from 'lucide-react'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -14,7 +14,16 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [referralSource, setReferralSource] = useState('other')
   const supabase = createClient()
+
+  const REFERRAL_OPTIONS = [
+    { id: 'tiktok', label: 'TikTok', icon: Smartphone, color: 'text-pink-500 bg-pink-500/10' },
+    { id: 'youtube', label: 'YouTube', icon: PlayCircle, color: 'text-red-500 bg-red-500/10' },
+    { id: 'google search', label: 'Google Search', icon: Search, color: 'text-blue-500 bg-blue-500/10' },
+    { id: 'friend', label: 'Friend / Family', icon: Users, color: 'text-emerald-500 bg-emerald-500/10' },
+    { id: 'other', label: 'Other', icon: Globe, color: 'text-slate-400 bg-slate-400/10' },
+  ]
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,6 +53,9 @@ export default function RegisterPage() {
         password,
         options: {
           emailRedirectTo: `${appUrl}/auth/callback?next=/auth/success`,
+          data: {
+            referral_source: referralSource,
+          }
         }
       })
 
@@ -229,6 +241,36 @@ export default function RegisterPage() {
           {password.length === 0 && (
             <p className="text-xs text-muted font-medium mt-1 ml-1">Must be at least 6 characters.</p>
           )}
+        </div>
+
+        {/* Referral Source Selector */}
+        <div className="flex flex-col gap-2 mb-2">
+          <label className="text-sm font-semibold text-foreground">
+            Where did you learn about us?
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {REFERRAL_OPTIONS.map((option) => {
+              const Icon = option.icon
+              const isSelected = referralSource === option.id
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setReferralSource(option.id)}
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all duration-200 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
+                    isSelected
+                      ? 'border-primary bg-primary/10 text-foreground shadow-sm shadow-primary/20'
+                      : 'border-border bg-background hover:border-primary/30 text-muted hover:text-foreground'
+                  }`}
+                >
+                  <div className={`p-2 rounded-lg mb-1.5 ${option.color} transition-transform duration-300 ${isSelected ? 'scale-110' : ''}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-bold tracking-tight">{option.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <button

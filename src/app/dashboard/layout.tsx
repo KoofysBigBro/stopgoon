@@ -4,6 +4,7 @@ import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, Messa
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
+import AdBanner from '@/components/AdBanner'
 
 
 
@@ -209,7 +210,20 @@ export default async function DashboardLayout({
           </Link>
         </div>
         {children}
+
+        {/* Mobile Ad Banner */}
+        <div className="block lg:hidden mt-8">
+           <AdBanner isPremium={isPremium} slot="mobile-bottom" format="rectangle" />
+        </div>
       </main>
+
+      {/* Right Ad Sidebar (Desktop) */}
+      <aside className="hidden lg:flex w-72 p-6 flex-col border-l border-border/40 bg-surface/30 sticky top-0 h-screen overflow-y-auto z-40">
+        <div className="sticky top-6">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1">Sponsor</p>
+          <AdBanner isPremium={isPremium} slot="desktop-sidebar" format="vertical" />
+        </div>
+      </aside>
     </div>
   )
 }
