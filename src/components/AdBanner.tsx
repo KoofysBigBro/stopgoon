@@ -28,7 +28,23 @@ export default function AdBanner({
   const pushed = useRef(false)
 
   const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID
-  const adSlot = slot || process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID
+
+  // Resolve slot ID:
+  // 1. If slot name is numeric, use it directly
+  // 2. If slot name is a slug, look for NEXT_PUBLIC_ADSENSE_SLOT_[SLUG_IN_UPPERCASE]
+  // 3. Fall back to NEXT_PUBLIC_ADSENSE_SLOT_ID
+  let adSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID
+  if (slot) {
+    if (/^\d+$/.test(slot)) {
+      adSlot = slot
+    } else {
+      const envKey = `NEXT_PUBLIC_ADSENSE_SLOT_${slot.toUpperCase().replace(/-/g, '_')}`
+      const envSlot = process.env[envKey]
+      if (envSlot && /^\d+$/.test(envSlot)) {
+        adSlot = envSlot
+      }
+    }
+  }
 
   useEffect(() => {
     if (isPremium || !pubId || !adSlot || pushed.current) return
