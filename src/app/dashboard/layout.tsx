@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, MessageCircle, Sparkles, BookOpen, Crown, Mail } from 'lucide-react'
+import { LayoutDashboard, BookHeart, LifeBuoy, Activity, Settings, LogOut, MessageCircle, Sparkles, BookOpen, Crown, Mail, ShieldCheck } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatNotificationDot from './components/ChatNotificationDot'
 import AdBanner from '@/components/AdBanner'
+import ClientLayoutWrapper from './components/ClientLayoutWrapper'
 
 
 
@@ -75,6 +76,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background text-foreground transition-colors duration-300 relative overflow-hidden">
+      <ClientLayoutWrapper isPremium={isPremium} />
       <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/20 blur-[100px]" />
       <div className="pointer-events-none absolute bottom-0 -right-24 w-96 h-96 rounded-full bg-accent/15 blur-[100px]" />
       {/* Sidebar / Topbar */}
@@ -97,6 +99,7 @@ export default async function DashboardLayout({
             const supportNav = [
               { href: '/dashboard/motivation', icon: Sparkles, label: 'Motivation', cls: 'text-amber-500 hover:bg-amber-500/10', dot: false },
               { href: '/dashboard/chat', icon: MessageCircle, label: 'Community', cls: '', dot: true },
+              { href: '/dashboard/shield', icon: ShieldCheck, label: 'StopGoon Shield', cls: 'text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/10', dot: false },
               { href: '/blog', icon: BookOpen, label: 'Blog', cls: '', dot: false },
             ] as const
             return (
@@ -166,6 +169,7 @@ export default async function DashboardLayout({
             { href: '/dashboard/analytics', icon: Activity },
             { href: '/dashboard/motivation', icon: Sparkles, cls: 'text-amber-500' },
             { href: '/dashboard/chat', icon: MessageCircle, dot: true },
+            { href: '/dashboard/shield', icon: ShieldCheck, cls: 'text-indigo-500 dark:text-indigo-400' },
             { href: '/blog', icon: BookOpen },
           ].map((item, i) => (
             <Link key={item.href} href={item.href} className={`snap-start shrink-0 flex flex-col items-center justify-center gap-1 group relative transition-transform active:scale-95 ${item.cls || ''}`}>
@@ -212,18 +216,22 @@ export default async function DashboardLayout({
         {children}
 
         {/* Mobile Ad Banner */}
-        <div className="block lg:hidden mt-8">
-           <AdBanner isPremium={isPremium} slot="mobile-bottom" format="rectangle" />
-        </div>
+        {!isPremium && (
+          <div className="block lg:hidden mt-8">
+             <AdBanner isPremium={isPremium} slot="mobile-bottom" format="rectangle" />
+          </div>
+        )}
       </main>
 
       {/* Right Ad Sidebar (Desktop) */}
-      <aside className="hidden lg:flex w-72 p-6 flex-col border-l border-border/40 bg-surface/30 sticky top-0 h-screen overflow-y-auto z-40">
-        <div className="sticky top-6">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1">Sponsor</p>
-          <AdBanner isPremium={isPremium} slot="desktop-sidebar" format="vertical" />
-        </div>
-      </aside>
+      {!isPremium && (
+        <aside className="hidden lg:flex w-72 p-6 flex-col border-l border-border/40 bg-surface/30 sticky top-0 h-screen overflow-y-auto z-40">
+          <div className="sticky top-6">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1">Sponsor</p>
+            <AdBanner isPremium={isPremium} slot="desktop-sidebar" format="vertical" />
+          </div>
+        </aside>
+      )}
     </div>
   )
 }
