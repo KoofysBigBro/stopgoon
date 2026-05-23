@@ -50,56 +50,6 @@ export default async function LandingPage() {
         </div>
       </nav>
 
-      <main>
-        <section className="pt-40 pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span>Private recovery tracker for compulsive habits</span>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] font-heading animate-fade-up-delay">
-            {heroVariant === 'freedom'
-              ? 'The urge is temporary. Your recovery is permanent.'
-              : "You're not broken. You're building something stronger."}
-          </h1>
-
-          <p className="text-lg md:text-xl text-muted mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-up-delay">
-            StopGoon is a private recovery tool for breaking compulsive habits. Daily check-ins, urge tracking, SOS breathing exercises, and insights — all without shame or judgment.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/register" className="w-full sm:w-auto inline-flex items-center justify-center bg-foreground text-background px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl">
-              Start Your Recovery
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-            <p className="text-sm text-muted mt-4 sm:mt-0 sm:ml-4 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-primary" /> No credit card required
-            </p>
-          </div>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-muted">
-            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" /> Encrypted by default</span>
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> 2,400+ people on their journey</span>
-            <span className="px-3 py-1 rounded-full bg-accent/15 text-foreground">No shame-based streak language</span>
-          </div>
-
-          <div className="mt-20 grid sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
-              <div className="text-2xl mb-2">📝</div>
-              <h3 className="font-bold text-sm mb-1">Daily Check-ins</h3>
-              <p className="text-xs text-muted">One tap to log your mood and build awareness.</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
-              <div className="text-2xl mb-2">⚡</div>
-              <h3 className="font-bold text-sm mb-1">Urge Tracking</h3>
-              <p className="text-xs text-muted">Log triggers and intensity to spot patterns.</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-surface p-5 text-left">
-              <div className="text-2xl mb-2">🆘</div>
-              <h3 className="font-bold text-sm mb-1">SOS Rescue</h3>
-              <p className="text-xs text-muted">Breathing exercises and grounding when urges hit.</p>
-            </div>
-          </div>
       {/* Floating Right Ad Sidebar (Desktop XL) */}
       <aside className="hidden xl:flex w-[260px] flex-col fixed right-6 top-32 z-40 pointer-events-auto">
         <div className="bg-surface/50 backdrop-blur-xl border border-border/50 rounded-2xl p-4 shadow-xl">
@@ -108,7 +58,7 @@ export default async function LandingPage() {
         </div>
       </aside>
 
-      <main className="pt-40 relative z-10">
+      <main className="pt-32 relative z-10">
         <section className="pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
             <Sparkles className="w-4 h-4 text-accent" />
