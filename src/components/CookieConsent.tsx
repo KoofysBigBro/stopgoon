@@ -25,7 +25,7 @@ function loadGA() {
 }
 
 export default function CookieConsent() {
-  const [state, setState] = useState<'hidden' | 'visible' | 'leaving'>('hidden')
+  const [visible, setVisible] = useState(false)
   const loaded = useRef(false)
 
   useEffect(() => {
@@ -39,20 +39,7 @@ export default function CookieConsent() {
     }
     if (stored === 'dismissed') return
 
-    function show() {
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => setState('visible'), { timeout: 2000 })
-      } else {
-        setTimeout(() => setState('visible'), 2000)
-      }
-    }
-
-    if (document.readyState === 'complete') {
-      show()
-    } else {
-      window.addEventListener('load', show, { once: true })
-      return () => window.removeEventListener('load', show)
-    }
+    setVisible(true)
   }, [])
 
   const accept = useCallback(() => {
@@ -61,26 +48,21 @@ export default function CookieConsent() {
       loadGA()
       loaded.current = true
     }
-    setState('leaving')
-    setTimeout(() => setState('hidden'), 300)
+    setVisible(false)
   }, [])
 
   const dismiss = useCallback(() => {
     localStorage.setItem(STORAGE_KEY, 'dismissed')
-    setState('leaving')
-    setTimeout(() => setState('hidden'), 300)
+    setVisible(false)
   }, [])
 
-  if (state === 'hidden') return null
+  if (!visible) return null
 
   return (
     <div
       role="region"
       aria-label="Cookie notice"
-      style={{ contentVisibility: 'auto', contain: 'layout style paint' }}
-      className={`fixed bottom-0 inset-x-0 p-4 sm:p-6 z-50 pointer-events-none transition-all duration-300 ${
-        state === 'leaving' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
-      }`}
+      className="fixed bottom-0 inset-x-0 p-4 sm:p-6 z-50 pointer-events-none"
     >
       <div className="mx-auto max-w-3xl bg-surface border border-border rounded-2xl p-5 sm:p-6 shadow-2xl pointer-events-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
