@@ -103,12 +103,12 @@ export default async function DashboardLayout({
               <>
                 {/* Desktop vertical nav */}
                 <nav aria-label="Main dashboard navigation" className="flex flex-col gap-1 pb-0">
-                  <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Core</p>
+                  <p className="px-4 pt-1 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/80">Core</p>
                   {coreNav.map(item => (
                     <NavLink key={item.href} href={item.href} icon={item.icon} label={item.label} cls={item.cls} dot={item.dot} userId={user.id} />
                   ))}
                   <div className="my-1 mx-4 border-t border-border/50" />
-                  <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/50">Support</p>
+                  <p className="px-4 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted/80">Support</p>
                   {supportNav.map(item => (
                     <NavLink key={item.href} href={item.href} icon={item.icon} label={item.label} cls={item.cls} dot={item.dot} userId={user.id} />
                   ))}
@@ -145,7 +145,7 @@ export default async function DashboardLayout({
               <Mail className="w-5 h-5 shrink-0" aria-hidden="true" />
               <span className="text-sm">Contact Support</span>
             </a>
-            <div className="px-4 text-[10px] text-muted/50 truncate">stopgoonsupport@gmail.com</div>
+            <div className="px-4 text-[10px] text-muted/80 truncate">stopgoonsupport@gmail.com</div>
           </nav>
           <form action={handleSignOut}>
             <button className="flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl hover:bg-surface-hover transition-colors font-medium text-muted hover:text-foreground">
@@ -194,7 +194,7 @@ export default async function DashboardLayout({
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 pb-24 md:p-12 md:pb-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
+      <main id="main-content" className="flex-1 p-6 pb-24 md:p-12 md:pb-12 max-w-5xl overflow-y-auto relative z-10 animate-fade-up">
         {/* Top Header Mobile / Badges */}
         <div className="absolute top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto flex items-center justify-between md:justify-end z-50 pointer-events-none">
           {/* Streak Badge (Top Left Mobile, Top Right Desktop) */}
@@ -223,7 +223,7 @@ export default async function DashboardLayout({
       {!isPremium && (
         <aside className="hidden lg:flex w-72 p-6 flex-col border-l border-border/40 bg-surface/30 sticky top-0 h-screen overflow-y-auto z-40">
           <div className="sticky top-6">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1">Sponsor</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted/80 mb-3 px-1">Sponsor</p>
             <AdBanner isPremium={isPremium} slot="desktop-sidebar" format="vertical" />
           </div>
         </aside>

@@ -84,7 +84,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
 
-      <main className="max-w-3xl mx-auto px-6 -mt-32 relative z-10">
+      <main id="main-content" className="max-w-3xl mx-auto px-6 -mt-32 relative z-10">
         <article className="bg-surface border border-border rounded-3xl p-6 md:p-10 shadow-lg">
           <header className="mb-10">
             <div className="flex flex-wrap items-center gap-4 mb-5 text-sm text-muted">

@@ -44,7 +44,7 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <main className="pt-32 pb-24 px-6">
+      <main id="main-content" className="pt-32 pb-24 px-6">
         {/* Hero */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-6 text-muted">

@@ -44,7 +44,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
         </div>
       </nav>
 
-      <main className="max-w-5xl mx-auto px-6 py-16">
+      <main id="main-content" className="max-w-5xl mx-auto px-6 py-16">
         <header className="mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
             <Sparkles className="w-4 h-4" aria-hidden="true" />

@@ -196,6 +196,11 @@ h1, h2, h3, h4, h5, h6 {
   transition-timing-function: var(--ease-standard);
 }
 
+*:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-up-delay,

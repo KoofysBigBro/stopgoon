@@ -3,6 +3,7 @@ import { Manrope, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 import PWAInit from "@/components/PWAInit";
+import CookieConsent from "@/components/CookieConsent";
 import Script from "next/script";
 import "./globals.css";
 
@@ -22,7 +23,6 @@ export const viewport = {
   themeColor: '#09090b',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 };
 
 export const metadata: Metadata = {
@@ -77,6 +77,13 @@ export default function RootLayout({
         <meta name="google-site-verification" content="CNsTGn3vxiIULNaxFVPxqdmB7UL9e2PvKuO5VHpdt_k" />
       </head>
       <body className="min-h-full flex flex-col font-sans smooth-ui">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-xl focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+        >
+          Skip to main content
+        </a>
+
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-PZC0PSD6JC"
           strategy="afterInteractive"
@@ -97,7 +104,10 @@ export default function RootLayout({
         >
           <PWAInit />
           <Analytics />
-          {children}
+          <div id="main-content">
+            {children}
+          </div>
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>

@@ -74,7 +74,7 @@ export default function PornRecoveryTrackerPage() {
         </div>
       </nav>
 
-      <main className="px-6 py-20 max-w-4xl mx-auto">
+      <main id="main-content" className="px-6 py-20 max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 text-primary font-bold mb-6 text-sm">
           <ShieldCheck className="w-4 h-4" /> StopGoon Guide
         </div>

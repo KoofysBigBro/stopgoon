@@ -122,7 +122,7 @@ export default async function LandingPage() {
         </div>
       </aside>
 
-      <main className="pt-32 relative z-10">
+      <main id="main-content" className="pt-32 relative z-10">
         <section className="pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
             <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
