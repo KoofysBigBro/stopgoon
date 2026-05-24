@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
@@ -26,6 +26,7 @@ export default function AdBanner({
 }: AdBannerProps) {
   const adRef = useRef<HTMLDivElement>(null)
   const pushed = useRef(false)
+  const [adStatus, setAdStatus] = useState<'loading' | 'filled' | 'unfilled'>('loading')
 
   const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID
 
@@ -47,26 +48,65 @@ export default function AdBanner({
   }
 
   useEffect(() => {
-    if (isPremium || !pubId || !adSlot || pushed.current) return
+    if (isPremium || !pubId || !adSlot) return
+
+    // Set a timeout to fall back to internal ads if AdSense is blocked by an adblocker or fails to load
+    const timeoutId = setTimeout(() => {
+      setAdStatus((prev) => (prev === 'loading' ? 'unfilled' : prev))
+    }, 2500)
 
     try {
-      // Push the ad after mount (initialize queue if script hasn't loaded yet)
       if (typeof window !== 'undefined') {
-        window.adsbygoogle = window.adsbygoogle || []
-        window.adsbygoogle.push({})
-        pushed.current = true
+        if (!pushed.current) {
+          window.adsbygoogle = window.adsbygoogle || []
+          window.adsbygoogle.push({})
+          pushed.current = true
+        }
+
+        // Set up MutationObserver to detect Google AdSense unfilled status
+        const insElement = adRef.current?.querySelector('ins.adsbygoogle')
+        if (insElement) {
+          // If status is already populated by server-side/early render, check it immediately
+          const initialStatus = insElement.getAttribute('data-ad-status')
+          if (initialStatus === 'filled') {
+            setAdStatus('filled')
+          } else if (initialStatus === 'unfilled') {
+            setAdStatus('unfilled')
+          }
+
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.type === 'attributes') {
+                const status = insElement.getAttribute('data-ad-status')
+                if (status === 'filled') {
+                  setAdStatus('filled')
+                } else if (status === 'unfilled') {
+                  setAdStatus('unfilled')
+                }
+              }
+            })
+          })
+
+          observer.observe(insElement, { attributes: true })
+          return () => {
+            clearTimeout(timeoutId)
+            observer.disconnect()
+          }
+        }
       }
     } catch (e) {
-      // AdSense not loaded or blocked by adblocker
-      console.log('AdSense not available')
+      console.log('AdSense error:', e)
+      setAdStatus('unfilled')
     }
+
+    return () => clearTimeout(timeoutId)
   }, [isPremium, pubId, adSlot])
 
   // Don't render for premium users
   if (isPremium) return null
 
-  // If no AdSense config, show a fallback internal ad
-  if (!pubId || !adSlot) {
+  // If no AdSense config, or if Google explicitly returned "unfilled", show a fallback internal ad
+  if (!pubId || !adSlot || adStatus === 'unfilled') {
     return <FallbackAd />
   }
 
