@@ -324,7 +324,7 @@ export default async function LandingPage() {
               </div>
 
               {/* 1 Month Premium */}
-              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+              <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-primary/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
                     <Crown className="w-4 h-4 text-primary" />
@@ -342,7 +342,7 @@ export default async function LandingPage() {
               </Link>
 
               {/* 3 Months Premium - Highlighted */}
-              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 to-background p-5 flex flex-col shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
+              <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 to-background p-5 flex flex-col shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
                 <div className="absolute -top-2.5 right-4 bg-gradient-to-r from-primary to-indigo-600 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full">
                   MOST POPULAR
                 </div>
@@ -364,7 +364,7 @@ export default async function LandingPage() {
               </Link>
 
               {/* 1 Year Premium */}
-              <Link href="/dashboard/upgrade" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-amber-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+              <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-amber-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
                 <div className="absolute -top-2.5 right-4 bg-amber-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full">
                   SAVE 30%
                 </div>

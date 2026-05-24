@@ -78,7 +78,7 @@ export default function PricingPage() {
           </div>
 
           {/* 1 Month */}
-          <Link href="/dashboard/upgrade" className="group rounded-2xl border border-border/60 bg-background p-6 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <Link href="/dashboard/upgrade" rel="nofollow" className="group rounded-2xl border border-border/60 bg-background p-6 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
             <div className="flex items-center gap-2 mb-3">
               <div className="bg-primary/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform"><Crown className="w-4 h-4 text-primary" /></div>
               <h2 className="font-bold">1 Month</h2>
@@ -94,7 +94,7 @@ export default function PricingPage() {
           </Link>
 
           {/* 3 Months - Popular */}
-          <Link href="/dashboard/upgrade" className="group relative rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 to-background p-6 flex flex-col shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
+          <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/10 to-background p-6 flex flex-col shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-indigo-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full whitespace-nowrap">
               MOST POPULAR
             </div>
@@ -114,7 +114,7 @@ export default function PricingPage() {
           </Link>
 
           {/* 1 Year */}
-          <Link href="/dashboard/upgrade" className="group relative rounded-2xl border border-border/60 bg-background p-6 flex flex-col hover:border-amber-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+          <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border border-border/60 bg-background p-6 flex flex-col hover:border-amber-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
             <div className="absolute -top-3 right-4 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">SAVE 30%</div>
             <div className="flex items-center gap-2 mb-3">
               <div className="bg-amber-500/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform"><Crown className="w-4 h-4 text-amber-500" /></div>
@@ -169,7 +169,7 @@ export default function PricingPage() {
               <Link href="/register" className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5">
                 Start Free <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/dashboard/upgrade" className="inline-flex items-center justify-center gap-2 border border-border bg-surface hover:bg-surface-hover font-bold px-7 py-3.5 rounded-full transition-colors">
+              <Link href="/dashboard/upgrade" rel="nofollow" className="inline-flex items-center justify-center gap-2 border border-border bg-surface hover:bg-surface-hover font-bold px-7 py-3.5 rounded-full transition-colors">
                 See Premium Plans
               </Link>
             </div>
