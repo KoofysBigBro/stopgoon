@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { trackGAEvent } from '@/utils/analytics'
 import { Plus, Trash2, GripVertical, Play, Pause, SkipForward, Timer, Pencil, RotateCcw, CheckCircle2, Sparkles, Crown } from 'lucide-react'
 import Link from 'next/link'
 import PageHeader from '../components/ui/PageHeader'
@@ -68,6 +69,7 @@ export default function SOSPage() {
   }, [loadData])
 
   const handleBreathingToggle = () => {
+    if (!isBreathing) trackGAEvent('sos_used', { type: 'box_breathing' })
     if (isBreathing) {
       setBreatheText('Ready')
       setScale(0.5)
@@ -142,6 +144,7 @@ export default function SOSPage() {
 
   const startRoutine = (routine: Routine) => {
     if (routine.steps.length === 0) return
+    trackGAEvent('sos_used', { type: 'routine', routine_name: routine.name })
     setActiveRoutine(routine)
     setCurrentStepIndex(0)
     setStepTimeLeft(routine.steps[0].duration)

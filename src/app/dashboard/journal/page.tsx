@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { trackGAEvent } from '@/utils/analytics'
 import { BookHeart, Search, Loader2, Check, Trash2, Plus, X, Lightbulb } from 'lucide-react'
 import PageHeader from '../components/ui/PageHeader'
 import PrimaryButton from '../components/ui/PrimaryButton'
@@ -259,7 +260,7 @@ export default function JournalPage() {
           <PrimaryButton 
             onClick={() => {
               if (!isPremium && entries.length >= 7) {
-                // If limit reached, could trigger upgrade modal or redirect
+                trackGAEvent('upgrade_clicked', { location: 'journal_new_entry' });
                 window.location.href = '/dashboard/upgrade';
               } else {
                 setIsWriting(true);
@@ -278,7 +279,7 @@ export default function JournalPage() {
             <Lightbulb className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Free tier includes 7 journal entries ({7 - entries.length} remaining).</span>
           </div>
-          <button onClick={() => window.location.href = '/dashboard/upgrade'} className="font-bold underline">Upgrade for unlimited</button>
+          <button onClick={() => { trackGAEvent('upgrade_clicked', { location: 'journal_banner' }); window.location.href = '/dashboard/upgrade'; }} className="font-bold underline">Upgrade for unlimited</button>
         </div>
       )}
 

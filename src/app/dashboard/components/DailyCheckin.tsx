@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { trackGAEvent } from '@/utils/analytics'
 import { Check, Loader2 } from 'lucide-react'
 
 const MOODS = [
@@ -74,10 +75,18 @@ export default function DailyCheckin() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
+
+      const { count } = await supabase
+        .from('daily_checkins')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+      const isFirst = count === 0
+
       const { error } = await supabase.from('daily_checkins').insert({ user_id: user.id, mood })
       if (error) {
         if (process.env.NODE_ENV === 'development') console.error('Checkin failed:', error)
       } else {
+        if (isFirst) trackGAEvent('first_checkin')
         setSaved(mood)
         setIsOpen(false)
         router.refresh()

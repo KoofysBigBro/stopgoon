@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
+import { trackGAEvent } from '@/utils/analytics'
 import {
   Database, CreditCard, Check, Loader2, Trash2, ArrowRight, ShieldCheck, Bell, Crown, X
 } from 'lucide-react'
@@ -30,6 +31,12 @@ export default function SettingsPage() {
 
   const searchParams = useSearchParams()
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(searchParams.get('upgrade') === 'success')
+
+  useEffect(() => {
+    if (showUpgradeSuccess) {
+      trackGAEvent('purchase', { currency: 'EUR', value: 1 })
+    }
+  }, [showUpgradeSuccess])
 
   const { setTheme } = useTheme()
   const [fontScale, setFontScale] = useState('normal')

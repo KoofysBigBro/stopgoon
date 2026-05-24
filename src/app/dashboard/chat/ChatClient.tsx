@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { trackGAEvent } from '@/utils/analytics';
 import { MessageCircle, Send, Globe, Lock, Users, Shield, VolumeX, Volume2, Ban, Clock, Trash2, X, Crown, BookHeart, CalendarCheck, Flame, UserCheck, Zap } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 
@@ -534,7 +535,7 @@ export default function ChatClient({
                       <Clock className="w-4 h-4" /> {cooldownSeconds}s
                     </div>
                   ) : !isPremium && activeRoom === 'global' ? (
-                    <button type="button" onClick={() => window.location.href = '/dashboard/upgrade'} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-3 rounded-xl transition-all font-bold text-xs flex items-center gap-1.5 whitespace-nowrap">
+                    <button type="button" onClick={() => { trackGAEvent('upgrade_clicked', { location: 'chat_unlock' }); window.location.href = '/dashboard/upgrade'; }} className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-3 rounded-xl transition-all font-bold text-xs flex items-center gap-1.5 whitespace-nowrap">
                       <Crown className="w-4 h-4" /> Unlock Chat
                     </button>
                   ) : (

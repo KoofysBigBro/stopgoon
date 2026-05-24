@@ -6,6 +6,7 @@ import PWAInit from "@/components/PWAInit";
 import Script from "next/script";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsentWrapper";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -97,6 +98,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PWAInit />
+          <AnalyticsTracker />
           <Analytics />
           {children}
           <CookieConsent />

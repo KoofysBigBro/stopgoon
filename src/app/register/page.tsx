@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import GoogleIcon from '@/components/GoogleIcon'
 import GithubIcon from '@/components/GithubIcon'
+import { trackGAEvent } from '@/utils/analytics'
 import { ShieldCheck, Eye, EyeOff, Loader2, CheckCircle2, ArrowRight, Sparkles, HeartHandshake, Smartphone, PlayCircle, Search, Users, Globe } from 'lucide-react'
 
 export default function RegisterPage() {
@@ -73,6 +74,7 @@ export default function RegisterPage() {
         return
       }
 
+      trackGAEvent('sign_up', { method: 'email' })
       setIsSuccess(true)
       setIsLoading(false)
     } catch {
@@ -105,6 +107,7 @@ export default function RegisterPage() {
     setIsLoading(true)
     setError(null)
     try {
+      trackGAEvent('sign_up', { method: provider })
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
