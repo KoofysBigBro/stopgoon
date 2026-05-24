@@ -11,7 +11,17 @@ export const metadata: Metadata = {
     absolute: 'StopGoon — Overcome Addiction, Dopamine Detox & Build Discipline'
   },
   description: 'Break compulsive digital habits, track your porn recovery, and quit doomscrolling. StopGoon is a private, shame-free recovery tracker designed to rewire your brain.',
-  keywords: ['addiction recovery', 'nofap', 'dopamine detox', 'stop gooning', 'habit tracker', 'quit doomscrolling', 'self discipline', 'porn addiction'],
+  keywords: [
+    'nofap tracker app',
+    'porn addiction recovery app',
+    'how to stop compulsive habits',
+    'free habit tracker for addiction',
+    'urge tracking app',
+    'stop gooning app',
+    'dopamine detox',
+    'quit doomscrolling',
+    'self discipline'
+  ],
   alternates: {
     canonical: 'https://stopgoon.xyz',
   },
@@ -115,7 +125,7 @@ export default async function LandingPage() {
         <section className="pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
             <Sparkles className="w-4 h-4 text-accent" />
-            <span>Private recovery tracker for compulsive habits</span>
+            <span>Free habit tracker for addiction & compulsive habits</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] font-heading animate-fade-up-delay">
@@ -125,7 +135,7 @@ export default async function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-muted mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-up-delay">
-            StopGoon is a private recovery tool for breaking compulsive habits. Daily check-ins, urge tracking, SOS breathing exercises, and insights — all without shame or judgment.
+            StopGoon is a private **porn addiction recovery app** and **nofap tracker app** designed to help you learn **how to stop compulsive habits**. Use our free **urge tracking app** for daily check-ins, SOS breathing resets, and smart insights — all without shame or judgment.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
