@@ -3,24 +3,63 @@ import Link from 'next/link'
 import { ArrowRight, ShieldCheck, BarChart3, Heart, Users, Brain, CheckCircle2, Activity } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking | StopGoon',
+  title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking',
   description: 'Track porn recovery with private daily check-ins, relapse intelligence, and accountability support. StopGoon measures Days of Growth, not streaks, so progress never resets to zero.',
   alternates: {
     canonical: 'https://stopgoon.xyz/porn-recovery-tracker',
   },
   openGraph: {
-    title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking | StopGoon',
+    title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking',
     description: 'Track porn recovery with private daily check-ins, relapse intelligence, and accountability support. Days of Growth, not streaks.',
     url: 'https://stopgoon.xyz/porn-recovery-tracker',
     type: 'website',
   },
   twitter: {
-    title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking | StopGoon',
+    title: 'Porn Recovery Tracker — Private, Shame-Free Progress Tracking',
     description: 'Track porn recovery with private daily check-ins, relapse intelligence, and accountability support.',
   },
 }
 
 export default function PornRecoveryTrackerPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Is my data private?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. All check-ins, journal entries, and urge logs are encrypted. We do not sell or share your data. Recovery is personal, and we built StopGoon to respect that.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What happens when I relapse?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Nothing punitive. Log the relapse, note what triggered it, and continue. Your Days of Growth count does not reset — it keeps growing. That slip becomes a data point that helps you understand your patterns better.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do I need a premium subscription to use the tracker?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. The core tracking features — daily check-ins, urge logging, SOS reset, and community chat — all available on the free Essentials plan.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I use this anonymously?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. You only need an email to create an account. No real name required. You can use a pseudonym in the community chat.',
+        },
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <nav className="border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 w-full z-50">
@@ -182,6 +221,12 @@ export default function PornRecoveryTrackerPage() {
           </p>
         </div>
       </main>
+
+      {/* Dynamic JSON-LD FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
     </div>
   )
 }

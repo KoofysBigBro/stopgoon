@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!post) return { title: 'Article Not Found | StopGoon' }
   const cleanTitle = stripEmojiPrefix(post.title)
   return {
-    title: `${cleanTitle} | StopGoon Blog`,
+    title: `${cleanTitle} | Blog`,
     description: post.excerpt,
     openGraph: {
       title: cleanTitle,

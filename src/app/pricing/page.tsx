@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { CheckCircle2, X, ShieldCheck, Crown, Star, ArrowRight, Sparkles } from 'lucide-react'
 
 export const metadata = {
-  title: 'Pricing — StopGoon | Free & Premium Recovery Plans',
+  title: 'Pricing — Free & Premium Recovery Plans',
   description: 'Start free with daily check-ins, urge tracking, and SOS tools. Upgrade to Premium for AI coaching, predictive warnings, and advanced analytics.',
 }
 

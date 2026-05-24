@@ -3,7 +3,7 @@ import BlogIndexClient from './blog-index-client'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Blog - Recovery Guides & Resources | StopGoon',
+  title: 'Blog - Recovery Guides & Resources',
   description: 'Science-backed guides on breaking compulsive habits, dopamine detox, porn recovery, doomscrolling, and building discipline.',
   openGraph: {
     title: 'StopGoon Blog - Recovery Guides & Resources',

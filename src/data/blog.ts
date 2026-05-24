@@ -28,6 +28,11 @@ import { content as contentRebuildAfterRelapse } from './posts/rebuild-after-rel
 import { content as contentPornEffectsOnBrain } from './posts/porn-effects-on-brain'
 import { content as contentStopThinkingAboutPorn } from './posts/stop-thinking-about-porn'
 import { content as contentMorningRoutineDiscipline } from './posts/morning-routine-discipline'
+import { content as contentPiedRecoveryTimeline } from './posts/pied-recovery-timeline'
+import { content as contentDopamineDetoxMythVsScience } from './posts/dopamine-detox-myth-vs-science'
+import { content as contentHowToStopFappingAtNight } from './posts/how-to-stop-fapping-at-night'
+import { content as contentDopamineDetoxSocialMedia } from './posts/dopamine-detox-social-media'
+import { content as contentNofapBenefits30Days } from './posts/nofap-benefits-30-days'
 
 export interface BlogPost {
   slug: string
@@ -44,6 +49,66 @@ export interface BlogPost {
 }
 
 const POSTS: BlogPost[] = [
+  {
+    slug: 'pied-recovery-timeline',
+    title: '🏥 Porn-Induced Erectile Dysfunction (PIED) Recovery Timeline',
+    excerpt: 'Understand the neuroscience behind PIED, how high-stimulus pornography desensitizes natural responses, and the step-by-step physical recovery timeline.',
+    date: 'May 24, 2026',
+    category: 'Science & Health',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['porn', 'recovery', 'health', 'science'],
+    image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80',
+    content: contentPiedRecoveryTimeline
+  },
+  {
+    slug: 'dopamine-detox-myth-vs-science',
+    title: '🧪 Is Dopamine Detox a Myth? The Actual Science Explained',
+    excerpt: 'Explore the scientific reality of dopamine receptors, why you can\'t actually \'detox\' a neurotransmitter, and the behavioral adjustments that actually work.',
+    date: 'May 20, 2026',
+    category: 'Science & Health',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['dopamine', 'detox', 'science', 'focus'],
+    image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=80',
+    content: contentDopamineDetoxMythVsScience
+  },
+  {
+    slug: 'how-to-stop-fapping-at-night',
+    title: '🌙 How to Stop Fapping at Night: 5 Science-Backed Strategies',
+    excerpt: 'Nighttime triggers are driven by an exhausted prefrontal cortex. Discover how to build a friction-based evening routine to stop midnight urges.',
+    date: 'May 18, 2026',
+    category: 'Practical Habits',
+    readingTime: '6 min read',
+    author: 'StopGoon Team',
+    tags: ['habits', 'nighttime', 'urges', 'recovery'],
+    image: 'https://images.unsplash.com/photo-1511295726362-88a7675d1e39?w=800&q=80',
+    content: contentHowToStopFappingAtNight
+  },
+  {
+    slug: 'dopamine-detox-social-media',
+    title: '📱 How to Dopamine Detox from Social Media in 48 Hours',
+    excerpt: 'A weekend step-by-step roadmap to reset your attention span, quiet your brain\'s threat-detection loop, and break the social scroll addiction.',
+    date: 'May 15, 2026',
+    category: 'Practical Habits',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['social media', 'dopamine', 'detox', 'screentime'],
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80',
+    content: contentDopamineDetoxSocialMedia
+  },
+  {
+    slug: 'nofap-benefits-30-days',
+    title: '📈 NoFap Benefits: What Actually Happens in the First 30 Days',
+    excerpt: 'A realistic, science-first breakdown of the physical and psychological changes you will experience during the first 30 days of porn abstinence.',
+    date: 'May 10, 2026',
+    category: 'Recovery Guides',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['nofap', 'benefits', 'timeline', 'recovery'],
+    image: 'https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&q=80',
+    content: contentNofapBenefits30Days
+  },
   {
     slug: 'dopamine-detox-guide',
     title: '🧠 The Ultimate Dopamine Detox Guide: Rewire Your Brain',

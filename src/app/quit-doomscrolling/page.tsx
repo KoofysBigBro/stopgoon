@@ -3,24 +3,63 @@ import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Moon, Zap, Brain, Clock, CheckCircle2, Activity, BookHeart, LifeBuoy } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Quit Doomscrolling Tracker — Break the Scroll Loop | StopGoon',
+  title: 'Quit Doomscrolling Tracker — Break the Scroll Loop',
   description: 'Use StopGoon to quit doomscrolling with guided daily check-ins, SOS reset tools, and weekly behavior reviews. Track your focus recovery with data, not shame.',
   alternates: {
     canonical: 'https://stopgoon.xyz/quit-doomscrolling',
   },
   openGraph: {
-    title: 'Quit Doomscrolling Tracker — Break the Scroll Loop | StopGoon',
+    title: 'Quit Doomscrolling Tracker — Break the Scroll Loop',
     description: 'Quit doomscrolling with guided daily check-ins, SOS reset tools, and weekly behavior reviews.',
     url: 'https://stopgoon.xyz/quit-doomscrolling',
     type: 'website',
   },
   twitter: {
-    title: 'Quit Doomscrolling Tracker — Break the Scroll Loop | StopGoon',
+    title: 'Quit Doomscrolling Tracker — Break the Scroll Loop',
     description: 'Quit doomscrolling with guided daily check-ins, SOS reset tools, and weekly behavior reviews.',
   },
 }
 
 export default function QuitDoomscrollingPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Can this really help me stop scrolling?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'It depends on your commitment, but the system is designed to address the root cause — not just the symptom. By tracking your patterns, you become aware of when and why you scroll. Awareness is the first step to change.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How is this different from screen time settings?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Phone screen time settings just show you a number. StopGoon shows you patterns: what time of day, what emotional state, and what triggers your scrolling. It also gives you tools to intervene in the moment.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do I need premium?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. All core doomscrolling tracking features — daily check-ins, urge logging, SOS tools, and community chat — are free on the Essentials plan.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What if I relapse into scrolling?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Log it and move on. There is no streak to break. StopGoon tracks Days of Focus — your total progress, not your consecutive streak. One scroll session does not erase your progress.',
+        },
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <nav className="border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 w-full z-50">
@@ -168,6 +207,12 @@ export default function QuitDoomscrollingPage() {
           </p>
         </div>
       </main>
+
+      {/* Dynamic JSON-LD FAQ Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
     </div>
   )
 }

@@ -4,6 +4,29 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { getVariant } from '@/utils/experiments'
 import AdBanner from '@/components/AdBanner'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'StopGoon — Overcome Addiction, Dopamine Detox & Build Discipline'
+  },
+  description: 'Break compulsive digital habits, track your porn recovery, and quit doomscrolling. StopGoon is a private, shame-free recovery tracker designed to rewire your brain.',
+  keywords: ['addiction recovery', 'nofap', 'dopamine detox', 'stop gooning', 'habit tracker', 'quit doomscrolling', 'self discipline', 'porn addiction'],
+  alternates: {
+    canonical: 'https://stopgoon.xyz',
+  },
+  openGraph: {
+    title: 'StopGoon — Overcome Addiction, Dopamine Detox & Build Discipline',
+    description: 'Break compulsive digital habits, track your porn recovery, and quit doomscrolling with our private, shame-free recovery tracker.',
+    url: 'https://stopgoon.xyz',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'StopGoon — Overcome Addiction, Dopamine Detox & Build Discipline',
+    description: 'Break compulsive digital habits, track your porn recovery, and quit doomscrolling with our private, shame-free recovery tracker.',
+  },
+}
 
 export default async function LandingPage() {
   let user = null
@@ -17,6 +40,36 @@ export default async function LandingPage() {
     if (variant === 'focus' || variant === 'freedom') heroVariant = variant
   } catch (e) {
     if (process.env.NODE_ENV === 'development') console.error('Landing page auth check failed:', e)
+  }
+
+  const webApplicationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'StopGoon',
+    url: 'https://stopgoon.xyz',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires HTML5 compatible browser',
+    description: 'StopGoon is a private recovery web tool that helps individuals overcome compulsive digital habits, manage dopamine detox, and track their porn recovery without shame.',
+    offers: {
+      '@type': 'Offer',
+      price: '0.00',
+      priceCurrency: 'EUR',
+    },
+  }
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'StopGoon',
+    url: 'https://stopgoon.xyz',
+    logo: 'https://stopgoon.xyz/icon.svg',
+    sameAs: [],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'stopgoonsupport@gmail.com',
+      contactType: 'customer support',
+    },
   }
 
   if (user) {
@@ -387,6 +440,16 @@ export default async function LandingPage() {
           Start Your Recovery <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
+
+      {/* Dynamic JSON-LD WebApplication & Organization Schemas */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
     </div>
   )
 }
