@@ -70,12 +70,18 @@ export default function AdBanner({
     return <FallbackAd />
   }
 
+  const minHeight = format === 'vertical' ? '600px' : format === 'rectangle' ? '250px' : '90px'
+
   return (
     <div className="mb-6">
-      <div ref={adRef} className="bg-surface border border-border rounded-2xl overflow-hidden min-h-[90px]">
+      <div 
+        ref={adRef} 
+        className="bg-surface border border-border rounded-2xl overflow-hidden" 
+        style={{ minHeight }}
+      >
         <ins
           className="adsbygoogle"
-          style={{ display: 'block' }}
+          style={{ display: 'block', minHeight }}
           data-ad-client={pubId}
           data-ad-slot={adSlot}
           data-ad-format={format}
