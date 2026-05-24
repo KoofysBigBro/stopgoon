@@ -48,28 +48,32 @@ export async function triggerOnboardingEmails(userId: string) {
     return
   }
 
-  const welcomeContent = onboardingEmails[0].getContent()
-  const { error: sendError } = await resend.emails.send({
-    from: 'StopGoon <hello@stopgoon.xyz>',
-    to: user.email,
-    subject: welcomeContent.subject,
-    html: welcomeContent.html,
-  })
+  try {
+    const welcomeContent = onboardingEmails[0].getContent()
+    const { error: sendError } = await resend.emails.send({
+      from: 'StopGoon <hello@stopgoon.xyz>',
+      to: user.email,
+      subject: welcomeContent.subject,
+      html: welcomeContent.html,
+    })
 
-  if (sendError) {
+    if (sendError) {
+      await supabase
+        .from('email_queue')
+        .update({ error: sendError.message })
+        .eq('user_id', userId)
+        .eq('email_type', 'welcome')
+
+      console.error('[onboarding-email] Failed to send welcome email', sendError)
+      return
+    }
+
     await supabase
       .from('email_queue')
-      .update({ error: sendError.message })
+      .update({ sent_at: new Date().toISOString() })
       .eq('user_id', userId)
       .eq('email_type', 'welcome')
-
-    console.error('[onboarding-email] Failed to send welcome email', sendError)
-    return
+  } catch (err) {
+    console.error('[onboarding-email] Resend.send threw an exception', { userId, error: err })
   }
-
-  await supabase
-    .from('email_queue')
-    .update({ sent_at: new Date().toISOString() })
-    .eq('user_id', userId)
-    .eq('email_type', 'welcome')
 }
