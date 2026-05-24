@@ -76,6 +76,9 @@ export default function RootLayout({
     >
       <head>
         <meta name="google-site-verification" content="CNsTGn3vxiIULNaxFVPxqdmB7UL9e2PvKuO5VHpdt_k" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://launchigniter.com" />
       </head>
       <body className="min-h-full flex flex-col font-sans smooth-ui">
         <a

@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
           <p className="text-muted leading-relaxed mb-2">
             We&apos;ve sent a password reset link to <strong>{email}</strong>.
           </p>
-          <p className="text-muted text-xs mb-8 opacity-60">
+          <p className="text-muted/80 text-xs mb-8">
             Don&apos;t see it? Check your spam or junk folder.
           </p>
           <Link href="/login" className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">

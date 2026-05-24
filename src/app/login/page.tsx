@@ -140,7 +140,7 @@ export default function LoginPage() {
           <p className="text-muted leading-relaxed mb-2">
             We sent a magic link to <strong>{email}</strong>. Click it to sign in instantly.
           </p>
-          <p className="text-muted text-xs mb-8 opacity-60">
+          <p className="text-muted/80 text-xs mb-8">
             Don&apos;t see it? Check your spam or junk folder.
           </p>
           <button onClick={() => setMagicLinkSent(false)} className="text-sm text-primary hover:text-primary-hover font-semibold">

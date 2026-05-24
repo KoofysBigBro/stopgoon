@@ -13,7 +13,7 @@ export default function AnalyticsTracker() {
       }
     }
 
-    document.addEventListener('click', handleClick, { capture: true })
+    document.addEventListener('click', handleClick, { capture: true, passive: true })
     return () => document.removeEventListener('click', handleClick, { capture: true })
   }, [])
 

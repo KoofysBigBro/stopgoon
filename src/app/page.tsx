@@ -158,17 +158,17 @@ export default async function LandingPage() {
           <div className="mt-20 grid sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <div className="rounded-2xl border border-border bg-surface p-5 text-left">
               <div className="text-2xl mb-2">📝</div>
-              <h3 className="font-bold text-sm mb-1">Daily Check-ins</h3>
+              <h2 className="font-bold text-sm mb-1">Daily Check-ins</h2>
               <p className="text-xs text-muted">One tap to log your mood and build awareness.</p>
             </div>
             <div className="rounded-2xl border border-border bg-surface p-5 text-left">
               <div className="text-2xl mb-2">⚡</div>
-              <h3 className="font-bold text-sm mb-1">Urge Tracking</h3>
+              <h2 className="font-bold text-sm mb-1">Urge Tracking</h2>
               <p className="text-xs text-muted">Log triggers and intensity to spot patterns.</p>
             </div>
             <div className="rounded-2xl border border-border bg-surface p-5 text-left">
               <div className="text-2xl mb-2">🆘</div>
-              <h3 className="font-bold text-sm mb-1">SOS Rescue</h3>
+              <h2 className="font-bold text-sm mb-1">SOS Rescue</h2>
               <p className="text-xs text-muted">Breathing exercises and grounding when urges hit.</p>
             </div>
           </div>
@@ -319,7 +319,7 @@ export default async function LandingPage() {
                   <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> SOS Reset Button</li>
                   <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> Community Chat</li>
                 </ul>
-                <Link href="/register" className="w-full py-2.5 rounded-xl border border-border text-center text-xs font-bold hover:bg-surface transition-colors">
+                <Link href="/register" aria-label="Get started with StopGoon Essentials free plan" className="w-full py-2.5 rounded-xl border border-border text-center text-xs font-bold hover:bg-surface transition-colors">
                   Get Started
                 </Link>
               </div>

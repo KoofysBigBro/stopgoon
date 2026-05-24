@@ -3,7 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     viewTransition: true,
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
   },
+  transpilePackages: [],
   images: {
     remotePatterns: [
       {
