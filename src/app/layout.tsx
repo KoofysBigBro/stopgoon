@@ -3,9 +3,9 @@ import { Manrope, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 import PWAInit from "@/components/PWAInit";
-import CookieConsent from "@/components/CookieConsent";
 import Script from "next/script";
 import "./globals.css";
+import CookieConsent from "@/components/CookieConsentWrapper";
 
 const manrope = Manrope({
   variable: "--font-manrope",

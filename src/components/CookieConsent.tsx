@@ -4,14 +4,22 @@ import { useState, useEffect, useCallback } from 'react'
 
 const STORAGE_KEY = 'stopgoon-cookie-consent'
 
+function idleCallback(fn: () => void) {
+  if ('requestIdleCallback' in window) {
+    const id = requestIdleCallback(fn, { timeout: 3000 })
+    return () => cancelIdleCallback(id)
+  }
+  const id = setTimeout(fn, 3000)
+  return () => clearTimeout(id)
+}
+
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) {
-      const timer = setTimeout(() => setVisible(true), 1000)
-      return () => clearTimeout(timer)
+      return idleCallback(() => setVisible(true))
     }
   }, [])
 
@@ -31,6 +39,7 @@ export default function CookieConsent() {
     <div
       role="region"
       aria-label="Cookie notice"
+      style={{ contentVisibility: 'auto', contain: 'layout style paint' }}
       className="fixed bottom-0 inset-x-0 p-4 sm:p-6 pointer-events-none"
     >
       <div className="mx-auto max-w-3xl bg-surface border border-border rounded-2xl p-5 sm:p-6 shadow-2xl pointer-events-auto">
