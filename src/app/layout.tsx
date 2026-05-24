@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://stopgoon.xyz',
+    canonical: 'https://stopgoon.xyz',
   },
   manifest: "/manifest.json",
   icons: {
@@ -104,9 +104,7 @@ export default function RootLayout({
         >
           <PWAInit />
           <Analytics />
-          <div id="main-content">
-            {children}
-          </div>
+          {children}
           <CookieConsent />
         </ThemeProvider>
       </body>

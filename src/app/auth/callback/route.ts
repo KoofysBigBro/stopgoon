@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { triggerOnboardingEmails } from '@/utils/onboarding-email'
 import type { EmailOtpType } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
@@ -7,7 +8,6 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = searchParams.get('type')
-  // if "next" is in param, use it as the redirect URL
   let next = searchParams.get('next') ?? '/dashboard'
 
   const supabase = await createClient()
@@ -16,7 +16,6 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // Check if user needs onboarding
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data: profile } = await supabase
@@ -25,6 +24,7 @@ export async function GET(request: Request) {
           .eq('id', user.id)
           .single()
         if (profile && !profile.onboarding_completed) {
+          await triggerOnboardingEmails(user.id)
           next = '/onboarding'
         }
       }

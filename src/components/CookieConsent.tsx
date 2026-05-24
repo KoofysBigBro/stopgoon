@@ -10,7 +10,7 @@ export default function CookieConsent() {
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) {
-      const timer = setTimeout(() => setVisible(true), 500)
+      const timer = setTimeout(() => setVisible(true), 1000)
       return () => clearTimeout(timer)
     }
   }, [])
@@ -29,12 +29,11 @@ export default function CookieConsent() {
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Cookie consent"
-      className="fixed bottom-0 left-0 right-0 z-[60] p-4 sm:p-6"
+      role="region"
+      aria-label="Cookie notice"
+      className="fixed bottom-0 inset-x-0 p-4 sm:p-6 pointer-events-none"
     >
-      <div className="mx-auto max-w-3xl bg-surface border border-border rounded-2xl p-5 sm:p-6 shadow-2xl backdrop-blur-xl">
+      <div className="mx-auto max-w-3xl bg-surface border border-border rounded-2xl p-5 sm:p-6 shadow-2xl pointer-events-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <p className="text-sm text-foreground leading-relaxed flex-1">
             We use cookies to analyze traffic and improve your experience.{' '}

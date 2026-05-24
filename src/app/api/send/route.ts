@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: 'StopGoon <onboarding@resend.dev>',
+      from: 'StopGoon <hello@stopgoon.xyz>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,

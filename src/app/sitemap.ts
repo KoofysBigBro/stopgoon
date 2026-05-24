@@ -2,8 +2,7 @@ import { MetadataRoute } from 'next'
 import { getBlogPosts } from '@/data/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stopgoon.xyz'
-  const baseUrl = rawBaseUrl.replace(/\/$/, '')
+  const baseUrl = 'https://stopgoon.xyz'
   const now = new Date()
 
   const safeLastModified = (value: string | Date): Date => {
