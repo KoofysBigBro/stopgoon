@@ -137,15 +137,15 @@ export default function LoginPage() {
         <div className="hidden md:flex flex-col justify-between rounded-3xl glass-card p-8 animate-fade-up">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-5">
-              <Sparkles className="w-3.5 h-3.5" /> Trusted recovery platform
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Trusted recovery platform
             </div>
             <h2 className="text-3xl font-heading font-bold mb-3">Welcome back to focused living.</h2>
             <p className="text-muted leading-relaxed">Pick up exactly where you left off, with your check-ins, trigger map, and recovery plan ready in one place.</p>
           </div>
           <div className="space-y-3 text-sm font-medium text-foreground">
-            <div className="flex items-center gap-2"><Lock className="w-4 h-4 text-primary" /> End-to-end encrypted data</div>
-            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" /> No public profile required</div>
-            <div className="flex items-center gap-2"><ArrowRight className="w-4 h-4 text-primary" /> Back to your dashboard in seconds</div>
+            <div className="flex items-center gap-2"><Lock className="w-4 h-4 text-primary" aria-hidden="true" /> End-to-end encrypted data</div>
+            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" aria-hidden="true" /> No public profile required</div>
+            <div className="flex items-center gap-2"><ArrowRight className="w-4 h-4 text-primary" aria-hidden="true" /> Back to your dashboard in seconds</div>
           </div>
         </div>
 
@@ -237,6 +237,7 @@ export default function LoginPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground p-1 transition-colors"
               tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>

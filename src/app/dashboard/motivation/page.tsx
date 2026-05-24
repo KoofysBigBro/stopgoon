@@ -118,7 +118,7 @@ export default function MotivationPage() {
       <div className="animate-in fade-in duration-500 max-w-4xl mx-auto">
         <header className="mb-10 text-center">
           <h1 className="text-4xl font-bold text-amber-500 mb-2 flex items-center justify-center gap-3">
-            <Sparkles className="w-8 h-8" /> Premium Motivation
+            <Sparkles className="w-8 h-8" aria-hidden="true" /> Premium Motivation
           </h1>
           <p className="text-xl text-muted">Fuel your recovery with daily insights and your personal &ldquo;Why&rdquo;.</p>
         </header>
@@ -155,7 +155,7 @@ export default function MotivationPage() {
         {/* Daily Quote */}
         <div className="lg:col-span-1 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg flex flex-col justify-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-6 opacity-10">
-            <Quote className="w-32 h-32" />
+            <Quote className="w-32 h-32" aria-hidden="true" />
           </div>
           <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-4">Quote of the Day</p>
             <h2 className="text-2xl font-bold leading-tight relative z-10 italic">
@@ -166,7 +166,7 @@ export default function MotivationPage() {
         {/* My Reasons */}
         <SectionCard className="lg:col-span-2">
           <div className="flex items-center gap-2 mb-6">
-            <Target className="w-5 h-5 text-emerald-500" />
+            <Target className="w-5 h-5 text-emerald-500" aria-hidden="true" />
             <h2 className="text-lg font-bold">My Reasons to Quit</h2>
           </div>
           
@@ -177,6 +177,7 @@ export default function MotivationPage() {
               onChange={(e) => setNewReason(e.target.value)}
               placeholder="Why are you doing this? (e.g. To be a better father)"
               className="flex-1 bg-background border border-border rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors"
+              aria-label="Add a reason to quit"
             />
             <PrimaryButton
               type="submit"
@@ -197,6 +198,7 @@ export default function MotivationPage() {
                   <button
                     onClick={() => removeReason(i)}
                     className="text-muted hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                    aria-label={`Remove reason: ${reason}`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -211,7 +213,7 @@ export default function MotivationPage() {
       <SectionCard className="p-6 md:p-8">
         <div className="flex items-center justify-between gap-2 mb-6">
           <div className="flex items-center gap-2">
-            <Video className="w-6 h-6 text-red-500" />
+            <Video className="w-6 h-6 text-red-500" aria-hidden="true" />
             <div>
               <h2 className="text-xl font-bold">Motivation Video</h2>
                <p className="text-sm text-muted">Tap &ldquo;Next&rdquo; if a video doesn&apos;t load properly.</p>
@@ -222,6 +224,7 @@ export default function MotivationPage() {
               onClick={goToPrev}
               className="p-2 rounded-lg hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
               title="Previous video"
+              aria-label="Previous video"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -232,6 +235,7 @@ export default function MotivationPage() {
               onClick={goToNext}
               className="p-2 rounded-lg hover:bg-surface-hover text-muted hover:text-foreground transition-colors"
               title="Next video"
+              aria-label="Next video"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

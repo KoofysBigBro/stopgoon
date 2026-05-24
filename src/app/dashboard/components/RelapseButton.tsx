@@ -58,6 +58,7 @@ export default function RelapseButton() {
         onChange={e => setNote(e.target.value)}
         placeholder="I felt stressed because..."
         className="w-full bg-surface border border-border rounded-xl p-3 text-sm min-h-[80px] focus:outline-none focus:ring-2 focus:ring-red-500/50 mb-4 text-foreground placeholder:text-muted"
+        aria-label="What triggered this setback?"
       />
       <div className="flex gap-2">
         <button

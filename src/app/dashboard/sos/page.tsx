@@ -402,7 +402,7 @@ export default function SOSPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-accent" />
+              <Sparkles className="w-5 h-5 text-accent" aria-hidden="true" />
               Custom Routines
             </h3>
             <p className="text-sm text-muted">Build personalized emergency plans for when urges hit.</p>
@@ -412,21 +412,21 @@ export default function SOSPage() {
               href="/dashboard/upgrade"
               className="flex items-center gap-2 bg-gradient-to-r from-primary/20 to-indigo-500/20 border border-primary/30 hover:border-primary/60 text-primary px-4 py-2.5 rounded-xl font-bold text-sm transition-all"
             >
-              <Crown className="w-4 h-4" /> Unlock More
+               <Crown className="w-4 h-4" aria-hidden="true" /> Unlock More
             </Link>
           ) : (
             <PrimaryButton
               onClick={() => { setShowBuilder(true); setEditingRoutine(null); setRoutineName(''); setRoutineSteps([]) }}
               className="px-4 py-2.5 text-sm"
             >
-              <Plus className="w-4 h-4" /> New Routine
+              <Plus className="w-4 h-4" aria-hidden="true" /> New Routine
             </PrimaryButton>
           )}
         </div>
 
         {!isPremium && routines.length >= 1 && (
           <div className="mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+             <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             Free tier includes 1 custom routine. Upgrade to Premium for unlimited routines.
           </div>
         )}
@@ -449,10 +449,10 @@ export default function SOSPage() {
                   <button onClick={() => startRoutine(routine)} className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-1.5">
                     <Play className="w-3.5 h-3.5" /> Start
                   </button>
-                  <button onClick={() => editRoutine(routine)} className="text-muted hover:text-foreground p-2 rounded-lg hover:bg-surface-hover transition-colors">
+                  <button onClick={() => editRoutine(routine)} className="text-muted hover:text-foreground p-2 rounded-lg hover:bg-surface-hover transition-colors" aria-label={`Edit ${routine.name} routine`}>
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <button onClick={() => deleteRoutine(routine.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                  <button onClick={() => deleteRoutine(routine.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors" aria-label={`Delete ${routine.name} routine`}>
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -472,6 +472,7 @@ export default function SOSPage() {
               value={routineName}
               onChange={e => setRoutineName(e.target.value)}
               className="w-full bg-background border border-border rounded-xl px-4 py-3 mb-4 text-sm font-medium focus:outline-none focus:border-primary"
+              aria-label="Routine name"
             />
 
             <p className="text-xs font-bold text-muted uppercase mb-2">Add steps:</p>
@@ -500,6 +501,7 @@ export default function SOSPage() {
                     value={step.label}
                     onChange={e => updateStep(step.id, 'label', e.target.value)}
                     className="flex-1 bg-transparent border-none text-sm font-medium focus:outline-none"
+                    aria-label={`Step ${i + 1} label`}
                   />
                   <div className="flex items-center gap-1 flex-shrink-0">
                     <input
@@ -509,10 +511,11 @@ export default function SOSPage() {
                       min={1}
                       max={300}
                       className="w-14 bg-background border border-border rounded-lg px-2 py-1 text-xs text-center font-mono focus:outline-none"
+                      aria-label={`Step ${i + 1} duration in seconds`}
                     />
                     <span className="text-xs text-muted">s</span>
                   </div>
-                  <button onClick={() => removeStep(step.id)} className="text-red-500 hover:bg-red-500/10 p-1 rounded-lg transition-colors">
+                  <button onClick={() => removeStep(step.id)} className="text-red-500 hover:bg-red-500/10 p-1 rounded-lg transition-colors" aria-label={`Remove step ${i + 1}`}>
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>

@@ -159,7 +159,7 @@ export default function AccountSection({
                 <User className="w-8 h-8 text-muted" />
               )}
             </div>
-            <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+            <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity" aria-label="Upload avatar image">
               {uploadingAvatar ? (
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               ) : (
@@ -211,6 +211,7 @@ export default function AccountSection({
                   onChange={(e) => setNewUsername(e.target.value)}
                   maxLength={20}
                   className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-medium focus:outline-none focus:border-indigo-500 w-48"
+                  aria-label="New username"
                 />
                 <button onClick={handleUsernameChange} className="text-sm font-bold text-indigo-600 hover:underline">Save</button>
                 <button onClick={() => { setEditingUsername(false); setNewUsername(username); setUsernameError(null) }} className="text-sm text-slate-500 hover:underline">Cancel</button>
@@ -224,6 +225,7 @@ export default function AccountSection({
                   disabled={!canChangeUsername()}
                   className="text-indigo-500 hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed"
                   title={canChangeUsername() ? 'Edit username' : `Available again ${getNextChangeDate()?.toLocaleDateString()}`}
+                  aria-label="Edit username"
                 >
                   <Pencil className="w-3.5 h-3.5" />
                 </button>

@@ -27,6 +27,7 @@ export default function AdBanner({
   const adRef = useRef<HTMLDivElement>(null)
   const pushed = useRef(false)
   const [adStatus, setAdStatus] = useState<'loading' | 'filled' | 'unfilled'>('loading')
+  const [inView, setInView] = useState(false)
 
   const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID
 
@@ -47,8 +48,54 @@ export default function AdBanner({
     }
   }
 
+  // Intersection Observer to detect when the ad is close to entering the viewport
   useEffect(() => {
     if (isPremium || !pubId || !adSlot) return
+
+    const el = adRef.current
+    if (!el) return
+
+    // Fall back to immediate loading if IntersectionObserver is not supported by browser
+    if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
+      setInView(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setInView(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        rootMargin: '200px', // Preload ad 200px before scrolling it into view
+      }
+    )
+
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+    }
+  }, [isPremium, pubId, adSlot])
+
+  // Viewport-aware script injection and ad slot push
+  useEffect(() => {
+    if (isPremium || !pubId || !adSlot || !inView) return
+
+    // Dynamically inject Google AdSense script only on-demand
+    if (typeof window !== 'undefined') {
+      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]')
+      if (!existingScript) {
+        const script = document.createElement('script')
+        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${pubId}`
+        script.async = true
+        script.crossOrigin = 'anonymous'
+        document.head.appendChild(script)
+      }
+    }
 
     // Set a timeout to fall back to internal ads if AdSense is blocked by an adblocker or fails to load
     const timeoutId = setTimeout(() => {
@@ -100,7 +147,7 @@ export default function AdBanner({
     }
 
     return () => clearTimeout(timeoutId)
-  }, [isPremium, pubId, adSlot])
+  }, [isPremium, pubId, adSlot, inView])
 
   // Don't render for premium users
   if (isPremium) return null
@@ -129,7 +176,7 @@ export default function AdBanner({
         />
       </div>
       <div className="flex items-center justify-center gap-2 mt-2">
-        <Sparkles className="w-3 h-3 text-amber-500" />
+        <Sparkles className="w-3 h-3 text-amber-500" aria-hidden="true" />
         <Link href="/dashboard/upgrade" className="text-xs text-muted hover:text-amber-500 transition-colors">
           Remove ads with Premium
         </Link>
@@ -145,7 +192,20 @@ function FallbackAd() {
     { title: 'You\'re Not Alone', desc: 'Join the community and connect with others on the same path.', gradient: 'from-indigo-600 to-purple-600', link: '/dashboard/chat' },
     { title: 'Emergency? SOS', desc: 'Breathing exercises and grounding when urges hit.', gradient: 'from-red-500 to-red-700', link: '/dashboard/sos' },
   ]
-  const ad = ads[Math.floor(Math.random() * ads.length)]
+  
+  const [ad, setAd] = useState<typeof ads[0] | null>(null)
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * ads.length)
+    setAd(ads[randomIndex])
+  }, [])
+
+  if (!ad) {
+    // Render a clean, height-stable skeleton to prevent Cumulative Layout Shift (CLS)
+    return (
+      <div className="mb-6 h-[116px] bg-surface border border-border/50 rounded-2xl animate-pulse" />
+    )
+  }
 
   return (
     <div className="mb-6">
@@ -156,7 +216,7 @@ function FallbackAd() {
         <p className="text-white/80 text-sm">{ad.desc}</p>
       </Link>
       <div className="flex items-center justify-center gap-2 mt-2">
-        <Sparkles className="w-3 h-3 text-amber-500" />
+        <Sparkles className="w-3 h-3 text-amber-500" aria-hidden="true" />
         <Link href="/dashboard/upgrade" className="text-xs text-muted hover:text-amber-500 transition-colors">
           Remove ads with Premium
         </Link>

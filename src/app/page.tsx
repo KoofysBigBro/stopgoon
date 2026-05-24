@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShieldCheck, Lock, TrendingDown, ArrowRight, CheckCircle2, Sparkles, Activity, HeartPulse, Zap, Compass, Users, BadgeCheck, Crown, Star } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
@@ -88,11 +89,11 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 relative">
-      <nav className="border-b border-border/40 bg-background/70 backdrop-blur-xl fixed top-0 w-full z-50 transition-all">
+      <nav aria-label="Main navigation" className="border-b border-border/40 bg-background/70 backdrop-blur-xl fixed top-0 w-full z-50 transition-all">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2.5 text-foreground">
             <div className="bg-primary/15 p-2 rounded-xl">
-              <ShieldCheck className="w-6 h-6 text-primary" />
+              <ShieldCheck className="w-6 h-6 text-primary" aria-hidden="true" />
             </div>
             <span className="text-xl font-bold tracking-tight font-heading">StopGoon</span>
           </div>
@@ -116,7 +117,7 @@ export default async function LandingPage() {
       {/* Floating Right Ad Sidebar (Desktop XL) */}
       <aside className="hidden xl:flex w-[260px] flex-col fixed right-6 top-32 z-40 pointer-events-auto">
         <div className="bg-surface/50 backdrop-blur-xl border border-border/50 rounded-2xl p-4 shadow-xl">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1">Sponsor</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3 px-1">Sponsor</p>
           <AdBanner isPremium={false} slot="front-page-sidebar" format="vertical" />
         </div>
       </aside>
@@ -124,7 +125,7 @@ export default async function LandingPage() {
       <main className="pt-32 relative z-10">
         <section className="pb-20 px-6 text-center max-w-5xl mx-auto relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-sm font-semibold mb-8 text-muted animate-fade-up">
-            <Sparkles className="w-4 h-4 text-accent" />
+            <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" />
             <span>Free habit tracker for addiction & compulsive habits</span>
           </div>
 
@@ -141,16 +142,16 @@ export default async function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/register" className="w-full sm:w-auto inline-flex items-center justify-center bg-foreground text-background px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-xl">
               Start Your Recovery
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-5 h-5 ml-2" aria-hidden="true" />
             </Link>
             <p className="text-sm text-muted mt-4 sm:mt-0 sm:ml-4 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-primary" /> No credit card required
+              <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" /> No credit card required
             </p>
           </div>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-muted">
-            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" /> Encrypted by default</span>
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> 2,400+ people on their journey</span>
+            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" aria-hidden="true" /> Encrypted by default</span>
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary inline-flex items-center gap-1.5"><Users className="w-3.5 h-3.5" aria-hidden="true" /> 2,400+ people on their journey</span>
             <span className="px-3 py-1 rounded-full bg-accent/15 text-foreground">No shame-based streak language</span>
           </div>
 
@@ -175,7 +176,7 @@ export default async function LandingPage() {
 
         {/* Mobile Ad Banner */}
         <div className="block xl:hidden px-6 max-w-4xl mx-auto my-12">
-           <p className="text-[10px] font-bold uppercase tracking-widest text-muted/50 mb-3 px-1 text-center">Sponsor</p>
+           <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3 px-1 text-center">Sponsor</p>
            <AdBanner isPremium={false} slot="mobile-front-page" format="rectangle" />
         </div>
 
@@ -199,7 +200,7 @@ export default async function LandingPage() {
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-muted font-medium">
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                     </div>
                     {item}
                   </li>
@@ -211,7 +212,7 @@ export default async function LandingPage() {
               <div className="bg-background border border-border p-8 rounded-3xl shadow-xl animate-fade-up">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-2xl bg-accent/15 flex items-center justify-center">
-                    <TrendingDown className="w-6 h-6 text-accent" />
+                    <TrendingDown className="w-6 h-6 text-accent" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-bold">Pattern Alert</h3>
@@ -269,21 +270,21 @@ export default async function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 rounded-3xl glass-card hover:border-primary/45 transition-all duration-300 group hover:-translate-y-1">
-              <Activity className="w-8 h-8 text-primary mb-6 group-hover:scale-110 transition-transform" />
+              <Activity className="w-8 h-8 text-primary mb-6 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <h3 className="text-xl font-bold mb-3 font-heading text-foreground">Adaptive Analytics</h3>
               <p className="text-muted leading-relaxed text-sm">
                 Spot trigger patterns in seconds with trend cards designed for fast comprehension.
               </p>
             </div>
             <div className="p-8 rounded-3xl glass-card hover:border-accent/45 transition-all duration-300 group hover:-translate-y-1">
-              <HeartPulse className="w-8 h-8 text-accent mb-6 group-hover:scale-110 transition-transform" />
+              <HeartPulse className="w-8 h-8 text-accent mb-6 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <h3 className="text-xl font-bold mb-3 font-heading text-foreground">SOS Reset Flows</h3>
               <p className="text-muted leading-relaxed text-sm">
                 One-button guided routines to lower urge intensity and reset your nervous system.
               </p>
             </div>
             <div className="p-8 rounded-3xl glass-card hover:border-emerald-500/45 transition-all duration-300 group hover:-translate-y-1">
-              <Lock className="w-8 h-8 text-emerald-500 mb-6 group-hover:scale-110 transition-transform" />
+              <Lock className="w-8 h-8 text-emerald-500 mb-6 group-hover:scale-110 transition-transform" aria-hidden="true" />
               <h3 className="text-xl font-bold mb-3 font-heading text-foreground">Private by Default</h3>
               <p className="text-muted leading-relaxed text-sm">
                 Encryption, no data resale, and trust-forward UX language that increases user confidence.
@@ -304,7 +305,7 @@ export default async function LandingPage() {
               <div className="rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-border/80 transition-colors group">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-primary/10 p-1.5 rounded-lg">
-                    <Sparkles className="w-4 h-4 text-primary" />
+                    <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="font-bold text-sm">Essentials</h3>
                 </div>
@@ -313,10 +314,10 @@ export default async function LandingPage() {
                   <span className="text-xs text-muted">forever</span>
                 </div>
                 <ul className="space-y-2 mb-5 flex-1">
-                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Daily Check-ins</li>
-                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Urge Log</li>
-                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> SOS Reset Button</li>
-                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" /> Community Chat</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> Daily Check-ins</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> Urge Log</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> SOS Reset Button</li>
+                  <li className="flex items-center gap-2 text-xs font-medium"><CheckCircle2 className="w-3 h-3 text-muted shrink-0" aria-hidden="true" /> Community Chat</li>
                 </ul>
                 <Link href="/register" className="w-full py-2.5 rounded-xl border border-border text-center text-xs font-bold hover:bg-surface transition-colors">
                   Get Started
@@ -327,7 +328,7 @@ export default async function LandingPage() {
               <Link href="/dashboard/upgrade" rel="nofollow" className="group relative rounded-2xl border border-border/60 bg-background p-5 flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-primary/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
-                    <Crown className="w-4 h-4 text-primary" />
+                    <Crown className="w-4 h-4 text-primary" aria-hidden="true" />
                   </div>
                   <h3 className="font-bold text-sm">1 Month</h3>
                 </div>
@@ -337,7 +338,7 @@ export default async function LandingPage() {
                 </div>
                 <p className="text-[10px] text-muted mb-4 leading-relaxed">Flexible access to all premium features.</p>
                 <div className="mt-auto flex items-center gap-1.5 text-primary text-xs font-bold">
-                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                   View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                 </div>
               </Link>
 
@@ -348,7 +349,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-primary/15 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
-                    <Star className="w-4 h-4 text-primary fill-primary" />
+                    <Star className="w-4 h-4 text-primary fill-primary" aria-hidden="true" />
                   </div>
                   <h3 className="font-bold text-sm text-primary">3 Months</h3>
                 </div>
@@ -359,7 +360,7 @@ export default async function LandingPage() {
                 <p className="text-[10px] text-emerald-500 font-semibold mb-3">Save 17% vs monthly</p>
                 <p className="text-[10px] text-muted mb-4 leading-relaxed flex-1">Best balance of commitment and savings.</p>
                 <div className="flex items-center gap-1.5 text-primary text-xs font-bold">
-                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                 </div>
               </Link>
 
@@ -370,7 +371,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-amber-500/10 p-1.5 rounded-lg group-hover:scale-110 transition-transform">
-                    <Crown className="w-4 h-4 text-amber-500" />
+                    <Crown className="w-4 h-4 text-amber-500" aria-hidden="true" />
                   </div>
                   <h3 className="font-bold text-sm">1 Year</h3>
                 </div>
@@ -380,7 +381,7 @@ export default async function LandingPage() {
                 </div>
                 <p className="text-[10px] text-muted mb-4 leading-relaxed flex-1">Lowest monthly cost for long-term support.</p>
                 <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold">
-                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  View Plan <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                 </div>
               </Link>
             </div>
@@ -392,13 +393,13 @@ export default async function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Start now and feel the shift this week.</h2>
             <p className="text-muted text-lg leading-relaxed mb-8 max-w-3xl mx-auto">Small daily actions compound fast when the experience is clear, encouraging, and built for follow-through.</p>
             <div className="flex flex-wrap justify-center gap-4 text-sm font-semibold text-foreground">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10"><Zap className="w-4 h-4 text-primary" /> Fast actions</span>
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15"><Compass className="w-4 h-4 text-accent" /> Clear guidance</span>
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Trust-first UX</span>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10"><Zap className="w-4 h-4 text-primary" aria-hidden="true" /> Fast actions</span>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/15"><Compass className="w-4 h-4 text-accent" aria-hidden="true" /> Clear guidance</span>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10"><ShieldCheck className="w-4 h-4 text-emerald-500" aria-hidden="true" /> Trust-first UX</span>
             </div>
             <div className="mt-8">
               <Link href="/register" className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-7 py-3.5 rounded-full shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5">
-                Create Free Account <ArrowRight className="w-4 h-4" />
+                Create Free Account <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -422,7 +423,7 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 grid gap-8 md:grid-cols-[1.2fr_auto] items-start">
           <div>
             <div className="flex items-center gap-2 text-muted mb-3">
-              <ShieldCheck className="w-5 h-5" />
+              <ShieldCheck className="w-5 h-5" aria-hidden="true" />
               <span className="font-bold">StopGoon</span>
             </div>
               <h3 className="text-base font-bold text-foreground">About Us</h3>
@@ -432,7 +433,13 @@ export default async function LandingPage() {
               </p>
               <div className="mt-4 flex justify-start">
                 <a href="https://launchigniter.com/product/stopgoon?ref=badge-stopgoon" target="_blank" rel="noopener noreferrer" className="inline-block hover:opacity-90 transition-opacity">
-                  <img src="https://launchigniter.com/api/badge/stopgoon?theme=dark" alt="Featured on LaunchIgniter" width="212" height="55" className="max-w-full h-auto" />
+                  <Image
+                    src="https://launchigniter.com/api/badge/stopgoon?theme=dark"
+                    alt="Featured on LaunchIgniter"
+                    width={212}
+                    height={55}
+                    className="max-w-full h-auto"
+                  />
                 </a>
               </div>
           </div>
@@ -447,7 +454,7 @@ export default async function LandingPage() {
 
       <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40">
         <Link href="/register" className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-full shadow-xl shadow-primary/35 transition-all">
-          Start Your Recovery <ArrowRight className="w-4 h-4" />
+          Start Your Recovery <ArrowRight className="w-4 h-4" aria-hidden="true" />
         </Link>
       </div>
 

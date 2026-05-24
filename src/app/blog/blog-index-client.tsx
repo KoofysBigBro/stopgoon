@@ -34,11 +34,11 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
       <nav className="border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 w-full z-50 transition-all">
         <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-muted hover:text-foreground transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             <span className="font-semibold">Back to Home</span>
           </Link>
           <div className="flex items-center gap-2.5 text-foreground">
-            <BookOpen className="w-6 h-6 text-primary" />
+            <BookOpen className="w-6 h-6 text-primary" aria-hidden="true" />
             <span className="text-xl font-bold tracking-tight font-heading">Blog</span>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
       <main className="max-w-5xl mx-auto px-6 py-16">
         <header className="mb-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4">
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
             Science-backed recovery guides
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 font-heading">
@@ -67,6 +67,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
               src={featured.image}
               alt={featured.title}
               className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
+              priority={true}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
           </div>
@@ -76,7 +77,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
                 {featured.category}
               </span>
               <span className="flex items-center gap-1 text-xs text-muted backdrop-blur-sm">
-                <Clock className="w-3 h-3" />
+                <Clock className="w-3 h-3" aria-hidden="true" />
                 {featured.readingTime}
               </span>
             </div>
@@ -91,10 +92,11 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
 
         <div className="flex flex-col sm:flex-row gap-4 mb-10">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" aria-hidden="true" />
             <input
               type="text"
               placeholder="Search articles..."
+              aria-label="Search articles"
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-2xl bg-surface border border-border text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -159,7 +161,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
                       {post.category}
                     </span>
                     <span className="flex items-center gap-1 text-xs text-muted">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-3 h-3" aria-hidden="true" />
                       {post.readingTime}
                     </span>
                   </div>
@@ -172,7 +174,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
                   <div className="flex flex-wrap gap-1.5">
                     {post.tags.slice(0, 2).map(tag => (
                       <span key={tag} className="inline-flex items-center gap-1 text-[10px] text-muted bg-background px-2 py-0.5 rounded-full">
-                        <Tag className="w-2.5 h-2.5" />
+                        <Tag className="w-2.5 h-2.5" aria-hidden="true" />
                         {tag}
                       </span>
                     ))}
@@ -193,7 +195,7 @@ export default function BlogIndexClient({ posts, categories, featured }: { posts
             href="/register"
             className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-primary/25 hover:-translate-y-0.5"
           >
-            Start Free Recovery <ChevronRight className="w-4 h-4" />
+            Start Free Recovery <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
       </main>

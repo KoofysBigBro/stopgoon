@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <nav className="border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 w-full z-50 transition-all">
         <div className="max-w-4xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/blog" className="flex items-center gap-2 text-muted hover:text-foreground transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             <span className="font-semibold">Back to Blog</span>
           </Link>
           <span className="text-xs font-bold tracking-wider uppercase text-primary bg-primary/10 px-3 py-1 rounded-full">
@@ -79,6 +79,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           src={article.image}
           alt={article.title}
           className="w-full h-full object-cover"
+          priority={true}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
@@ -88,7 +89,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <header className="mb-10">
             <div className="flex flex-wrap items-center gap-4 mb-5 text-sm text-muted">
               <span className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4" aria-hidden="true" />
                 {article.readingTime}
               </span>
               <span>{article.date}</span>
@@ -106,7 +107,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="flex flex-wrap gap-2 mt-5">
               {article.tags.map(tag => (
                 <span key={tag} className="inline-flex items-center gap-1 text-xs text-muted bg-background border border-border px-2.5 py-1 rounded-full">
-                  <Tag className="w-3 h-3" />
+                  <Tag className="w-3 h-3" aria-hidden="true" />
                   {tag}
                 </span>
               ))}
@@ -130,9 +131,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="mt-6 pt-6 border-t border-border/50 flex flex-wrap items-center justify-between gap-4">
             <p className="text-sm text-muted font-medium">Share this article</p>
             <div className="flex gap-2">
-              <ShareButton href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="X" />
-              <ShareButton href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="in" />
-              <ShareButton href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="✉" />
+              <ShareButton href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="X" ariaLabel="Share on X (formerly Twitter)" />
+              <ShareButton href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="in" ariaLabel="Share on LinkedIn" />
+              <ShareButton href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(`https://stopgoon.xyz/blog/${article.slug}`)}`} label="✉" ariaLabel="Share via Email" />
             </div>
           </div>
 
@@ -147,7 +148,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               href="/register"
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-primary/25 hover:-translate-y-0.5"
             >
-              Start Your Free Journey <ChevronRight className="w-4 h-4" />
+              Start Your Free Journey <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
         </article>
@@ -245,13 +246,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   )
 }
 
-function ShareButton({ href, label }: { href: string; label: string }) {
+function ShareButton({ href, label, ariaLabel }: { href: string; label: string; ariaLabel: string }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="w-9 h-9 rounded-full bg-surface border border-border hover:border-foreground/30 hover:bg-surface-hover flex items-center justify-center text-xs font-bold text-muted hover:text-foreground transition-all"
+      aria-label={ariaLabel}
     >
       {label}
     </a>

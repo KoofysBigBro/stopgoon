@@ -126,15 +126,15 @@ export default function RegisterPage() {
         <div className="hidden md:flex flex-col justify-between rounded-3xl glass-card p-8 animate-fade-up">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-5">
-              <Sparkles className="w-3.5 h-3.5" /> New user setup in 2 minutes
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> New user setup in 2 minutes
             </div>
             <h2 className="text-3xl font-heading font-bold mb-3">Start stronger, not stricter.</h2>
             <p className="text-muted leading-relaxed">Create your account and we will personalize your first plan with your exact triggers and recovery goals.</p>
           </div>
           <div className="space-y-3 text-sm font-medium text-foreground">
-            <div className="flex items-center gap-2"><HeartHandshake className="w-4 h-4 text-primary" /> Supportive, no-shame approach</div>
-            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" /> Privacy-first architecture</div>
-            <div className="flex items-center gap-2"><ArrowRight className="w-4 h-4 text-primary" /> Guided onboarding right after signup</div>
+            <div className="flex items-center gap-2"><HeartHandshake className="w-4 h-4 text-primary" aria-hidden="true" /> Supportive, no-shame approach</div>
+            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-primary" aria-hidden="true" /> Privacy-first architecture</div>
+            <div className="flex items-center gap-2"><ArrowRight className="w-4 h-4 text-primary" aria-hidden="true" /> Guided onboarding right after signup</div>
           </div>
         </div>
 
@@ -221,6 +221,7 @@ export default function RegisterPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground p-1 transition-colors"
               tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>

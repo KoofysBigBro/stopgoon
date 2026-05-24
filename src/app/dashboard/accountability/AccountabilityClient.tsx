@@ -115,6 +115,7 @@ export default function AccountabilityClient({
             <button 
               onClick={handleCopyCode}
               className="bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-xl transition-colors"
+              aria-label="Copy connection code"
             >
               {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
             </button>
@@ -137,6 +138,7 @@ export default function AccountabilityClient({
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
               className="bg-background border border-border rounded-xl px-4 py-3 flex-1 font-mono uppercase focus:outline-none focus:border-indigo-500"
+              aria-label="Partner connection code"
             />
             <PrimaryButton
               type="submit"
@@ -196,6 +198,7 @@ export default function AccountabilityClient({
                     <button 
                       onClick={() => handleRemove(p.id)}
                       className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors flex-shrink-0"
+                      aria-label={`Remove partner ${partnerEmail}`}
                     >
                       <X className="w-4 h-4" />
                     </button>

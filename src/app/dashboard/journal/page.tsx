@@ -163,6 +163,7 @@ export default function JournalPage() {
             <button
               onClick={() => { setIsWriting(false); setTitle(''); setContent(''); setSelectedMood(null) }}
               className="text-muted hover:text-foreground p-2 transition-colors rounded-full hover:bg-surface-hover"
+              aria-label="Close editor"
             >
               <X className="w-6 h-6" />
             </button>
@@ -187,7 +188,7 @@ export default function JournalPage() {
         {/* Daily prompt */}
         <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 mb-8 flex gap-4 items-start">
           <div className="bg-primary/10 p-2 rounded-full shrink-0">
-            <Lightbulb className="w-5 h-5 text-primary" />
+            <Lightbulb className="w-5 h-5 text-primary" aria-hidden="true" />
           </div>
           <div>
             <p className="text-sm font-semibold text-primary mb-1 uppercase tracking-wider">Reflection Prompt</p>
@@ -201,6 +202,7 @@ export default function JournalPage() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Give this entry a title..."
           className="w-full text-3xl font-bold bg-transparent border-none outline-none placeholder:text-muted/50 mb-6 text-foreground font-heading tracking-tight"
+          aria-label="Journal entry title"
         />
 
         {/* Content */}
@@ -211,6 +213,7 @@ export default function JournalPage() {
           placeholder="Start writing..."
           autoFocus
           className="w-full bg-transparent border-none outline-none text-lg leading-relaxed placeholder:text-muted/50 resize-none mb-8 text-foreground"
+          aria-label="Journal entry content"
         />
 
         {/* Mood selector */}
@@ -272,7 +275,7 @@ export default function JournalPage() {
       {!isPremium && entries.length >= 5 && (
         <div className="mb-6 rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Lightbulb className="w-3.5 h-3.5 shrink-0" />
+            <Lightbulb className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             <span>Free tier includes 7 journal entries ({7 - entries.length} remaining).</span>
           </div>
           <button onClick={() => window.location.href = '/dashboard/upgrade'} className="font-bold underline">Upgrade for unlimited</button>
@@ -281,12 +284,13 @@ export default function JournalPage() {
 
       {/* Search */}
       <div className="relative mb-8">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" aria-hidden="true" />
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search your entries..."
           className="w-full pl-12 pr-4 py-4 rounded-xl border border-border bg-surface hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-foreground"
+          aria-label="Search journal entries"
         />
       </div>
 
@@ -343,6 +347,7 @@ export default function JournalPage() {
                     <button
                       onClick={() => setDeleteConfirm(entry.id)}
                       className="text-muted/50 hover:text-red-500 transition-colors p-1"
+                      aria-label="Delete journal entry"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

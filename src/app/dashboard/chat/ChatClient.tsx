@@ -308,7 +308,7 @@ export default function ChatClient({
                   <p className="text-xs text-muted">Member since {new Date(profilePopup.profile.created_at).toISOString().split('T')[0]}</p>
                 </div>
               </div>
-              <button onClick={() => setProfilePopup(null)} className="text-muted hover:text-foreground">
+              <button onClick={() => setProfilePopup(null)} className="text-muted hover:text-foreground" aria-label="Close profile popup">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -454,7 +454,7 @@ export default function ChatClient({
                           </p>
 
                           {isOwn && !msg.is_deleted && (
-                            <button onClick={() => handleUserDeleteMessage(msg.id)} className="text-muted hover:text-red-500 transition-colors" title="Delete Message">
+                            <button onClick={() => handleUserDeleteMessage(msg.id)} className="text-muted hover:text-red-500 transition-colors" title="Delete Message" aria-label="Delete message">
                               <Trash2 className="w-3 h-3" />
                             </button>
                           )}
@@ -462,7 +462,7 @@ export default function ChatClient({
                           {/* Admin controls */}
                           {canModerate && !isOwn && (
                             <div className="relative">
-                              <button onClick={() => setAdminMenuOpen(adminMenuOpen === msg.id ? null : msg.id)} className="text-muted hover:text-amber-500 transition-colors">
+                              <button onClick={() => setAdminMenuOpen(adminMenuOpen === msg.id ? null : msg.id)} className="text-muted hover:text-amber-500 transition-colors" aria-label="Open moderation menu">
                                 <Shield className="w-3 h-3" />
                               </button>
                               {adminMenuOpen === msg.id && (
@@ -525,6 +525,7 @@ export default function ChatClient({
                       maxLength={500}
                       disabled={!isPremium && activeRoom === 'global'}
                       className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
+                      aria-label="Type a chat message"
                     />
                     {sendError && <p className="text-xs text-red-400 mt-1 px-1">{sendError}</p>}
                   </div>
@@ -537,7 +538,7 @@ export default function ChatClient({
                       <Crown className="w-4 h-4" /> Unlock Chat
                     </button>
                   ) : (
-                    <button type="submit" disabled={!newMessage.trim() || sending} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white p-3 rounded-xl transition-all">
+                    <button type="submit" disabled={!newMessage.trim() || sending} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white p-3 rounded-xl transition-all" aria-label="Send message">
                       <Send className="w-5 h-5" />
                     </button>
                   )}

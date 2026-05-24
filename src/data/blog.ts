@@ -34,6 +34,13 @@ import { content as contentHowToStopFappingAtNight } from './posts/how-to-stop-f
 import { content as contentDopamineDetoxSocialMedia } from './posts/dopamine-detox-social-media'
 import { content as contentNofapBenefits30Days } from './posts/nofap-benefits-30-days'
 
+// New SEO Article Imports
+import { content as contentBestFreeNofapTrackerApp2025 } from './posts/best-free-nofap-tracker-app-2025'
+import { content as contentHowToStopCompulsiveHabitsPracticalGuide } from './posts/how-to-stop-compulsive-habits-practical-guide'
+import { content as contentWhatIsUrgeSurfingHowDoesItWork } from './posts/what-is-urge-surfing-how-does-it-work'
+import { content as contentPornAddictionRecoveryWhatActuallyWorks } from './posts/porn-addiction-recovery-what-actually-works'
+import { content as contentWhyNofapStreaksFailWhatToDoInstead } from './posts/why-nofap-streaks-fail-what-to-do-instead'
+
 export interface BlogPost {
   slug: string
   title: string
@@ -49,6 +56,66 @@ export interface BlogPost {
 }
 
 const POSTS: BlogPost[] = [
+  {
+    slug: 'best-free-nofap-tracker-app-2025',
+    title: '🏆 The Best Free NoFap Tracker App in 2025: Ditch the Shame, Keep the Progress',
+    excerpt: 'Looking for the best free nofap tracker app in 2025? We compare options like StopGoon, Brainbuddy, and Iron Will to help you find the perfect private recovery tool.',
+    date: 'May 24, 2026',
+    category: 'Recovery Guides',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['nofap', 'app', 'recovery', 'habits'],
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+    content: contentBestFreeNofapTrackerApp2025
+  },
+  {
+    slug: 'how-to-stop-compulsive-habits-practical-guide',
+    title: '🧠 How to Stop Compulsive Habits: A Practical, Science-Backed Guide',
+    excerpt: 'Struggling with bad habits? Learn how to stop compulsive habits with this science-backed, compassionate, and practical guide to habit replacement.',
+    date: 'May 23, 2026',
+    category: 'Practical Habits',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['habits', 'science', 'psychology', 'recovery'],
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+    content: contentHowToStopCompulsiveHabitsPracticalGuide
+  },
+  {
+    slug: 'what-is-urge-surfing-how-does-it-work',
+    title: '🌊 What Is Urge Surfing and How Does It Work? A Complete Guide',
+    excerpt: 'Discover urge surfing, a clinically-proven mindfulness technique to ride out cravings without giving in. Learn how to apply it during high-intensity moments.',
+    date: 'May 22, 2026',
+    category: 'Science & Health',
+    readingTime: '7 min read',
+    author: 'StopGoon Team',
+    tags: ['mindfulness', 'urges', 'recovery', 'coping'],
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    content: contentWhatIsUrgeSurfingHowDoesItWork
+  },
+  {
+    slug: 'porn-addiction-recovery-what-actually-works',
+    title: '🏥 Porn Addiction Recovery: What Actually Works (According to Science)',
+    excerpt: 'An evidence-based, compassionate guide to porn addiction recovery. Learn what actually works, from dopamine rewiring to identity shifts.',
+    date: 'May 21, 2026',
+    category: 'Science & Health',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['porn', 'recovery', 'health', 'science'],
+    image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80',
+    content: contentPornAddictionRecoveryWhatActuallyWorks
+  },
+  {
+    slug: 'why-nofap-streaks-fail-what-to-do-instead',
+    title: '🚫 Why NoFap Streaks Fail (and What to Do Instead)',
+    excerpt: 'Why do traditional nofap streaks fail so often? Discover the psychology of the shame-streak cycle and why Days of Growth are scientifically superior.',
+    date: 'May 20, 2026',
+    category: 'Mindset',
+    readingTime: '8 min read',
+    author: 'StopGoon Team',
+    tags: ['nofap', 'streak', 'psychology', 'mindset'],
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+    content: contentWhyNofapStreaksFailWhatToDoInstead
+  },
   {
     slug: 'pied-recovery-timeline',
     title: '🏥 Porn-Induced Erectile Dysfunction (PIED) Recovery Timeline',
