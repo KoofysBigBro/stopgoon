@@ -50,8 +50,9 @@ export default function AdBanner({
     if (isPremium || !pubId || !adSlot || pushed.current) return
 
     try {
-      // Push the ad after mount
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
+      // Push the ad after mount (initialize queue if script hasn't loaded yet)
+      if (typeof window !== 'undefined') {
+        window.adsbygoogle = window.adsbygoogle || []
         window.adsbygoogle.push({})
         pushed.current = true
       }
