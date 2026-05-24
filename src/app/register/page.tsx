@@ -92,8 +92,11 @@ export default function RegisterPage() {
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
           </div>
           <h1 className="text-3xl font-bold font-heading tracking-tight text-foreground mb-3">Check your email</h1>
-          <p className="text-muted leading-relaxed mb-8">
+          <p className="text-muted leading-relaxed mb-2">
             We&apos;ve sent a verification link to <strong>{email}</strong>. Please verify your account to continue.
+          </p>
+          <p className="text-muted text-xs mb-8 opacity-60">
+            Don&apos;t see it? Check your spam or junk folder.
           </p>
           <Link href="/login" className="block w-full bg-primary hover:bg-primary-hover text-primary-foreground rounded-xl px-4 py-4 transition-all font-bold shadow-md shadow-primary/20 hover:scale-[1.01] active:scale-[0.99]">
             Return to Login

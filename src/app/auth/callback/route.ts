@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { triggerOnboardingEmails } from '@/utils/onboarding-email'
 import type { EmailOtpType } from '@supabase/supabase-js'
 
 async function triggerForNewUser(userId: string) {
-  const supabase = await createClient()
-  const { data: profile } = await supabase
+  const admin = createAdminClient()
+
+  const { data: profile } = await admin
     .from('users')
     .select('onboarding_completed')
     .eq('id', userId)
@@ -44,6 +46,14 @@ export async function GET(request: Request) {
       if (user) {
         const onboardingPath = await triggerForNewUser(user.id)
         if (onboardingPath) next = onboardingPath
+
+        try {
+          const admin = createAdminClient()
+          const { data: backfillResult, error: backfillError } = await admin.rpc('backfill_email_queue', { dry_run: false })
+          console.log('[auth/callback] Backfill result', { backfillResult, backfillError })
+        } catch (err) {
+          console.error('[auth/callback] Backfill RPC failed (non-fatal)', err)
+        }
       }
       return NextResponse.redirect(`${origin}${next}`)
     }
@@ -63,6 +73,14 @@ export async function GET(request: Request) {
       if (user) {
         const onboardingPath = await triggerForNewUser(user.id)
         if (onboardingPath) next = onboardingPath
+
+        try {
+          const admin = createAdminClient()
+          const { data: backfillResult, error: backfillError } = await admin.rpc('backfill_email_queue', { dry_run: false })
+          console.log('[auth/callback] Backfill result', { backfillResult, backfillError })
+        } catch (err) {
+          console.error('[auth/callback] Backfill RPC failed (non-fatal)', err)
+        }
       }
       return NextResponse.redirect(`${origin}${next}`)
     }

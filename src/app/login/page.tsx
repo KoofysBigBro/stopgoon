@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -16,6 +16,25 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const queryError = params.get('error')
+    if (queryError) {
+      setError(decodeURIComponent(queryError))
+      return
+    }
+
+    const hash = window.location.hash
+    if (hash) {
+      const hashParams = new URLSearchParams(hash.replace(/^#/, ''))
+      const desc = hashParams.get('error_description')
+      const code = hashParams.get('error_code')
+      if (desc) {
+        setError(`${decodeURIComponent(desc)}${code ? ` (${code})` : ''}`)
+      }
+    }
+  }, [])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -118,8 +137,11 @@ export default function LoginPage() {
             <Mail className="w-10 h-10 text-primary" />
           </div>
           <h1 className="text-3xl font-bold font-heading tracking-tight text-foreground mb-3">Check your email</h1>
-          <p className="text-muted leading-relaxed mb-8">
+          <p className="text-muted leading-relaxed mb-2">
             We sent a magic link to <strong>{email}</strong>. Click it to sign in instantly.
+          </p>
+          <p className="text-muted text-xs mb-8 opacity-60">
+            Don&apos;t see it? Check your spam or junk folder.
           </p>
           <button onClick={() => setMagicLinkSent(false)} className="text-sm text-primary hover:text-primary-hover font-semibold">
             Use a different email
