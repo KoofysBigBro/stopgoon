@@ -2,11 +2,15 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname
+  console.log(`[Middleware] Request path: ${path}`)
+
   if (
-    request.nextUrl.pathname === '/sitemap.xml' ||
-    request.nextUrl.pathname === '/robots.txt' ||
-    request.nextUrl.pathname === '/ads.txt'
+    path === '/sitemap.xml' ||
+    path === '/robots.txt' ||
+    path === '/ads.txt'
   ) {
+    console.log(`[Middleware] Public crawler asset bypass triggered for: ${path}`)
     return NextResponse.next()
   }
 
@@ -56,6 +60,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|ads.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
