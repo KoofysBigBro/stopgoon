@@ -4,6 +4,9 @@ import { CheckCircle2, X, ShieldCheck, Crown, Star, ArrowRight, Sparkles } from 
 export const metadata = {
   title: 'Pricing — Free & Premium Recovery Plans',
   description: 'Start free with daily check-ins, urge tracking, and SOS tools. Upgrade to Premium for AI coaching, predictive warnings, and advanced analytics.',
+  alternates: {
+    canonical: 'https://stopgoon.xyz/pricing',
+  },
 }
 
 const features = [

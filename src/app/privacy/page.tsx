@@ -5,6 +5,9 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'StopGoon privacy policy — how we collect, use, and protect your data.',
+  alternates: {
+    canonical: 'https://stopgoon.xyz/privacy',
+  },
 }
 
 export default function PrivacyPolicy() {
@@ -59,7 +62,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-bold text-foreground mb-4">5. Contact Us</h2>
             <p className="text-muted leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us at support@stopgoon.com.
+              If you have any questions about this Privacy Policy, please contact us at stopgoonsupport@gmail.com.
             </p>
           </section>
         </div>

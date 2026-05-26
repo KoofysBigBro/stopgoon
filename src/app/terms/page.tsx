@@ -5,6 +5,9 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'StopGoon terms of service — the rules and guidelines for using our platform.',
+  alternates: {
+    canonical: 'https://stopgoon.xyz/terms',
+  },
 }
 
 export default function TermsOfService() {

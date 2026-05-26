@@ -5,6 +5,9 @@ import { ArrowLeft } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'Refund Policy',
   description: 'StopGoon refund policy — our 7-day money-back guarantee terms.',
+  alternates: {
+    canonical: 'https://stopgoon.xyz/refund',
+  },
 };
 
 export default function RefundPage() {

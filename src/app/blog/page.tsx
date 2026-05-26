@@ -5,6 +5,9 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Blog - Recovery Guides & Resources',
   description: 'Science-backed guides on breaking compulsive habits, dopamine detox, porn recovery, doomscrolling, and building discipline.',
+  alternates: {
+    canonical: 'https://stopgoon.xyz/blog',
+  },
   openGraph: {
     title: 'StopGoon Blog - Recovery Guides & Resources',
     description: 'Science-backed guides on breaking compulsive habits, dopamine detox, and building discipline.',
